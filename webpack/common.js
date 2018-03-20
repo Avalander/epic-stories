@@ -5,6 +5,7 @@ module.exports = ({ base_dir, folders }) => ({
 	entry: {
 		main: path.resolve(folders.src, 'app', 'index.js'),
 		register: path.resolve(folders.src, 'register.js'),
+		login: path.resolve(folders.src, 'login.js'),
 	},
 	output: {
 		path: folders.dist,
@@ -80,7 +81,12 @@ module.exports = ({ base_dir, folders }) => ({
 			template: path.join(folders.src, 'register.html'),
 			filename: 'register.html',
 			chunks: [ 'register' ],
-		})
+		}),
+		new HtmlWebpackPlugin({
+			template: path.join(folders.src, 'login.html'),
+			filename: 'login.html',
+			chunks: [ 'login' ],
+		}),
 	],
 	resolve: {
 		modules: [
