@@ -1,3 +1,5 @@
+const path = require('path')
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
@@ -26,6 +28,8 @@ const app = express()
 app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(bodyParser.json())
+
+app.use(express.static(path.join(__dirname, '..', 'static'), { extensions: [ 'html' ]}))
 
 app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser }))
 

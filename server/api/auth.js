@@ -9,12 +9,14 @@ const makeSignIn = ({ SECRET, findUser }) => (username, password) => findUser(us
 		user,
 	}))
 
-const makeAuthorise = ({ SECRET }) => token => new Promise((resolve, reject) => {
-	jwt.verify(token, SECRET, (err, decoded) => {
-		if (err) reject(err)
-		else resolve(decoded)
+const makeAuthorise = ({ SECRET }) => (req, res, next) => {
+	const { bearer } = req.cookies
+	if (!bearer) next(new Error('Unauthorised.'))
+	jwt.verify(bearer, SECRET, (err, decoded) => {
+		if (err) next(err)
+		else next()
 	})
-})
+}
 
 module.exports = {
 	makeSignIn,
