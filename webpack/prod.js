@@ -29,11 +29,11 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 		}]
 	},
 	plugins: [
-		/*
 		new ExtractTextPlugin({
 			filename: 'style.css',
 			allChunks: true,
 		}),
+		/*
 		new ServiceWorkerPlugin({
 			entry: path.resolve(base_dir, folders.src, 'sw', 'index.js')
 		}),

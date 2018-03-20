@@ -7,11 +7,6 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 		rules: [{
 			test: /\.scss/,
 			use: [ 'style-loader', 'css-loader', {
-				loader: 'postcss-loader',
-				options: {
-					plugins: () => [ require('autoprefixer') ]
-				}
-			}, {
 				loader: 'sass-loader',
 				options: {
 					includePaths: [ folders.src ]

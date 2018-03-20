@@ -1,0 +1,25 @@
+@import 'scss/variables';
+
+$toolbar-height: 54px;
+
+.toolbar {
+	background-color: $color-primary;
+	font-size: 24px;
+	height: $toolbar-height;
+	display: flex;
+	align-items: center;
+	padding: 0 20px;
+	box-shadow: $box-shadow-sm;
+	z-index: 99;
+
+	&.fixed {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+}
+
+.with-fixed-toolbar {
+	margin-top: $toolbar-height;
+}

@@ -1,0 +1,20 @@
+@import 'scss/variables';
+
+input {
+	background: inherit;
+	color: inherit;
+	border: none;
+	padding: 5px 10px 0;
+	width: 100%;
+
+	&:focus {
+		outline: none;
+		border-bottom: 2px solid $color-primary-light;
+		caret-color: $color-primary-light;
+		color: $color-primary-light;
+	}
+
+	&::placeholder {
+		color: $gray-400;
+	}
+}

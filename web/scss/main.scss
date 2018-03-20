@@ -1,0 +1,25 @@
+$fa-font-path: '../../node_modules/font-awesome/fonts';
+@import '~font-awesome/scss/font-awesome';
+
+@import 'normalize';
+@import 'variables';
+@import 'buttons';
+@import 'forms';
+@import 'toolbar';
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:400,700');
+
+body {
+	font-family: 'Raleway';
+	line-height: 1.6;
+	background-color: $color-background;
+	color: $color-text;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Montserrat'
+}
+
+main {
+	padding: 10px 0;
+}

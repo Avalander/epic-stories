@@ -1,0 +1,47 @@
+@import 'scss/variables';
+
+@mixin speech-marker($side) {
+	content: '';
+	position: absolute;
+	#{$side}: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-right-color: $gray-800;
+	border-left-color: $gray-800;
+	border-#{$side}: 0;
+	margin-top: -10px;
+	margin-#{$side}: -10px;
+}
+  
+
+.text-bubble {
+	background-color: $gray-800;
+	padding: 10px 20px;
+	margin: 20px;
+	margin-right: 60px;
+	border-radius: 10px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	box-shadow: $box-shadow-sm;
+
+	&:not(.by-user):after {
+		@include speech-marker(left);
+	}
+
+	.title {
+		font-weight: bold;
+		color: $color-primary-light;
+	}
+}
+
+.text-bubble.by-user {
+	margin-right: 20px;
+	margin-left: 60px;
+
+	&:after {
+		@include speech-marker(right)
+	}
+}
