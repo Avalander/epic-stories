@@ -1,4 +1,4 @@
-const loginUser = res => ({ token, user }) =>
+const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
@@ -11,7 +11,7 @@ module.exports = ({ Router, signIn, authorise, registerUser }) => {
 		if (!username || !password || !token) return next(new Error('Invalid request.'))
 		registerUser(username, password, token)
 			.then(() => signIn(username, password))
-			.then(loginUser(res))
+			.then(loginUser(req, res))
 			.catch(next)
 	})
 
@@ -19,9 +19,11 @@ module.exports = ({ Router, signIn, authorise, registerUser }) => {
 		const { username, password } = req.body
 		if (!password) return next(new Error('User not found.'))
 		signIn(username, password)
-			.then(loginUser(res))
+			.then(loginUser(req, res))
 			.catch(next)
 	})
+
+	api.post('/ping', authorise, (req, res) => res.json({ message: 'pong' }))
 
 	return api
 }

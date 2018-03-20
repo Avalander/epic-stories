@@ -37,6 +37,7 @@ document.querySelector('#register').onclick = event => {
 	fetch(`/api/register/${token}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
 		body: JSON.stringify({ username, password }),
 	})
 		.then(res => res.ok ? res.json() : res.json().then(e => { throw e }))
