@@ -4,9 +4,15 @@
 	background: $color-background-light;
 	padding: 10px;
 	margin: 10px;
-	width: 100%;
 
 	input {
 		background: $color-background;
 	}
 }
+
+/*
+.panel-header {
+	border-bottom: 1px solid $color-primary;
+	width: auto;
+}
+*/
