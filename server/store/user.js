@@ -14,7 +14,6 @@ const makeRegisterUser = database => (username, password, token) => database()
 		Promise.resolve(db),
 	]))
 	.then(([invite, hash_password, db]) => {
-		console.log(invite)
 		return db.collection('users').insertOne({
 			token: invite.token,
 			groups: invite.groups,

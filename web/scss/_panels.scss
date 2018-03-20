@@ -1,0 +1,12 @@
+@import 'scss/variables';
+
+.panel {
+	background: $color-background-light;
+	padding: 10px;
+	margin: 10px;
+	width: 100%;
+
+	input {
+		background: $color-background;
+	}
+}

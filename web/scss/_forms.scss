@@ -4,12 +4,12 @@ input {
 	background: inherit;
 	color: inherit;
 	border: none;
-	padding: 5px 10px 0;
+	padding: 10px;
 	width: 100%;
 
 	&:focus {
 		outline: none;
-		border-bottom: 2px solid $color-primary-light;
+		border: 1px solid $color-primary-light;
 		caret-color: $color-primary-light;
 		color: $color-primary-light;
 	}
@@ -17,4 +17,10 @@ input {
 	&::placeholder {
 		color: $gray-400;
 	}
+}
+
+.form-group {
+	width: 100%;
+	margin: 5px 0;
+	max-width: inherit;
 }

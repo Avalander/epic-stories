@@ -1,7 +1,29 @@
+@import 'variables';
+
 .btn {
 	background: transparent;
 	color: inherit;
 	border: none;
 	padding: 10px 20px;
 	cursor: pointer;
+	text-transform: uppercase;
+
+	&.primary {
+		background: $color-primary;
+		box-shadow: $box-shadow-sm;
+
+		&:active {
+			transform: translateY(2px);
+			outline: none;
+			box-shadow: 0 0 4px rgba(6, 17, 6, 0.4);
+		}
+	}
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&:focus {
+		outline-color: $color-primary;
+	}
 }

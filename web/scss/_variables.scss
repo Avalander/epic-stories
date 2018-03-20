@@ -2,9 +2,11 @@ $color-primary: #6f3399;
 //$color-primary-light: #8b40bf;
 $color-primary-light: #9753c5;
 $color-background: #212529;
+$color-background-light: lighten($color-background, 10%);
 $color-text: #fff;
+$color-error: #c43d3d;
 
 $gray-400: #ced4da;
 $gray-800: #343a40;
 
-$box-shadow-sm: 0 2px 4px rgba(6, 17, 6, 0.4);;
+$box-shadow-sm: 0 2px 4px rgba(6, 17, 6, 0.4);
