@@ -4,8 +4,8 @@ const fail = message => {
 	throw new Error(message)
 }
 
-const makeFindAllStories = database => group => database()
-	.then(db => db.collection('stories').find({ group }).toArray())
+const makeFindStoriesByGroups = database => groups => database()
+	.then(db => db.collection('stories').find({ group: { $in: groups }}).toArray())
 
 const makeFindStory = database => id => database()
 	.then(db => Promise.all([
@@ -26,6 +26,6 @@ const makeCreateStory = database => story => database()
 
 module.exports = {
 	makeCreateStory,
-	makeFindAllStories,
+	makeFindStoriesByGroups,
 	makeFindStory,
 }

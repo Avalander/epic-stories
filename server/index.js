@@ -8,7 +8,7 @@ const makeDatabase = require('store/database')
 const { makeFindUser, makeRegisterUser } = require('store/user')
 const {
 	makeCreateStory,
-	makeFindAllStories,
+	makeFindStoriesByGroups,
 	makeFindStory,
 } = require('store/story')
 
@@ -25,7 +25,7 @@ const database = makeDatabase({ DB_URL, DB_NAME })
 const findUser = makeFindUser(database)
 const registerUser = makeRegisterUser(database)
 const createStory = makeCreateStory(database)
-const findAllStories = makeFindAllStories(database)
+const findStoriesByGroups = makeFindStoriesByGroups(database)
 const findStory = makeFindStory(database)
 
 const signIn = makeSignIn({ SECRET, findUser })
@@ -39,7 +39,7 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '..', 'static'), { extensions: [ 'html' ]}))
 
-app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findAllStories, findStory }))
+app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory }))
 
 app.use(errorHandler)
 

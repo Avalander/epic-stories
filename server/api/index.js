@@ -2,7 +2,7 @@ const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
-module.exports = ({ Router, signIn, authorise, registerUser, createStory, findAllStories, findStory }) => {
+module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -25,10 +25,12 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findA
 
 	api.post('/ping', authorise, (req, res) => res.json({ message: 'pong' }))
 
-	api.get('/stories', (req, res, next) => findAllStories(1)
-		.then(stories => res.json(stories))
-		.catch(next)
-	)
+	api.get('/stories', authorise, (req, res, next) => {
+		const { groups } = req.bearer
+		findStoriesByGroups(groups)
+			.then(stories => res.json(stories))
+			.catch(next)
+	})
 
 	api.get('/stories/:id', (req, res, next) => findStory(req.params.id)
 		.then(story => res.json(story))
