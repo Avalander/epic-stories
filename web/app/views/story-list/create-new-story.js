@@ -9,7 +9,7 @@ import {
 } from '@cycle/dom'
 
 
-const Inactive = () => div('.new-story.panel.text-primary', { dataset: { toggle: 'active' }}, [
+const Inactive = () => div('.new-story.panel.primary', { dataset: { toggle: 'active' }}, [
 	span('.handwriting', 'Start a new story.'),
 ])
 
