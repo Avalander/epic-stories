@@ -40,14 +40,13 @@ const create_token = ([ token='asdasaf', ...groups ]) => openConnection()
 		client.close()
 	})
 
-const reset = () => openConnection()
+const reset = (names) => openConnection()
 	.then(([ db, client ]) => Promise.all([
 		Promise.resolve(client),
-		db.collection('users').deleteMany({}),
-		db.collection('invites').deleteMany({}),
+		...names.map(x => db.collection(x).deleteMany({})),
 	]))
 	.then(([ client ]) => {
-		console.log(`Cleared database.`)
+		console.log(`Cleared collections [${names}].`)
 		client.close()
 	})
 
