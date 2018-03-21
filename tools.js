@@ -3,10 +3,15 @@ require('dotenv').config()
 
 const { DB_URL, DB_NAME } = process.env
 const command = process.argv[2]
-const value = process.argv[3]
+const params = process.argv.slice(3)
 
-const show_users = () => mongo.MongoClient.connect(DB_URL)
-	.then(client => Promise.all([ client.db(DB_NAME), Promise.resolve(client) ]))
+const openConnection = () => mongo.MongoClient.connect(DB_URL)
+	.then(client => Promise.all([
+		client.db(DB_NAME),
+		Promise.resolve(client),
+	]))
+
+const show_users = () => openConnection()
 	.then(([ db, client ]) => {
 		db.collection('users').find({}).toArray()
 			.then(users => {
@@ -15,27 +20,42 @@ const show_users = () => mongo.MongoClient.connect(DB_URL)
 			})
 	})
 
-const create_token = (token='asdasaf') => mongo.MongoClient.connect(DB_URL)
-	.then(client => Promise.all([client.db(DB_NAME), Promise.resolve(client)]))
-	.then(([ db, client ]) => {
-		Promise.all([
-			db.collection('users').deleteMany({}),
-			db.collection('invites').deleteMany({}),
-		])
-		.then(() => {
-			return db.collection('invites').insertOne({
-				token, groups: [ 1 ]
-			})
-		})
-		.then(() => {
-			console.log(`Created token ${token}.`)
-			client.close()
-		})
+const show = ([ name='users' ]) => openConnection()
+	.then(([ db, client ]) => Promise.all([
+		db.collection(name).find({}).toArray(),
+		Promise.resolve(client),
+	]))
+	.then(([ items, client ]) => {
+		console.log(items)
+		client.close()
+	})
+
+const create_token = ([ token='asdasaf', ...groups ]) => openConnection()
+	.then(([ db, client ]) => Promise.all([
+		Promise.resolve(client),
+		db.collection('invites').insertOne({ token, groups: groups.length > 0 ? groups : [ '1' ]}),
+	]))
+	.then(([ client ]) => {
+		console.log(`Created token '${token}'.`)
+		client.close()
+	})
+
+const reset = () => openConnection()
+	.then(([ db, client ]) => Promise.all([
+		Promise.resolve(client),
+		db.collection('users').deleteMany({}),
+		db.collection('invites').deleteMany({}),
+	]))
+	.then(([ client ]) => {
+		console.log(`Cleared database.`)
+		client.close()
 	})
 
 const commands = {
 	create_token,
+	reset,
+	show,
 	show_users,
 }
 
-commands[command](value)
+commands[command](params)
