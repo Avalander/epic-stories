@@ -1,0 +1,35 @@
+@import 'scss/variables';
+@import 'scss/mixins';
+
+.story {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 0;
+	box-shadow: $box-shadow-sm;
+}
+
+.story-header {
+	padding: 10px;
+}
+
+.btn.join {
+	background: $color-primary;
+	position: relative;
+
+	&:after {
+		@include speech-marker(left, $color-primary);
+	}
+}
+
+.new-story.panel {
+	background: transparent;
+	//border: 2px dashed $gray-800;
+	border: 2px dashed $color-primary;
+	text-align: center;
+	cursor: pointer;
+
+	i, span {
+		padding: 0 5px;
+	}
+}

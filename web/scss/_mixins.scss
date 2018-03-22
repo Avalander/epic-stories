@@ -1,0 +1,14 @@
+@mixin speech-marker($side, $color) {
+	content: '';
+	position: absolute;
+	#{$side}: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	border-right-color: $color;
+	border-left-color: $color;
+	border-#{$side}: 0;
+	margin-top: -10px;
+	margin-#{$side}: -10px;
+}

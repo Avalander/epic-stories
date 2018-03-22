@@ -1,6 +1,7 @@
 import 'scss/main.scss'
 
 import xs from 'xstream'
+import flattenConcurrently from 'xstream'
 
 import { run } from '@cycle/run'
 import {
@@ -10,29 +11,54 @@ import {
 	h1,
 	main,
 } from '@cycle/dom'
+import { makeHTTPDriver } from '@cycle/http'
+
+import { routerify } from 'cyclic-router'
+import { makeHistoryDriver } from '@cycle/history'
+import switchPath from 'switch-path'
+
+import UnderConstruction from 'app/views/under-construction'
+import StoryList from 'app/views/story-list'
 
 
-const view = () => xs.of(false).map(x =>
+const view = (page$) => page$.map(x =>
 	div([
 		header('.toolbar.fixed', 'Epic Stories'),
 		main('.with-fixed-toolbar', [
-			h1('Ponies'),
+			x,
 		])
 	])
 )
 
-fetch('/api/ping', { method: 'POST', credentials: 'include' })
-	.then(res => res.json())
-	.then(x => console.log(x))
-
 const app = sources => {
+	const match$ = sources.router.define({
+		'/': UnderConstruction,
+		'/test': UnderConstruction,
+		'/stories': StoryList,
+	})
+
+	const page$ = match$.map(({ path, value }) =>
+		value({...sources, router: sources.router.path(path)}))
+	const page_dom$ = page$.map(x => x.DOM).flatten()
+
+	sources.HTTP.select()
+		.flatten()
+		.map(res => res.body)
+		.filter(result => 'ok' in result && !result.ok)
+		.addListener({
+			next: () => window.location.href = '/login.html'
+		})
+
 	return {
-		DOM: view()
+		DOM: view(page_dom$),
+		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
 	}
 }
 
 const drivers = {
 	DOM: makeDOMDriver('#root'),
+	HTTP: makeHTTPDriver(),
+	history: makeHistoryDriver(),
 }
 
-run(app, drivers)
+run(routerify(app, switchPath), drivers)

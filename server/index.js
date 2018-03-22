@@ -6,6 +6,11 @@ const cookieParser = require('cookie-parser')
 
 const makeDatabase = require('store/database')
 const { makeFindUser, makeRegisterUser } = require('store/user')
+const {
+	makeCreateStory,
+	makeFindStoriesByGroups,
+	makeFindStory,
+} = require('store/story')
 
 const makeApi = require('api')
 const { makeSignIn, makeAuthorise } = require('api/auth')
@@ -19,6 +24,9 @@ const { SECRET, DB_URL, DB_NAME, PORT } = process.env
 const database = makeDatabase({ DB_URL, DB_NAME })
 const findUser = makeFindUser(database)
 const registerUser = makeRegisterUser(database)
+const createStory = makeCreateStory(database)
+const findStoriesByGroups = makeFindStoriesByGroups(database)
+const findStory = makeFindStory(database)
 
 const signIn = makeSignIn({ SECRET, findUser })
 const authorise = makeAuthorise({ SECRET })
@@ -31,7 +39,7 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '..', 'static'), { extensions: [ 'html' ]}))
 
-app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser }))
+app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory }))
 
 app.use(errorHandler)
 

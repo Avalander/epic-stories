@@ -1,8 +1,11 @@
+const { Result, error_codes } = require('result')
+
+
 const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
-module.exports = ({ Router, signIn, authorise, registerUser }) => {
+module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -23,7 +26,27 @@ module.exports = ({ Router, signIn, authorise, registerUser }) => {
 			.catch(next)
 	})
 
-	api.post('/ping', authorise, (req, res) => res.json({ message: 'pong' }))
+	api.get('/stories', authorise, (req, res, next) => {
+		const { groups } = req.bearer
+		findStoriesByGroups(groups)
+			.then(stories => res.json(Result.ok(stories)))
+			.catch(next)
+	})
+
+	api.get('/stories/:id', (req, res, next) => findStory(req.params.id)
+		.then(story => res.json(Result.ok(story)))
+		.catch(next)
+	)
+
+	api.post('/stories', (req, res, next) => {
+		const { title, description, group } = req.body
+		if (!title || !group) {
+			return res.json(Result.INVALID_DATA('Missing data.'))
+		}
+		createStory({ title, description, group })
+			.then(({ insertedId }) => res.json(Result.ok({ insertedId })))
+			.catch(next)
+	})
 
 	return api
 }
