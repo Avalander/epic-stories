@@ -5,10 +5,18 @@ const hashPassword = password => bcrypt.hash(password, 10)
 
 const makeRegisterUser = database => (username, password, token) => database()
 	.then(db => Promise.all([
+		db.collection('users').findOne({ username }),
+		Promise.resolve(db),
+	]))
+	.then(([ user, db ]) => {
+		if (user) throw new Error('Username already exists.')
+		return db
+	})
+	.then(db => Promise.all([
 		db.collection('invites').findOneAndDelete({ token })
 			.then(({ value }) => value
 				? Promise.resolve(value)
-				: Promise.reject(new Error('Token not found.'))
+				: Promise.reject(new Error('Invalid token.'))
 			),
 		hashPassword(password),
 		Promise.resolve(db),
