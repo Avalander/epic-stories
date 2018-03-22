@@ -31,7 +31,15 @@ export default ({ DOM, HTTP }) => {
 	
 	const create_new_story = CreateNewStory({ DOM })
 	
+	const request$ = xs.of({
+		url: '/api/stories',
+		method: 'GET',
+		withCredentials: true,
+		category: 'fetch-stories',
+	})
+
 	return {
 		DOM: view(fetch_stories$, create_new_story.DOM),
+		HTTP: request$,
 	}
 }

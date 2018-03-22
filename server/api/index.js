@@ -1,3 +1,6 @@
+const { Result, error_codes } = require('result')
+
+
 const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
@@ -39,7 +42,9 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 
 	api.post('/stories', (req, res, next) => {
 		const { title, description, group } = req.body
-		if (!title || !group) return next(new Error('Missing information.'))
+		if (!title || !group) {
+			return res.json(Result.INVALID_DATA('Missing data.'))
+		}
 		createStory({ title, description, group })
 			.then(({ insertedId }) => res.json({ insertedId }))
 			.catch(next)

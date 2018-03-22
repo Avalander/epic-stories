@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --env=prod",
     "dev": "webpack-dev-server --env=dev --mode=development",
-    "start": "NODE_PATH=server node server/index.js",
+    "start": "NODE_PATH=server:shared node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

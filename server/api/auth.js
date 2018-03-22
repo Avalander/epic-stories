@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { Result } = require('result')
 
 
 const TOKEN_DURATION = 10 * 60
@@ -11,9 +12,15 @@ const makeSignIn = ({ SECRET, findUser }) => (username, password) => findUser(us
 
 const makeAuthorise = ({ SECRET }) => (req, res, next) => {
 	const { bearer } = req.cookies
-	if (!bearer) next(new Error('Unauthorised.'))
+	if (!bearer) {
+		res.json(Result.INVALID_CREDENTIALS('Unauthorised.'))
+		return next(new Error('Unauthorised.'))
+	}
 	jwt.verify(bearer, SECRET, (err, decoded) => {
-		if (err) return next(err)
+		if (err) {
+			res.json(Result.INVALID_CREDENTIALS(err))
+			return next(err)
+		}
 		req.bearer = decoded
 		next()
 	})

@@ -41,7 +41,8 @@ const app = sources => {
 	const page_dom$ = page$.map(x => x.DOM).flatten()
 
 	return {
-		DOM: view(page_dom$)
+		DOM: view(page_dom$),
+		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
 	}
 }
 
