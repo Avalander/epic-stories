@@ -26,17 +26,15 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			.catch(next)
 	})
 
-	api.post('/ping', authorise, (req, res) => res.json({ message: 'pong' }))
-
 	api.get('/stories', authorise, (req, res, next) => {
 		const { groups } = req.bearer
 		findStoriesByGroups(groups)
-			.then(stories => res.json(stories))
+			.then(stories => res.json(Result.ok(stories)))
 			.catch(next)
 	})
 
 	api.get('/stories/:id', (req, res, next) => findStory(req.params.id)
-		.then(story => res.json(story))
+		.then(story => res.json(Result.ok(story)))
 		.catch(next)
 	)
 
@@ -46,7 +44,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			return res.json(Result.INVALID_DATA('Missing data.'))
 		}
 		createStory({ title, description, group })
-			.then(({ insertedId }) => res.json({ insertedId }))
+			.then(({ insertedId }) => res.json(Result.ok({ insertedId })))
 			.catch(next)
 	})
 

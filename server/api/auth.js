@@ -18,7 +18,7 @@ const makeAuthorise = ({ SECRET }) => (req, res, next) => {
 	}
 	jwt.verify(bearer, SECRET, (err, decoded) => {
 		if (err) {
-			res.json(Result.INVALID_CREDENTIALS(err))
+			res.json(Result.INVALID_CREDENTIALS(err.message || err))
 			return next(err)
 		}
 		req.bearer = decoded

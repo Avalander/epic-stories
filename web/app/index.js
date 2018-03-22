@@ -1,6 +1,7 @@
 import 'scss/main.scss'
 
 import xs from 'xstream'
+import flattenConcurrently from 'xstream'
 
 import { run } from '@cycle/run'
 import {
@@ -39,6 +40,14 @@ const app = sources => {
 	const page$ = match$.map(({ path, value }) =>
 		value({...sources, router: sources.router.path(path)}))
 	const page_dom$ = page$.map(x => x.DOM).flatten()
+
+	sources.HTTP.select()
+		.flatten()
+		.map(res => res.body)
+		.filter(result => 'ok' in result && !result.ok)
+		.addListener({
+			next: () => window.location.href = '/login.html'
+		})
 
 	return {
 		DOM: view(page_dom$),

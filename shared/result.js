@@ -9,7 +9,7 @@ const error_codes = {
 	INVALID_CREDENTIALS: 3,
 }
 
-Object.keys(error_codes).forEach(e => Result[e] = message => Result.error(e, message))
+Object.keys(error_codes).forEach(e => Result[e] = message => Result.error(e, `${e}: ${message}`))
 
 module.exports = {
 	Result,
