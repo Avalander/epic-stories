@@ -7,6 +7,8 @@ import { run } from '@cycle/run'
 import {
 	makeDOMDriver,
 	div,
+	span,
+	i,
 	header,
 	h1,
 	main,
@@ -19,20 +21,27 @@ import switchPath from 'switch-path'
 
 import { error_codes } from 'result'
 
+import Sidebar from 'app/components/sidebar'
+
 import UnderConstruction from 'app/views/under-construction'
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
 import MyCharacter from 'app/views/my-character'
 
 
-const view = (page$) => page$.map(x =>
-	div([
-		header('.toolbar.fixed', 'Epic Stories'),
-		main('.with-fixed-toolbar', [
-			x,
+const view = (page$, sidebar$) => xs.combine(page$, sidebar$)
+	.map(([ page, sidebar ]) =>
+		div([
+			header('.toolbar.fixed', [
+				i('.fa.fa-bars.pointer', { dataset: { show: 'sidebar' }}),
+				span('Epic Stories'),
+			]),
+			sidebar,
+			main('.with-fixed-toolbar', [
+				page,
+			])
 		])
-	])
-)
+	)
 
 const app = sources => {
 	const match$ = sources.router.define({
@@ -54,9 +63,12 @@ const app = sources => {
 		.addListener({
 			next: () => window.location.href = '/login.html'
 		})
+	
+	const open_sidebar$ = sources.DOM.select('[data-show="sidebar"').events('click')
+	const sidebar = Sidebar({ ...sources, open$: open_sidebar$ })
 
 	return {
-		DOM: view(page_dom$),
+		DOM: view(page_dom$, sidebar.DOM),
 		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
 		router: page_router$,
 	}
