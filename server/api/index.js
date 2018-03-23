@@ -1,6 +1,10 @@
 const { Result, error_codes } = require('result')
-const isValidCharacter = require('validator/character')
-const isValidPost = require('validator/post')
+
+const {
+	validateCharacter,
+	validatePost,
+	validateStory,
+} = require('validators')
 
 
 const loginUser = (req, res) => ({ token, user }) =>
@@ -52,7 +56,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 	)
 
 	api.post('/stories/:story_id/my-character', authorise, (req, res, next) => Promise.resolve(Object.assign({}, req.body, { username: req.bearer.user }))
-		.then(isValidCharacter)
+		.then(validateCharacter)
 		.then(saveCharacter)
 		.then(result => res.json(Result.ok(result)))
 		.catch(error => res.json(Result.INVALID_DATA(error)))
@@ -65,21 +69,19 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 
 	api.post('/stories/:story_id/posts', authorise, (req, res, next) =>
 		Promise.resolve(Object.assign({}, req.body, { author: req.bearer.user, created_on: Date.now(), story_id: req.params.story_id }))
-			.then(isValidPost)
+			.then(validatePost)
 			.then(savePost)
 			.then(x => res.json(Result.ok(x)))
 			.catch(e => res.json(Result.OTHER(e)))
 	)
 
-	api.post('/stories', authorise, (req, res, next) => {
-		const { title, description, group } = req.body
-		if (!title || !group) {
-			return res.json(Result.INVALID_DATA('Missing data.'))
-		}
-		createStory({ title, description, group })
+	api.post('/stories', authorise, (req, res, next) =>
+		Promise.resolve(Object.assign({}, req.body, { group: req.bearer.groups[0]}))
+			.then(validateStory)
+			.then(createStory)
 			.then(({ insertedId }) => res.json(Result.ok({ insertedId })))
-			.catch(next)
-	})
+			.catch(e => res.json(Result.OTHER(e)))
+	)
 
 	return api
 }
