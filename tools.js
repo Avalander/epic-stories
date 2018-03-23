@@ -1,4 +1,5 @@
 const mongo = require('mongodb')
+const ObjectId = mongo.ObjectId
 require('dotenv').config()
 
 const { DB_URL, DB_NAME } = process.env
@@ -56,8 +57,19 @@ const reset = (names) => openConnection()
 		client.close()
 	})
 
+const remove = ([ collection, id ]) => openConnection()
+	.then(([ db, client ]) => Promise.all([
+		Promise.resolve(client),
+		db.collection(collection).findOneAndDelete({ _id: ObjectId(id) })
+	]))
+	.then(([ client, removed]) => {
+		console.log(`Removed element ${id} from ${collection}`)
+		client.close()
+	})
+
 const commands = {
 	create_token,
+	remove,
 	reset,
 	show,
 }

@@ -1,4 +1,5 @@
 import xs from 'xstream'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
 import {
 	div,
@@ -14,26 +15,38 @@ const Inactive = () => div('.new-story.panel.primary', { dataset: { toggle: 'act
 	span('.handwriting', 'Start a new story.'),
 ])
 
-const Active = () => div('.new-story.panel', [
+const Active = value => div('.phantom-panel.m-10', [
 	div('.form-group', [
 		label('Title'),
-		input(),
+		input('#title', { props: { value }}),
 	]),
-	div([
+	div('.button-container', [
 		button('.btn', { dataset: { toggle: 'inactive' }}, 'Cancel'),
-		button('.btn.primary', 'Save'),
+		button('.btn.primary', { dataset: { action: 'save' }}, 'Save'),
 	])
 ])
 
-export default sources => isolate(({ DOM }) => {
+const view = (toggle$, state$) => xs.combine(toggle$, state$)
+	.map(([ component, state ]) => component(state))
+
+export default sources => isolate(({ DOM, clear$ }) => {
 	const active_click$ = DOM.select('[data-toggle="active"]').events('click').mapTo(Active)
 	const inactive_click$ = DOM.select('[data-toggle="inactive"]').events('click').mapTo(Inactive)
-	const toggle$ = xs.merge(active_click$, inactive_click$)
+	const save_click$ = DOM.select('[data-action="save"]').events('click')
+
+	const toggle$ = xs.merge(active_click$, inactive_click$, clear$.mapTo(Inactive))
 		.startWith(Inactive)
-
-	const vtree$ = toggle$.map(x => x())
-
+	const input$ = DOM.select('#title').events('input')
+		.map(ev => ev.target.value)
+	
+	const state$ = xs.merge(input$, clear$.mapTo(''))
+		.startWith('')
+	
+	const new_story$ = save_click$.compose(sampleCombine(state$))
+		.map(([ _, title ]) => ({ title }))
+	
 	return {
-		DOM: vtree$,
+		DOM: view(toggle$, state$),
+		new_story$,
 	}
 })(sources)
