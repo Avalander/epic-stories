@@ -4,6 +4,7 @@ $toolbar-height: 54px;
 
 .toolbar {
 	background-color: $color-primary;
+	//background: linear-gradient(135deg, $color-primary, #7c3399);
 	font-size: 24px;
 	height: $toolbar-height;
 	display: flex;

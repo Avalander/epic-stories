@@ -1,11 +1,12 @@
 @import 'scss/variables';
 
-input {
+input, textarea {
+	display: block;
 	background: inherit;
 	color: inherit;
 	border: none;
 	padding: 10px;
-	width: 95%;
+	//width: 95%;
 
 	&:focus {
 		outline: none;
@@ -22,4 +23,16 @@ input {
 .form-group {
 	width: 100%;
 	padding: 10px 0;
+	display: flex;
+	flex-direction: column;
+
+	textarea {
+		min-height: 100px;
+	}
+}
+
+.button-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
 }

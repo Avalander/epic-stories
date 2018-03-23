@@ -10,7 +10,7 @@
 	text-decoration: none;
 
 	&.primary {
-		background: $color-primary;
+		background: linear-gradient(135deg, $color-primary, #7c3399);
 		box-shadow: $box-shadow-sm;
 		color: $color-text;
 

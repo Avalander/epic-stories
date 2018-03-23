@@ -7,6 +7,7 @@ import {
 	input,
 	button,
 } from '@cycle/dom'
+import isolate from '@cycle/isolate'
 
 
 const Inactive = () => div('.new-story.panel.primary', { dataset: { toggle: 'active' }}, [
@@ -24,7 +25,7 @@ const Active = () => div('.new-story.panel', [
 	])
 ])
 
-export default ({ DOM }) => {
+export default sources => isolate(({ DOM }) => {
 	const active_click$ = DOM.select('[data-toggle="active"]').events('click').mapTo(Active)
 	const inactive_click$ = DOM.select('[data-toggle="inactive"]').events('click').mapTo(Inactive)
 	const toggle$ = xs.merge(active_click$, inactive_click$)
@@ -35,4 +36,4 @@ export default ({ DOM }) => {
 	return {
 		DOM: vtree$,
 	}
-}
+})(sources)
