@@ -91,6 +91,7 @@ module.exports = ({ base_dir, folders }) => ({
 	resolve: {
 		modules: [
 			folders.src,
+			folders.shared,
 			'node_modules',
 		]
 	},

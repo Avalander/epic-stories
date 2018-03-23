@@ -17,6 +17,8 @@ import { routerify } from 'cyclic-router'
 import { makeHistoryDriver } from '@cycle/history'
 import switchPath from 'switch-path'
 
+import { error_codes } from 'result'
+
 import UnderConstruction from 'app/views/under-construction'
 import StoryList from 'app/views/story-list'
 import MyCharacter from 'app/views/my-character'
@@ -35,7 +37,7 @@ const app = sources => {
 	const match$ = sources.router.define({
 		'/': UnderConstruction,
 		'/stories': StoryList,
-		'/stories/:id/my-character': id => sources => MyCharacter({ id$: xs.of(id), ...sources }),
+		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
 	})
 
 	const page$ = match$.map(({ path, value }) =>
@@ -46,7 +48,7 @@ const app = sources => {
 	sources.HTTP.select()
 		.flatten()
 		.map(res => res.body)
-		.filter(result => 'ok' in result && !result.ok)
+		.filter(result => 'ok' in result && !result.ok && result.error.code === error_codes.INVALID_CREDENTIALS)
 		.addListener({
 			next: () => window.location.href = '/login.html'
 		})

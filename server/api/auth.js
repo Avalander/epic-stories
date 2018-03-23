@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const { Result } = require('result')
 
 
-const TOKEN_DURATION = 10 * 60
+const TOKEN_DURATION = 120 * 60
 
 const makeSignIn = ({ SECRET, findUser }) => (username, password) => findUser(username, password)
 	.then(user => Promise.resolve({

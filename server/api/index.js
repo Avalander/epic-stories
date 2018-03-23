@@ -1,11 +1,12 @@
 const { Result, error_codes } = require('result')
+const isValidCharacter = require('validator/character')
 
 
 const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
-module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory }) => {
+module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findCharacter, saveCharacter }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -33,12 +34,30 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			.catch(next)
 	})
 
-	api.get('/stories/:id', (req, res, next) => findStory(req.params.id)
+	api.get('/stories/:id', authorise, (req, res, next) => findStory(req.params.id)
 		.then(story => res.json(Result.ok(story)))
 		.catch(next)
 	)
 
-	api.post('/stories', (req, res, next) => {
+	api.get('/stories/:story_id/characters', authorise, (req, res, next) => findStoryCharacters(req.params.story_id)
+		.then(characters => res.json(Result.ok(characters)))
+	)
+
+	api.get('/stories/:story_id/my-character', authorise, (req, res, next) => findCharacter(req.params.story_id, req.bearer.username)
+		.then(character => character
+			? res.json(Result.ok(character))
+			: res.json(Result.NOT_FOUND(`${req.bearer.username} has no character in story ${req.params.story_id}.`))
+		)
+	)
+
+	api.post('/stories/:story_id/my-character', authorise, (req, res, next) => Promise.resolve(Object.assign({}, req.body, { username: req.bearer.user }))
+		.then(isValidCharacter)
+		.then(saveCharacter)
+		.then(result => res.json(Result.ok(result)))
+		.catch(error => res.json(Result.INVALID_DATA(error)))
+	)
+
+	api.post('/stories', authorise, (req, res, next) => {
 		const { title, description, group } = req.body
 		if (!title || !group) {
 			return res.json(Result.INVALID_DATA('Missing data.'))
