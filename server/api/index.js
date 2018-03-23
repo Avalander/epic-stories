@@ -11,7 +11,7 @@ const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
-module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }) => {
+module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -32,12 +32,17 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			.catch(next)
 	})
 
-	api.get('/stories', authorise, (req, res, next) => {
-		const { groups } = req.bearer
-		findStoriesByGroups(groups)
-			.then(stories => res.json(Result.ok(stories)))
-			.catch(next)
-	})
+	api.get('/stories', authorise, (req, res, next) =>
+		Promise.all([
+			findStoriesByGroups(req.bearer.groups),
+			findUserCharacters(req.bearer.user),
+		])
+		.then(([ stories, characters ]) => stories.map(s => Object.assign(s, {
+			is_playing: characters.some(c => c.story_id == s._id)
+		})))
+		.then(stories => res.json(Result.ok(stories)))
+		.catch(e => res.json(Result.OTHER(e)))
+	)
 
 	api.get('/stories/:id', authorise, (req, res, next) => findStory(req.params.id)
 		.then(story => res.json(Result.ok(story)))

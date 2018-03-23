@@ -16,6 +16,7 @@
 .btn.join {
 	background: $color-primary;
 	position: relative;
+	width: 90px;
 
 	&:after {
 		@include speech-marker(left, $color-primary);

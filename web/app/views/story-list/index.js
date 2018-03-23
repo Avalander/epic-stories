@@ -14,9 +14,11 @@ import { renderErrors } from 'app/render'
 import CreateNewStory from './create-new-story'
 
 
-const displayStories = stories => stories.map(({ title, _id }) => div('.panel.story', [
+const displayStories = stories => stories.map(({ title, _id, is_playing }) => div('.panel.story', [
 	div('.story-header', h4(title)),
-	button('.btn.join', { dataset: { href: `/stories/${_id}/my-character` }}, 'Join'),
+	is_playing
+		? button('.btn.join', { dataset: { href: `/stories/${_id}` }}, 'View')
+		: button('.btn.join', { dataset: { href: `/stories/${_id}/my-character` }}, 'Join'),
 ]))
 
 const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, errors$, create_new_story$)
