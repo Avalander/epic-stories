@@ -24,7 +24,6 @@
 
 .new-story.panel {
 	background: transparent;
-	//border: 2px dashed $gray-800;
 	border: 2px dashed $color-primary;
 	text-align: center;
 	cursor: pointer;
@@ -32,4 +31,8 @@
 	i, span {
 		padding: 0 5px;
 	}
+}
+
+.m-10 {
+	margin: 10px;
 }

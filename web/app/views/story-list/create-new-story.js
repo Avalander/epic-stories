@@ -14,12 +14,12 @@ const Inactive = () => div('.new-story.panel.primary', { dataset: { toggle: 'act
 	span('.handwriting', 'Start a new story.'),
 ])
 
-const Active = () => div('.new-story.panel', [
+const Active = () => div('.phantom-panel.m-10', [
 	div('.form-group', [
 		label('Title'),
 		input(),
 	]),
-	div([
+	div('.button-container', [
 		button('.btn', { dataset: { toggle: 'inactive' }}, 'Cancel'),
 		button('.btn.primary', 'Save'),
 	])
