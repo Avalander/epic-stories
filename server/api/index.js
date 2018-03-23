@@ -43,7 +43,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		.then(characters => res.json(Result.ok(characters)))
 	)
 
-	api.get('/stories/:story_id/my-character', authorise, (req, res, next) => findCharacter(req.params.story_id, req.bearer.username)
+	api.get('/stories/:story_id/my-character', authorise, (req, res, next) => findCharacter(req.params.story_id, req.bearer.user)
 		.then(character => character
 			? res.json(Result.ok(character))
 			: res.json(Result.NOT_FOUND(`${req.bearer.username} has no character in story ${req.params.story_id}.`))

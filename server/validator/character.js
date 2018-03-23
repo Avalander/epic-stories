@@ -9,6 +9,7 @@ const required_keys = [
 
 const expected_keys = [
 	...required_keys,
+	'_id',
 	'high_concept',
 	'trouble',
 	'description',

@@ -8,7 +8,7 @@ const makeFindCharacter = database => (story_id, username) => database()
 	.then(db => db.collection('characters').findOne({ story_id, username }))
 
 const makeSaveCharacter = database => character => database()
-	.then(db => db.collection('characters').save(character))
+	.then(db => db.collection('characters').save(Object.assign({}, character, character._id ? { _id: ObjectId(character._id) } : {})))
 
 module.exports = {
 	makeFindCharacter,
