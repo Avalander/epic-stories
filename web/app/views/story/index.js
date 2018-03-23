@@ -10,6 +10,8 @@ import {
 	h1,
 } from '@cycle/dom'
 
+import NewPost from './new-post'
+
 
 const mock_data = [{
 	author: 'charles',
@@ -22,13 +24,19 @@ const mock_data = [{
 }]
 
 const Story = ({ DOM, HTTP, story_id$ }) => {
-	const data$ = xs.of(mock_data)
+	const new_post = NewPost({ DOM })
+
+	const stuff$ = new_post.new_post$
+		.map(text => ({ text, author: 'peter', created_on: 1521820390360}))
+	
+	const data$ = stuff$
+		.fold((prev, x) => [ ...prev, x ], mock_data)
 		.map(x => x.map(timestampToDate))
 	
 	const story$ = xs.of({ title: 'Sagan om ringen' })
-	
+
 	return {
-		DOM: view(story$, data$)
+		DOM: view(story$, data$, new_post.DOM)
 	}
 }
 
@@ -40,10 +48,11 @@ const timestampToDate = post => {
 	}
 }
 
-const view = (story$, posts$) => xs.combine(story$, posts$)
-	.map(([ story, posts ]) => article('.content', [
+const view = (story$, posts$, new_post$) => xs.combine(story$, posts$, new_post$)
+	.map(([ story, posts, new_post ]) => article('.content', [
 		h1('.title', story.title),
 		div('.post-list', posts.map(renderPost)),
+		new_post,
 	]))
 
 const renderPost = ({ author, text, created_on }) => div('.post', [
