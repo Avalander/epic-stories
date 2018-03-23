@@ -1,4 +1,4 @@
-const exists = obj => obj !== undefined && obj !== null
+const { exists } = require('./util')
 
 
 const required_keys = [

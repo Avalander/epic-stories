@@ -10,6 +10,16 @@
 	}
 }
 
+.phantom-panel {
+	background: transparent;
+	border: 2px dashed $color-primary;
+	padding: 10px 20px;
+
+	input, textarea {
+		background: darken($color-background, 3%);
+	}
+}
+
 /*
 .panel-header {
 	border-bottom: 1px solid $color-primary;

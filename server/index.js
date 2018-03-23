@@ -16,6 +16,10 @@ const {
 	makeFindCharacter,
 	makeSaveCharacter,
 } = require('store/character')
+const {
+	makeFindStoryPosts,
+	makeSavePost,
+} = require('store/post')
 
 const makeApi = require('api')
 const { makeSignIn, makeAuthorise } = require('api/auth')
@@ -35,6 +39,8 @@ const findStory = makeFindStory(database)
 const findStoryCharacters = makeFindStoryCharacters(database)
 const findCharacter = makeFindCharacter(database)
 const saveCharacter = makeSaveCharacter(database)
+const findStoryPosts = makeFindStoryPosts(database)
+const savePost = makeSavePost(database)
 
 const signIn = makeSignIn({ SECRET, findUser })
 const authorise = makeAuthorise({ SECRET })
@@ -47,7 +53,7 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, '..', 'static'), { extensions: [ 'html' ]}))
 
-app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findCharacter, saveCharacter }))
+app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }))
 
 app.use(errorHandler)
 
