@@ -20,7 +20,7 @@ const Active = (text) => div('.phantom-panel.mt-10', [
 	]),
 	div('.button-container', [
 		button('.btn', { dataset: { toggle: 'inactive' }}, 'Cancel'),
-		button('.btn.primary', { dataset: { action: 'save' }}, 'Save'),
+		button('.btn.primary', { dataset: { action: 'save' }}, 'Post'),
 	])
 ])
 
