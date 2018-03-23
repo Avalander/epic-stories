@@ -26,17 +26,42 @@ const mock_data = [{
 const Story = ({ DOM, HTTP, story_id$ }) => {
 	const new_post = NewPost({ DOM })
 
-	const stuff$ = new_post.new_post$
-		.map(text => ({ text, author: 'peter', created_on: 1521820390360}))
-	
-	const data$ = stuff$
-		.fold((prev, x) => [ ...prev, x ], mock_data)
+	const fetch_posts_response$ = HTTP.select('fetch-posts').flatten()
+		.map(res => res.body)
+	const save_post_response$ = HTTP.select('save-post').flatten()
+		.map(res => res.body)
+	const save_post_success$ = save_post_response$
+		.filter(res => res.ok)
+		.map(res => res.result)
+
+	const posts$ = fetch_posts_response$
+		.filter(res => res.ok)
+		.map(res => res.result)
 		.map(x => x.map(timestampToDate))
+		.startWith([])
 	
 	const story$ = xs.of({ title: 'Sagan om ringen' })
 
+	const save_post_request$ = xs.combine(story_id$, new_post.new_post$)
+		.map(([ story_id, text ]) => ({
+			url: `/api/stories/${story_id}/posts`,
+			method: 'POST',
+			withCredentials: true,
+			category: 'save-post',
+			send: { text },
+		}))
+
+	const fetch_posts_request$ = xs.combine(story_id$, save_post_success$.startWith(true))
+		.map(([ story_id ]) => ({
+			url: `/api/stories/${story_id}/posts`,
+			method: 'GET',
+			withCredentials: true,
+			category: 'fetch-posts',
+		}))
+	
 	return {
-		DOM: view(story$, data$, new_post.DOM)
+		DOM: view(story$, posts$, new_post.DOM),
+		HTTP: xs.merge(fetch_posts_request$, save_post_request$),
 	}
 }
 
