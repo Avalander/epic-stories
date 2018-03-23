@@ -60,7 +60,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 
 	api.get('/stories/:story_id/posts', authorise, (req, res, next) => findStoryPosts(req.params.story_id)
 		.then(posts => res.json(Result.ok(posts)))
-		.catch(e => res.json(Result.INVALID_DATA(e)))
+		.catch(e => res.json(Result.OTHER(e)))
 	)
 
 	api.post('/stories/:story_id/posts', authorise, (req, res, next) =>
@@ -68,7 +68,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			.then(isValidPost)
 			.then(savePost)
 			.then(x => res.json(Result.ok(x)))
-			.catch(e => res.json(Result.INVALID_DATA(e)))
+			.catch(e => res.json(Result.OTHER(e)))
 	)
 
 	api.post('/stories', authorise, (req, res, next) => {

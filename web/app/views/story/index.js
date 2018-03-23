@@ -10,6 +10,8 @@ import {
 	h1,
 } from '@cycle/dom'
 
+import { renderErrors } from 'app/render'
+
 import NewPost from './new-post'
 
 
@@ -24,8 +26,6 @@ const mock_data = [{
 }]
 
 const Story = ({ DOM, HTTP, story_id$ }) => {
-	const new_post = NewPost({ DOM })
-
 	const fetch_posts_response$ = HTTP.select('fetch-posts').flatten()
 		.map(res => res.body)
 	const save_post_response$ = HTTP.select('save-post').flatten()
@@ -33,6 +33,9 @@ const Story = ({ DOM, HTTP, story_id$ }) => {
 	const save_post_success$ = save_post_response$
 		.filter(res => res.ok)
 		.map(res => res.result)
+	const api_errors = apiErrors(fetch_posts_response$, save_post_response$)
+
+	const new_post = NewPost({ DOM, clear$: save_post_success$ })
 
 	const posts$ = fetch_posts_response$
 		.filter(res => res.ok)
@@ -60,7 +63,7 @@ const Story = ({ DOM, HTTP, story_id$ }) => {
 		}))
 	
 	return {
-		DOM: view(story$, posts$, new_post.DOM),
+		DOM: view(story$, posts$, new_post.DOM, api_errors),
 		HTTP: xs.merge(fetch_posts_request$, save_post_request$),
 	}
 }
@@ -73,10 +76,23 @@ const timestampToDate = post => {
 	}
 }
 
-const view = (story$, posts$, new_post$) => xs.combine(story$, posts$, new_post$)
-	.map(([ story, posts, new_post ]) => article('.content', [
+const apiErrors = (fetch_posts_response$, save_post_response$) => ({
+	fetch_posts$: requestErrors(fetch_posts_response$),
+	save_post$: requestErrors(save_post_response$),
+})
+
+const requestErrors = response$ => xs.merge(
+	response$.filter(res => !res.ok).map(res => [ res.error ]),
+	response$.filter(res => res.ok).map(() => [])
+)
+.startWith([])
+
+const view = (story$, posts$, new_post$, api_errors) => xs.combine(story$, posts$, new_post$, api_errors.fetch_posts$, api_errors.save_post$)
+	.map(([ story, posts, new_post, fetch_errors, save_errors ]) => article('.content', [
 		h1('.title', story.title),
+		renderErrors(fetch_errors),
 		div('.post-list', posts.map(renderPost)),
+		renderErrors(save_errors),
 		new_post,
 	]))
 

@@ -24,24 +24,25 @@ const Active = (text) => div('.phantom-panel.mt-10', [
 	])
 ])
 
-export default sources => isolate(({ DOM }) => {
+export default sources => isolate(({ DOM, clear$ }) => {
 	const active_click$ = DOM.select('[data-toggle="active"]').events('click').mapTo(Active)
 	const inactive_click$ = DOM.select('[data-toggle="inactive"]').events('click').mapTo(Inactive)
 	
 	const input$ = DOM.select('#text').events('input')
 		.map(ev => ev.target.value)
 		.startWith('')
+
+	const state$ = xs.merge(input$, clear$.mapTo(''))
 		
 	const save_click$ = DOM.select('[data-action="save"]').events('click')
-	const new_post$ = save_click$.compose(sampleCombine(input$))
+	const new_post$ = save_click$.compose(sampleCombine(state$))
 		.map(([ _, text ]) => text)
-	const send_post$ = new_post$.mapTo(Inactive)
 	
-	const toggle$ = xs.merge(active_click$, inactive_click$, send_post$)
+	const toggle$ = xs.merge(active_click$, inactive_click$, clear$.mapTo(Inactive))
 		.startWith(Inactive)
 
 	return {
-		DOM: view(toggle$, input$),
+		DOM: view(toggle$, state$),
 		new_post$,
 	}
 })(sources)

@@ -1,4 +1,4 @@
-const { exists } = require('./util')
+const { hasContent } = require('./util')
 
 
 const required_keys = [
@@ -16,7 +16,7 @@ const expected_keys = [
 
 const isValid = obj => {
 	for (key of required_keys) {
-		if (!exists(obj[key])) return Promise.reject(`Missing key '${key}'.`)
+		if (!hasContent(obj[key])) return Promise.reject(`Missing key '${key}'.`)
 	}
 	for (key of Object.keys(obj)) {
 		if (!expected_keys.includes(key)) return Promise.reject(`Unexpected key '${key}'.`)
