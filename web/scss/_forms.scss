@@ -1,6 +1,7 @@
 @import 'scss/variables';
 
-input {
+input, textarea {
+	display: block;
 	background: inherit;
 	color: inherit;
 	border: none;
@@ -22,4 +23,8 @@ input {
 .form-group {
 	width: 100%;
 	padding: 10px 0;
+
+	textarea {
+		min-height: 100px;
+	}
 }

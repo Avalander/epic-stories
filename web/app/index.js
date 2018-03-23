@@ -19,6 +19,7 @@ import switchPath from 'switch-path'
 
 import UnderConstruction from 'app/views/under-construction'
 import StoryList from 'app/views/story-list'
+import MyCharacter from 'app/views/my-character'
 
 
 const view = (page$) => page$.map(x =>
@@ -33,13 +34,14 @@ const view = (page$) => page$.map(x =>
 const app = sources => {
 	const match$ = sources.router.define({
 		'/': UnderConstruction,
-		'/test': UnderConstruction,
 		'/stories': StoryList,
+		'/stories/:id/my-character': id => sources => MyCharacter({ id$: xs.of(id), ...sources }),
 	})
 
 	const page$ = match$.map(({ path, value }) =>
 		value({...sources, router: sources.router.path(path)}))
 	const page_dom$ = page$.map(x => x.DOM).flatten()
+	const page_router$ = page$.filter(x => 'router' in x).map(x => x.router).flatten()
 
 	sources.HTTP.select()
 		.flatten()
@@ -52,6 +54,7 @@ const app = sources => {
 	return {
 		DOM: view(page_dom$),
 		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
+		router: page_router$,
 	}
 }
 

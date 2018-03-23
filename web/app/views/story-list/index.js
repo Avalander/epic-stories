@@ -16,9 +16,9 @@ import CreateNewStory from './create-new-story'
 const displayErrors = errors =>
 	div('.alert-container', errors.map(({ message }) => div('.alert-error', message)))
 
-const displayStories = stories => stories.map(({ title }) => div('.panel.story', [
+const displayStories = stories => stories.map(({ title, _id }) => div('.panel.story', [
 	div('.story-header', h4(title)),
-	button('.btn.join', { attrs: { href: '/' }}, 'Join'),
+	button('.btn.join', { dataset: { href: `/stories/${_id}/my-character` }}, 'Join'),
 ]))
 
 const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, errors$, create_new_story$)
@@ -42,6 +42,9 @@ export default ({ DOM, HTTP }) => {
 		.map(({ result }) => result)
 		.startWith([])
 
+	const route$ = DOM.select('[data-href]').events('click')
+		.map(ev => ev.target.dataset.href)
+
 	const create_new_story = CreateNewStory({ DOM })
 	
 	const request$ = xs.of({
@@ -54,5 +57,6 @@ export default ({ DOM, HTTP }) => {
 	return {
 		DOM: view(stories$, errors$, create_new_story.DOM),
 		HTTP: request$,
+		router: route$,
 	}
 }
