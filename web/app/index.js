@@ -37,6 +37,7 @@ const app = sources => {
 	const match$ = sources.router.define({
 		'/': UnderConstruction,
 		'/stories': StoryList,
+		'/stories/:story_id': story_id => sources => UnderConstruction(sources),
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
 	})
 

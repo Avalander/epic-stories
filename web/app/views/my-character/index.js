@@ -57,13 +57,18 @@ const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
 	const save_character_errors$ = save_character_response$
 		.filter(result => !result.ok)
 		.map(result => [ result.error ])
+	const save_character_success$ = save_character_response$
+		.filter(result => result.ok)
+
 	const errors$ = xs.merge(save_character_errors$, save$.mapTo([]))
 		.startWith([])
+	const success$ = save_character_success$.compose(sampleCombine(story_id$))
+		.map(([ _, story_id ]) => `/stories/${story_id}`)
 
 	return {
 		DOM: view(request_data$, errors$),
 		HTTP: request$,
-		router: cancel$,
+		router: xs.merge(cancel$, success$),
 	}
 }
 
