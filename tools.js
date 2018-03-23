@@ -11,14 +11,16 @@ const openConnection = () => mongo.MongoClient.connect(DB_URL)
 		Promise.resolve(client),
 	]))
 
-const show_users = () => openConnection()
-	.then(([ db, client ]) => {
-		db.collection('users').find({}).toArray()
-			.then(users => {
-				console.log(users)
-				client.close()
-			})
-	})
+const generateToken = value => {
+	if (value) return Promise.resolve(value)
+	const chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
+	const result = []
+	for (let i=0; i<64; i++) {
+		const index = Math.floor(Math.random() * chars.length)
+		result.push(chars[index])
+	}
+	return Promise.resolve(result.join(''))
+}
 
 const show = ([ name='users' ]) => openConnection()
 	.then(([ db, client ]) => Promise.all([
@@ -30,12 +32,16 @@ const show = ([ name='users' ]) => openConnection()
 		client.close()
 	})
 
-const create_token = ([ token='asdasaf', ...groups ]) => openConnection()
-	.then(([ db, client ]) => Promise.all([
+const create_token = ([ token, ...groups ]) => Promise.all([
+		openConnection(),
+		generateToken(token),
+	])
+	.then(([[ db, client ], token ]) => Promise.all([
 		Promise.resolve(client),
+		Promise.resolve(token),
 		db.collection('invites').insertOne({ token, groups: groups.length > 0 ? groups : [ '1' ]}),
 	]))
-	.then(([ client ]) => {
+	.then(([ client, token ]) => {
 		console.log(`Created token '${token}'.`)
 		client.close()
 	})
@@ -54,7 +60,6 @@ const commands = {
 	create_token,
 	reset,
 	show,
-	show_users,
 }
 
 commands[command](params)
