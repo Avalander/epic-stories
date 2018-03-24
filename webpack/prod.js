@@ -22,7 +22,7 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 				use: [ 'css-loader', {
 					loader: 'sass-loader',
 					options: {
-						includePaths: [ path.resolve(base_dir, folders.src) ],
+						includePaths: [ folders.src ],
 					},
 				}],
 			})
@@ -30,7 +30,7 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 	},
 	plugins: [
 		new ExtractTextPlugin({
-			filename: 'style.css',
+			filename: '[name].css',
 			allChunks: true,
 		}),
 		/*

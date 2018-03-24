@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rm static/*",
     "build": "webpack --env=prod",
     "dev": "webpack-dev-server --env=dev --mode=development",
     "start": "NODE_PATH=server:shared node server/index.js",

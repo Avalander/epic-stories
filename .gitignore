@@ -1,3 +1,5 @@
 node_modules
 .env
 static
+deploy.sh
+*.zip
