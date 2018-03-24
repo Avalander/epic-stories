@@ -85,7 +85,7 @@ const view = (input$, errors$) => xs.combine(input$, errors$).map(([ state, erro
 		h1('My Character'),
 		displayErrors(errors),
 		formGroup(state.name, 'name', 'Name'),
-		formGroup(state.high_concept, 'high_concept', 'High Concept'),
+		formGroup(state.high_concept, 'high_concept', 'Character Concept'),
 		formGroup(state.trouble, 'trouble', 'Trouble'),
 		div('.form-group', [
 			label('Description'),

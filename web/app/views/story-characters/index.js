@@ -75,7 +75,7 @@ const renderCharacter = ({ name, username, high_concept, trouble, description=''
 		]),
 		div('.character-body', { class: { hide: !_expand }}, [
 			renderField('Player', username),
-			renderField('High Concept', high_concept),
+			renderField('Character Concept', high_concept),
 			renderField('Trouble', trouble),
 			renderField('Description', description.split('\n').map(x => p(x))),
 		]),
