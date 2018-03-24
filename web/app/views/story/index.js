@@ -8,11 +8,14 @@ import {
 	span,
 	p,
 	h1,
+	img,
 } from '@cycle/dom'
 
 import { renderErrors } from 'app/render'
 
 import NewPost from './new-post'
+
+import pinkie from 'app/pinkie.png'
 
 
 const mock_data = [{
@@ -110,6 +113,7 @@ const view = (story$, posts$, new_post$, api_errors) => xs.combine(story$, posts
 const renderPost = ({ author, text, created_on }) => div('.post', [
 	div('.post-header', [
 		div('.post-author', author),
+		div(img('.avatar', { props: { src: pinkie }})),
 		div('.post-date', created_on),
 	]),
 	div('.post-body', text.split('\n').map(x => p(x))),

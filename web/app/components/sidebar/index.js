@@ -12,8 +12,11 @@ import {
 	button,
 	i,
 	span,
+	img,
 } from '@cycle/dom'
 import isolate from '@cycle/isolate'
+
+import pinkie from 'app/pinkie.png'
 
 
 const state = {
@@ -58,7 +61,10 @@ const view = (state$, items$/*, active_id$*/) => xs.combine(state$, items$/*, ac
 		nav('.sidebar', { class: { active }}, [
 			div([
 				button('.dismiss', { dataset: { hide: true }}, i('.fa.fa-arrow-left')),
-				div('.sidebar-header', h3('Epic Stories')),
+				div('.sidebar-header', [
+					img('.avatar', { props: { src: pinkie }}),
+					h3('Epic Stories'),
+				]),
 				ul('.components', items.map(({ name, href, subcomponent }) =>
 					li(a({ class: { subcomponent }, dataset: { href, hide: true }}, name))
 				))

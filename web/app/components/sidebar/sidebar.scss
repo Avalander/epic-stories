@@ -35,6 +35,12 @@
 	background: $color-primary-light;
 }
 
+.sidebar-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .sidebar-footer {
 	display: flex;
 	flex-direction: column;
@@ -77,6 +83,11 @@
 	ul li a:hover, button:hover {
 		color: $color-primary;
 		background: #fff;
+	}
+	.avatar {
+		margin-top: 20px;
+		max-width: 100px;
+		border: 5px solid #fff;
 	}
 }
 
