@@ -1,0 +1,59 @@
+@import 'scss/variables';
+
+
+.content {
+	width: 924px;
+}
+
+.character-panel {
+	background: $color-background-light;
+	margin: 10px;
+}
+
+.character-header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 20px;
+
+	h4 {
+		margin: 0;
+	}
+}
+
+.character-body {
+	//transition: opacity 0.5s, max-height 0.5s, padding 0.3s linear 0.2s;
+	transition: all 0.5s;
+	max-height: 500px;
+	overflow: scroll;
+
+	border-top: 1px solid $gray-400;
+
+	&.hide {
+		display: block;
+		overflow: hidden;
+		max-height: 0;
+		opacity: 0;
+	}
+
+	.field {
+		display: grid;
+		grid-template-columns: 25% auto;
+		padding: 10px 20px;
+
+		.field-title {
+			color: $color-primary-light;
+			font-weight: bold;
+		}
+	}
+}
+
+
+
+@keyframes fade-in {
+	from { opacity: 0; }
+}
+
+.appear {
+	animation: fade-in 0.5s;
+}

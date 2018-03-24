@@ -34,6 +34,7 @@ const Sidebar = sources => isolate(({ DOM, open$, current_story$ }) => {
 		.mapTo(state.remove_overlay)
 
 	const items$ = current_story$.startWith([])
+	/*
 		.map(stories => [
 			{ name: 'All Stories', href: '/stories' },
 			...stories.map(({ title, _id }) => ({
@@ -41,8 +42,12 @@ const Sidebar = sources => isolate(({ DOM, open$, current_story$ }) => {
 			})),
 			...stories.map(({ _id }) => ({
 				name: 'My Character', href: `/stories/${_id}/my-character`, subcomponent: true
-			}))
+			})),
+			...stories.map(({ _id }) => ({
+				name: 'Characters', href: `/stories/${_id}/characters`, subcomponent: true
+			})),
 		])
+		*/
 	
 	const route$ = DOM.select('[data-href]').events('click')
 		.map(ev => ev.target.dataset.href)
@@ -56,8 +61,14 @@ const Sidebar = sources => isolate(({ DOM, open$, current_story$ }) => {
 	}
 })(sources)
 
-const view = (state$, items$/*, active_id$*/) => xs.combine(state$, items$/*, active_id$*/)
-	.map(([{ active, overlay }, items ]) => div([
+const renderStory = ({ title, _id }) => ([
+	li(a({ dataset: { hide: true, href: `/stories/${_id}`}}, title)),
+	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/my-character`}}, 'My Character')),
+	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/characters`}}, 'Characters')),
+])
+
+const view = (state$, stories$/*, active_id$*/) => xs.combine(state$, stories$/*, active_id$*/)
+	.map(([{ active, overlay }, stories ]) => div([
 		nav('.sidebar', { class: { active }}, [
 			div([
 				button('.dismiss', { dataset: { hide: true }}, i('.fa.fa-arrow-left')),
@@ -65,9 +76,15 @@ const view = (state$, items$/*, active_id$*/) => xs.combine(state$, items$/*, ac
 					img('.avatar', { props: { src: pinkie }}),
 					h3('Epic Stories'),
 				]),
+				ul('.components', [
+					li(a({ dataset: { hide: true, href: `/stories`}}, 'All Stories')),
+					...(stories.length > 0 ? renderStory(stories[0]) : []),
+				]),
+				/*
 				ul('.components', items.map(({ name, href, subcomponent }) =>
 					li(a({ class: { subcomponent }, dataset: { href, hide: true }}, name))
 				))
+				*/
 			]),
 		]),
 		div('.overlay', {

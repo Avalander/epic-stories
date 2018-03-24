@@ -26,6 +26,7 @@ import Sidebar from 'app/components/sidebar'
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
 import MyCharacter from 'app/views/my-character'
+import StoryCharacters from 'app/views/story-characters'
 
 
 const view = (page$, sidebar$) => xs.combine(page$, sidebar$)
@@ -48,6 +49,7 @@ const app = sources => {
 		'/stories': StoryList,
 		'/stories/:story_id': story_id => sources => Story({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
+		'/stories/:story_id/characters': story_id => sources => StoryCharacters({ story_id$: xs.of(story_id), ...sources }),
 	})
 
 	const page$ = match$.map(({ path, value }) =>
