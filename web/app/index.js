@@ -64,13 +64,19 @@ const app = sources => {
 			next: () => window.location.href = '/login.html'
 		})
 	
+	const current_story$ = sources.HTTP.select('fetch-story')
+		.flatten()
+		.map(res => res.body)
+		.filter(res => res.ok)
+		.map(res => [ res.result ])
+	
 	const open_sidebar$ = sources.DOM.select('[data-show="sidebar"').events('click')
-	const sidebar = Sidebar({ ...sources, open$: open_sidebar$ })
+	const sidebar = Sidebar({ ...sources, open$: open_sidebar$, current_story$ })
 
 	return {
 		DOM: view(page_dom$, sidebar.DOM),
 		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
-		router: page_router$,
+		router: xs.merge(page_router$, sidebar.router),
 	}
 }
 

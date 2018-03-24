@@ -51,6 +51,16 @@
 		font-size: 1.1em;
 		display: block;
 	}
+	ul li a.subcomponent {
+		padding: 10px 40px;
+		font-size: 0.9em;
+		&:first-of-type {
+			border-top: 1px solid $color-primary-light;
+		}
+		&:last-of-type {
+			border-bottom: 1px solid $color-primary-light;
+		}
+	}
 	button, button:focus {
 		background: inherit;
 		border: none;
