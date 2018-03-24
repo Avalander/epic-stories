@@ -100,7 +100,7 @@ const view = (story$, posts$, new_post$, api_errors) => xs.combine(story$, posts
 		new_post,
 	]))
 
-const renderPost = ({ author, text, created_on }) => div('.post', [
+const renderPost = ({ author, text, created_on, type }) => div('.post', { class: { meta: type === 'meta' }}, [
 	div('.post-header', [
 		div('.post-author', author),
 		div(img('.avatar', { props: { src: pinkie }})),

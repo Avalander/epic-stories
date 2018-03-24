@@ -21,6 +21,12 @@ h1.title {
 		display: grid;
 		grid-template-columns: 25% auto;
 
+		&.meta,
+		&.meta .post-header,
+		&.meta .post-body {
+			background: mix($gray-800, $color-background);
+		}
+
 		.post-header, .post-body {
 			padding: 10px 20px;
 		}
