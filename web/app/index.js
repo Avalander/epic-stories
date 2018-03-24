@@ -7,6 +7,8 @@ import { run } from '@cycle/run'
 import {
 	makeDOMDriver,
 	div,
+	span,
+	i,
 	header,
 	h1,
 	main,
@@ -19,24 +21,30 @@ import switchPath from 'switch-path'
 
 import { error_codes } from 'result'
 
-import UnderConstruction from 'app/views/under-construction'
+import Sidebar from 'app/components/sidebar'
+
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
 import MyCharacter from 'app/views/my-character'
 
 
-const view = (page$) => page$.map(x =>
-	div([
-		header('.toolbar.fixed', 'Epic Stories'),
-		main('.with-fixed-toolbar', [
-			x,
+const view = (page$, sidebar$) => xs.combine(page$, sidebar$)
+	.map(([ page, sidebar ]) =>
+		div([
+			header('.toolbar.fixed', [
+				i('.fa.fa-bars.pointer', { dataset: { show: 'sidebar' }}),
+				span('Epic Stories'),
+			]),
+			sidebar,
+			main('.with-fixed-toolbar', [
+				page,
+			])
 		])
-	])
-)
+	)
 
 const app = sources => {
 	const match$ = sources.router.define({
-		'/': UnderConstruction,
+		'/': StoryList,
 		'/stories': StoryList,
 		'/stories/:story_id': story_id => sources => Story({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
@@ -54,11 +62,20 @@ const app = sources => {
 		.addListener({
 			next: () => window.location.href = '/login.html'
 		})
+	
+	const current_story$ = sources.HTTP.select('fetch-story')
+		.flatten()
+		.map(res => res.body)
+		.filter(res => res.ok)
+		.map(res => [ res.result ])
+	
+	const open_sidebar$ = sources.DOM.select('[data-show="sidebar"').events('click')
+	const sidebar = Sidebar({ ...sources, open$: open_sidebar$, current_story$ })
 
 	return {
-		DOM: view(page_dom$),
+		DOM: view(page_dom$, sidebar.DOM),
 		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
-		router: page_router$,
+		router: xs.merge(page_router$, sidebar.router),
 	}
 }
 

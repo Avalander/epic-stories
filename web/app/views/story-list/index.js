@@ -64,10 +64,6 @@ export default ({ DOM, HTTP }) => {
 
 	const create_new_story = CreateNewStory({ DOM, clear$: save_story.success$.mapTo(true) })
 
-	create_new_story.new_story$.addListener({
-		next: x => console.log(x)
-	})
-
 	const save_story_request$ = create_new_story.new_story$
 		.map(story => ({
 			url: '/api/stories',
