@@ -77,13 +77,13 @@ const renderCharacter = ({ name, username, high_concept, trouble, description=''
 			renderField('Player', username),
 			renderField('High Concept', high_concept),
 			renderField('Trouble', trouble),
-			renderField('Description', description),
+			renderField('Description', description.split('\n').map(x => p(x))),
 		]),
 	])
 
 const renderField = (title, value) => div('.field', [
 	span('.field-title', title),
-	span(value),
+	span('.text', value),
 ])
 
 export default StoryCharacters

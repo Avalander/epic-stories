@@ -49,3 +49,7 @@ main {
 .hide {
 	display: none;
 }
+
+.text p:first-child {
+	margin-top: 0;
+}
