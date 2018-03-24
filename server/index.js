@@ -3,6 +3,7 @@ const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const fallback = require('express-history-api-fallback')
 
 const makeDatabase = require('store/database')
 const { makeFindUser, makeRegisterUser } = require('store/user')
@@ -53,9 +54,11 @@ app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(bodyParser.json())
 
-app.use(express.static(path.join(__dirname, '..', 'static'), { extensions: [ 'html' ]}))
-
 app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }))
+
+const static_root = path.join(__dirname, '..', 'static')
+app.use(express.static(static_root, { extensions: [ 'html' ]}))
+app.use(fallback('index.html', { root: static_root }))
 
 app.use(errorHandler)
 
