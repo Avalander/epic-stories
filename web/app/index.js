@@ -23,7 +23,6 @@ import { error_codes } from 'result'
 
 import Sidebar from 'app/components/sidebar'
 
-import UnderConstruction from 'app/views/under-construction'
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
 import MyCharacter from 'app/views/my-character'
@@ -45,7 +44,7 @@ const view = (page$, sidebar$) => xs.combine(page$, sidebar$)
 
 const app = sources => {
 	const match$ = sources.router.define({
-		'/': UnderConstruction,
+		'/': StoryList,
 		'/stories': StoryList,
 		'/stories/:story_id': story_id => sources => Story({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),

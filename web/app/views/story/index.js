@@ -83,7 +83,7 @@ const timestampToDate = post => {
 	const date = new Date(post.created_on)
 	return {
 		...post,
-		created_on: `${date.toDateString()} - ${date.toTimeString()}`
+		created_on: `${date.toDateString()} - ${date.toTimeString()}`.replace(/GMT.*/g, '')
 	}
 }
 
