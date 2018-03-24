@@ -43,12 +43,12 @@ const Story = ({ DOM, HTTP, story_id$ }) => {
 		.map(res => res.result)
 
 	const save_post_request$ = xs.combine(story_id$, new_post.new_post$)
-		.map(([ story_id, text ]) => ({
+		.map(([ story_id, post ]) => ({
 			url: `/api/stories/${story_id}/posts`,
 			method: 'POST',
 			withCredentials: true,
 			category: 'save-post',
-			send: { text },
+			send: post,
 		}))
 
 	const fetch_posts_request$ = xs.combine(story_id$, save_post_success$.startWith(true))
