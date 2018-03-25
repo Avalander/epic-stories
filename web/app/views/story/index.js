@@ -102,11 +102,17 @@ const view = (story$, posts$, new_post$, api_errors) => xs.combine(story$, posts
 
 const renderPost = ({ author, text, created_on, type }) => div('.post', { class: { meta: type === 'meta' }}, [
 	div('.post-header', [
-		div('.post-author', author),
+		//div('.post-author', author),
 		div(img('.avatar', { props: { src: pinkie }})),
-		div('.post-date', created_on),
+		//div('.post-date', created_on),
 	]),
-	div('.post-body', text.split('\n').map(x => p(x))),
+	div('.post-body', [
+		div([
+			span('.post-author', author),
+			span('.post-date', created_on),
+		]),
+		div('.post-text', text.split('\n').map(x => p(x))),
+	]),
 ])
 
 export default Story
