@@ -1,28 +1,61 @@
 @import 'scss/variables';
 
-.content {
-	max-width: 924px;
-	margin: auto;
-}
 
 h1.title {
 	margin-bottom: 0.2em;
 }
 
 .post-list {
-	background: $color-background-light;
-	box-shadow: $box-shadow-sm;
+	.post {
+		border-top: 1px solid $color-background-light;
+	}
 
-	.post:not(:first-child) {
-		border-top: 1px solid $color-background;
+	.post:last-child {
+		border-bottom: 1px solid $color-background-light;
 	}
 
 	.post {
-		display: grid;
-		grid-template-columns: 25% auto;
+		display: flex;
+		flex-direction: row;
+
+		&.meta .post-body {
+			color: darken($color-text, 50%);
+		}
+
+		.post-author {
+			font-weight: bold;
+			color: $color-primary-light;
+		}
 
 		.post-header, .post-body {
 			padding: 10px 20px;
+
+			@media (max-width: 768px) {
+				padding: 10px;
+			}
+		}
+
+		.post-body {
+			color: #eaeaea;
+
+			.post-body-header span {
+				margin-right: 20px;
+			}
+			.post-date {
+				color: #aaa;
+				font-size: 0.8em;
+			}
+			.post-author {
+				font-size: 1.1em;
+			}
+			.post-tag {
+				color: $color-text;
+				background: $color-secondary-gradient;
+				text-transform: uppercase;
+				font-weight: bold;
+				padding: 5px 10px;
+				border-radius: 4px;
+			}
 		}
 
 		.post-header {
@@ -30,18 +63,20 @@ h1.title {
 			flex-direction: column;
 			align-items: center; 
 			text-align: center;
-			background: mix($gray-800, $color-background);
 
-			.post-author {
-				font-weight: bold;
-				color: $color-primary-light;
-			}
 			.post-date {
 				font-size: 12px;
 			}
 			.avatar {
 				max-width: 80px;
+				@media (max-width: 768px) {
+					max-width: 50px;
+				}
 			}
+		}
+
+		.post-text {
+			text-align: justify;
 		}
 	}
 }

@@ -20,6 +20,7 @@ const Active = (text) => div('.phantom-panel.mt-10', [
 	]),
 	div('.button-container', [
 		button('.btn', { dataset: { toggle: 'inactive' }}, 'Cancel'),
+		button('.btn', { dataset: { action: 'save', meta: true }}, 'Post Meta'),
 		button('.btn.primary', { dataset: { action: 'save' }}, 'Post'),
 	])
 ])
@@ -35,8 +36,12 @@ export default sources => isolate(({ DOM, clear$ }) => {
 	const state$ = xs.merge(input$, clear$.mapTo(''))
 		
 	const save_click$ = DOM.select('[data-action="save"]').events('click')
+		.map(ev => ev.target.dataset.meta)
 	const new_post$ = save_click$.compose(sampleCombine(state$))
-		.map(([ _, text ]) => text)
+		.map(([ is_meta, text ]) => {
+			const type = is_meta ? 'meta' : 'regular'
+			return { text, type }
+		})
 	
 	const toggle$ = xs.merge(active_click$, inactive_click$, clear$.mapTo(Inactive))
 		.startWith(Inactive)

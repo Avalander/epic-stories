@@ -43,12 +43,12 @@ const Story = ({ DOM, HTTP, story_id$ }) => {
 		.map(res => res.result)
 
 	const save_post_request$ = xs.combine(story_id$, new_post.new_post$)
-		.map(([ story_id, text ]) => ({
+		.map(([ story_id, post ]) => ({
 			url: `/api/stories/${story_id}/posts`,
 			method: 'POST',
 			withCredentials: true,
 			category: 'save-post',
-			send: { text },
+			send: post,
 		}))
 
 	const fetch_posts_request$ = xs.combine(story_id$, save_post_success$.startWith(true))
@@ -76,7 +76,9 @@ const timestampToDate = post => {
 	const date = new Date(post.created_on)
 	return {
 		...post,
-		created_on: `${date.toDateString()} - ${date.toTimeString()}`.replace(/GMT.*/g, '')
+		created_on: `${date.toDateString()} - ${date.toTimeString()}`
+			.replace(/GMT.*/g, '')
+			.substring(0, 23)
 	}
 }
 
@@ -100,13 +102,18 @@ const view = (story$, posts$, new_post$, api_errors) => xs.combine(story$, posts
 		new_post,
 	]))
 
-const renderPost = ({ author, text, created_on }) => div('.post', [
+const renderPost = ({ author, text, created_on, type }) => div('.post', { class: { meta: type === 'meta' }}, [
 	div('.post-header', [
-		div('.post-author', author),
 		div(img('.avatar', { props: { src: pinkie }})),
-		div('.post-date', created_on),
 	]),
-	div('.post-body', text.split('\n').map(x => p(x))),
+	div('.post-body', [
+		div('.post-body-header', [
+			span('.post-author', author),
+			span('.post-date', created_on),
+			type === 'meta' ? span('.post-tag', 'Meta') : null,
+		]),
+		div('.post-text', text.split('\n').map(x => p(x))),
+	]),
 ])
 
 export default Story

@@ -1,10 +1,16 @@
-.content-sm {
-	width: 468px;
-	margin: auto;
-}
-
 .center {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+}
+
+.content-sm {
+	max-width: 468px;
+	margin: auto;
+}
+
+.content {
+	max-width: 924px;
+	margin: auto;
+	padding: 5px;
 }
