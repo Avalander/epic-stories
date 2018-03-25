@@ -19,7 +19,7 @@ h1.title {
 		flex-direction: row;
 
 		&.meta .post-body {
-			color: darken($color-text, 40%);
+			color: darken($color-text, 50%);
 		}
 
 		.post-author {
@@ -43,7 +43,7 @@ h1.title {
 			}
 			.post-date {
 				color: #aaa;
-				font-size: 0.9em;
+				font-size: 0.8em;
 			}
 			.post-author {
 				font-size: 1.1em;
