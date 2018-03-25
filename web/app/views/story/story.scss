@@ -18,6 +18,10 @@ h1.title {
 		display: flex;
 		flex-direction: row;
 
+		&.meta .post-body {
+			color: darken($color-text, 40%);
+		}
+
 		.post-author {
 			font-weight: bold;
 			color: $color-primary-light;
@@ -34,8 +38,7 @@ h1.title {
 		.post-body {
 			color: #eaeaea;
 
-			.post-author,
-			.post-date {
+			.post-body-header span {
 				margin-right: 20px;
 			}
 			.post-date {
@@ -44,6 +47,14 @@ h1.title {
 			}
 			.post-author {
 				font-size: 1.1em;
+			}
+			.post-tag {
+				color: $color-text;
+				background: $color-secondary-gradient;
+				text-transform: uppercase;
+				font-weight: bold;
+				padding: 5px 10px;
+				border-radius: 4px;
 			}
 		}
 

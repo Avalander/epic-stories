@@ -6,6 +6,10 @@ $color-background-light: lighten($color-background, 10%);
 $color-text: #fff;
 $color-error: #c43d3d;
 
+$color-secondary: #3d3dc4;
+$color-secondary-background: mix($color-secondary, $color-background);
+$color-secondary-gradient: linear-gradient(135deg, $color-secondary, #5f3399);
+
 $gray-400: #ced4da;
 $gray-800: #343a40;
 
