@@ -23,7 +23,7 @@ const displayStories = stories => stories.map(({ title, _id, is_playing }) => di
 
 const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, errors$, create_new_story$)
 	.map(([stories, errors, new_story]) =>
-		div([
+		div('.content', [
 			renderErrors(errors),
 			...displayStories(stories),
 			new_story,

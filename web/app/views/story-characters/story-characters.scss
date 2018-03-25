@@ -1,10 +1,6 @@
 @import 'scss/variables';
 
 
-.content {
-	width: 924px;
-}
-
 .character-panel {
 	background: $color-background-light;
 	margin: 10px;
@@ -40,6 +36,10 @@
 		display: grid;
 		grid-template-columns: 25% auto;
 		padding: 10px 20px;
+
+		@media (max-width: 768px) {
+			grid-template-columns: 100%;		
+		}
 
 		.field-title {
 			color: $color-primary-light;
