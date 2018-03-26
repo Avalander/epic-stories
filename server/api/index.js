@@ -32,6 +32,11 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			.catch(next)
 	})
 
+	api.get('/user', authorise, (req, res, next) => res.json(Result.ok({
+		username: req.bearer.user,
+		groups: req.bearer.groups,
+	})))
+
 	api.get('/stories', authorise, (req, res, next) =>
 		Promise.all([
 			findStoriesByGroups(req.bearer.groups),
