@@ -9,6 +9,8 @@ import {
 	p,
 	h1,
 	img,
+	i,
+	button,
 } from '@cycle/dom'
 
 import { renderErrors } from 'app/render'
@@ -84,9 +86,17 @@ const renderPost = ({ author, text, created_on, type }) => div('.post', { class:
 	]),
 	div('.post-body', [
 		div('.post-body-header', [
-			span('.post-author', author),
-			span('.post-date', created_on),
-			type === 'meta' ? span('.post-tag', 'Meta') : null,
+			div([
+				span('.post-author.mr-20', author),
+				span('.post-date.mr-20', created_on),
+				type === 'meta' ? span('.post-tag', 'Meta') : null,
+			]),
+			div('.button-container', [
+				button('.btn', [
+					i('.fa.fa-pencil.mr-5'),
+					span('.hide-sm', 'Edit'),
+				]),
+			]),
 		]),
 		div('.post-text', text.split('\n').map(x => p(x))),
 	]),

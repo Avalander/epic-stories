@@ -37,9 +37,17 @@ h1.title {
 
 		.post-body {
 			color: #eaeaea;
+			width: 100%;
 
-			.post-body-header span {
-				margin-right: 20px;
+			button {
+				color: #eaeaea;
+			}
+
+			.post-body-header {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
 			}
 			.post-date {
 				color: #aaa;
