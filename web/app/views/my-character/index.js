@@ -13,19 +13,23 @@ import {
 	textarea,
 } from '@cycle/dom'
 
+import {
+	makeFetch,
+	makePost,
+} from 'app/http'
+import { renderErrors } from 'app/render'
+
 
 const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
-	const fetch_character_response$ = HTTP.select('fetch-character')
-		.flatten()
-		.map(res => res.body)
-		.filter(result => result.ok)
-		.map(result => result.result)
+	const api_url$ = story_id$.map(x => `/api/stories/${x}/my-character`)
+	const fetch_character = makeFetch(HTTP, 'fetch-character', api_url$)
+	const save_character = makePost(HTTP, 'save-character', api_url$)
 
 	const input$ = DOM.select('input, textarea').events('input')
 		.map(ev => ({ [ev.target.id]: ev.target.value }))
 
-	const request_data$ = xs.merge(
-			fetch_character_response$,
+	const character_data$ = xs.merge(
+			fetch_character.response$,
 			input$,
 			story_id$.map(story_id => ({ story_id }))
 		)
@@ -35,38 +39,22 @@ const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
 		.mapTo({ type: 'goBack' })
 	const save$ = DOM.select('[data-action="save"]').events('click')
 
-	const fetch_character_request$ = story_id$.map(story_id => ({
-		url: `/api/stories/${story_id}/my-character`,
-		method: 'GET',
-		withCredentials: true,
-		category: 'fetch-character',
-	}))
-	const save_character_request$ = save$.compose(sampleCombine(request_data$))
-		.map(([ _, data ]) => ({
-			url: `/api/stories/${data.story_id}/my-character`,
-			method: 'POST',
-			withCredentials: true,
-			category: 'save-character',
-			send: data,
-		}))
-	const request$ = xs.merge(fetch_character_request$, save_character_request$)
-	
-	const save_character_response$ = HTTP.select('save-character')
-		.flatten()
-		.map(res => res.body)
-	const save_character_errors$ = save_character_response$
-		.filter(result => !result.ok)
-		.map(result => [ result.error ])
-	const save_character_success$ = save_character_response$
-		.filter(result => result.ok)
+	const save_character_request$ = save_character.makeRequest(
+		save$.compose(sampleCombine(character_data$))
+			.map(([ _, data ]) => data)
+	)
+	const request$ = xs.merge(fetch_character.request$, save_character_request$)
 
-	const errors$ = xs.merge(save_character_errors$, save$.mapTo([]))
-		.startWith([])
-	const success$ = save_character_success$.compose(sampleCombine(story_id$))
+	const errors$ = xs.merge(
+		save_character.error$.map(error => [ error ]),
+		save$.mapTo([])
+	)
+	.startWith([])
+	const success$ = save_character.response$.compose(sampleCombine(story_id$))
 		.map(([ _, story_id ]) => `/stories/${story_id}`)
 
 	return {
-		DOM: view(request_data$, errors$),
+		DOM: view(character_data$, errors$),
 		HTTP: request$,
 		router: xs.merge(cancel$, success$),
 	}
@@ -77,13 +65,10 @@ const formGroup = (value, name, display_text) => div('.form-group', [
 	input({ attrs: { name, id: name, value }}),
 ])
 
-const displayErrors = errors =>
-	div('.alert-container', errors.map(({ message }) => div('.alert-error', message)))
-
 const view = (input$, errors$) => xs.combine(input$, errors$).map(([ state, errors ]) =>
 	div('.panel.content', [
 		h1('My Character'),
-		displayErrors(errors),
+		renderErrors(errors),
 		formGroup(state.name, 'name', 'Name'),
 		formGroup(state.high_concept, 'high_concept', 'Character Concept'),
 		formGroup(state.trouble, 'trouble', 'Trouble'),
