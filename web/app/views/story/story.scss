@@ -7,11 +7,11 @@ h1.title {
 
 .post-list {
 	.post {
-		border-top: 1px solid $color-background-light;
+		border-bottom: 1px solid $color-background-light;
 	}
 
-	.post:last-child {
-		border-bottom: 1px solid $color-background-light;
+	.post:first-child {
+		border-top: 1px solid darken($color-text, 20%);
 	}
 
 	.post {

@@ -11,8 +11,41 @@ import {
 } from '@cycle/dom'
 
 import { renderErrors } from 'app/render'
+import {
+	makeFetch,
+	makePost,
+} from 'app/http'
+
 import CreateNewStory from './create-new-story'
 
+
+export default ({ DOM, HTTP }) => {
+	const save_story = makePost(HTTP, 'save-story', xs.of('/api/stories'))
+	const fetch_stories = makeFetch(HTTP, 'fetch-stories',
+		save_story.response$.startWith(true).mapTo('/api/stories'))
+	
+	const errors$ = xs.merge(fetch_stories.error$, save_story.error$)
+		.map(e => [ e ])
+		.startWith([])
+
+	const stories$ = fetch_stories.response$
+		.startWith([])
+	
+	const route$ = DOM.select('[data-href]').events('click')
+		.map(ev => ev.target.dataset.href)
+
+	const create_new_story = CreateNewStory({ DOM, clear$: save_story.response$.mapTo(true) })
+
+	const save_story_request$ = save_story.makeRequest(create_new_story.new_story$)
+
+	const request$ = xs.merge(fetch_stories.request$, save_story_request$)
+
+	return {
+		DOM: view(stories$, errors$, create_new_story.DOM),
+		HTTP: request$,
+		router: route$,
+	}
+}
 
 const displayStories = stories => stories.map(({ title, _id, is_playing }) => div('.panel.story', [
 	div('.story-header', h4(title)),
@@ -29,64 +62,3 @@ const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, erro
 			new_story,
 		])
 	)
-
-const response = (HTTP, category) => {
-	const response$ = HTTP.select(category)
-		.flatten()
-		.map(res => res.body)
-	
-	const error$ = response$
-		.filter(res => !res.ok)
-		.map(res => res.error)
-	const success$ = response$
-		.filter(res => res.ok)
-		.map(res => res.result)
-	
-	return {
-		error$,
-		success$,
-	}
-}
-
-export default ({ DOM, HTTP }) => {
-	const fetch_stories = response(HTTP, 'fetch-stories')
-	const save_story = response(HTTP, 'save-story')
-	
-	const errors$ = xs.merge(fetch_stories.error$, save_story.error$)
-		.map(e => [ e ])
-		.startWith([])
-
-	const stories$ = fetch_stories.success$
-		.startWith([])
-	
-	const route$ = DOM.select('[data-href]').events('click')
-		.map(ev => ev.target.dataset.href)
-
-	const create_new_story = CreateNewStory({ DOM, clear$: save_story.success$.mapTo(true) })
-
-	const save_story_request$ = create_new_story.new_story$
-		.map(story => ({
-			url: '/api/stories',
-			method: 'POST',
-			withCredentials: true,
-			category: 'save-story',
-			send: story,
-		}))
-	
-	const fetch_stories_request$ = save_story.success$
-		.startWith(true)
-		.mapTo({
-			url: '/api/stories',
-			method: 'GET',
-			withCredentials: true,
-			category: 'fetch-stories',
-		})
-
-	const request$ = xs.merge(fetch_stories_request$, save_story_request$)
-
-	return {
-		DOM: view(stories$, errors$, create_new_story.DOM),
-		HTTP: request$,
-		router: route$,
-	}
-}

@@ -12,6 +12,10 @@ import {
 } from '@cycle/dom'
 
 import { renderErrors } from 'app/render'
+import {
+	makeFetch,
+	makePost,
+} from 'app/http'
 
 import NewPost from './new-post'
 
@@ -19,77 +23,49 @@ import pinkie from 'app/pinkie.png'
 
 
 const Story = ({ DOM, HTTP, story_id$ }) => {
-	const fetch_posts_response$ = HTTP.select('fetch-posts').flatten()
-		.map(res => res.body)
-	const fetch_story_response$ = HTTP.select('fetch-story').flatten()
-		.map(res => res.body)
-	const save_post_response$ = HTTP.select('save-post').flatten()
-		.map(res => res.body)
-	const save_post_success$ = save_post_response$
-		.filter(res => res.ok)
-		.map(res => res.result)
-	const api_errors = apiErrors(fetch_posts_response$, fetch_story_response$, save_post_response$)
+	const save_post = makePost(HTTP, 'save-post',
+		story_id$.map(story_id => `/api/stories/${story_id}/posts`)
+	)
+	const fetch_posts = makeFetch(HTTP, 'fetch-posts', 
+		xs.combine(story_id$, save_post.response$.startWith(true))
+			.map(([ story_id ]) => `/api/stories/${story_id}/posts`)
+	)
+	const fetch_story = makeFetch(HTTP, 'fetch-story',
+		story_id$.map(story_id => `/api/stories/${story_id}`)
+	)
+	const api_errors = apiErrors(fetch_posts, fetch_story, save_post)
 
-	const new_post = NewPost({ DOM, clear$: save_post_success$ })
+	const new_post = NewPost({ DOM, clear$: save_post.response$ })
 
-	const posts$ = fetch_posts_response$
-		.filter(res => res.ok)
-		.map(res => res.result)
+	const posts$ = fetch_posts.response$
 		.map(x => x.map(timestampToDate))
-		.startWith([])
-	
-	const story$ = fetch_story_response$
-		.filter(res => res.ok)
-		.map(res => res.result)
+	const story$ = fetch_story.response$
 
-	const save_post_request$ = xs.combine(story_id$, new_post.new_post$)
-		.map(([ story_id, post ]) => ({
-			url: `/api/stories/${story_id}/posts`,
-			method: 'POST',
-			withCredentials: true,
-			category: 'save-post',
-			send: post,
-		}))
-
-	const fetch_posts_request$ = xs.combine(story_id$, save_post_success$.startWith(true))
-		.map(([ story_id ]) => ({
-			url: `/api/stories/${story_id}/posts`,
-			method: 'GET',
-			withCredentials: true,
-			category: 'fetch-posts',
-		}))
-	
-	const fetch_story_request$ = story_id$.map(story_id => ({
-		url: `/api/stories/${story_id}`,
-		method: 'GET',
-		withCredentials: true,
-		category: 'fetch-story',
-	}))
+	const save_post_request$ = save_post.makeRequest(new_post.new_post$)
 	
 	return {
 		DOM: view(story$, posts$, new_post.DOM, api_errors),
-		HTTP: xs.merge(fetch_posts_request$, fetch_story_request$, save_post_request$),
+		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
 	}
 }
 
-const timestampToDate = post => {
-	const date = new Date(post.created_on)
-	return {
-		...post,
-		created_on: `${date.toDateString()} - ${date.toTimeString()}`
-			.replace(/GMT.*/g, '')
-			.substring(0, 23)
-	}
-}
+const parseDate = date => `${date.toDateString()} - ${date.toTimeString()}`
+	.replace(/GMT.*/g, '')
+	.substring(0, 23)
 
-const apiErrors = (fetch_posts_response$, fetch_story_response$, save_post_response$) => ({
-	fetch_posts$: xs.merge(requestErrors(fetch_posts_response$), requestErrors(fetch_story_response$)),
-	save_post$: requestErrors(save_post_response$),
+const timestampToDate = post => ({
+	...post,
+	created_on: parseDate(new Date(post.created_on))
 })
 
-const requestErrors = response$ => xs.merge(
-	response$.filter(res => !res.ok).map(res => [ res.error ]),
-	response$.filter(res => res.ok).map(() => [])
+const apiErrors = (fetch_posts, fetch_story, save_post) => ({
+	fetch_posts$: xs.merge(requestErrors(fetch_posts), requestErrors(fetch_story)),
+	save_post$: requestErrors(save_post),
+})
+
+const requestErrors = ({ error$, response$ }) => xs.merge(
+	error$.map(error => [ error ]),
+	response$.map(() => [])
 )
 .startWith([])
 
