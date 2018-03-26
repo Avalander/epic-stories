@@ -94,15 +94,19 @@ const renderPost = ({ author, text, created_on, type }, { username }) =>
 					span('.post-date.mr-20', created_on),
 					type === 'meta' ? span('.post-tag', 'Meta') : null,
 				]),
-				div('.button-container', [
-					author === username ? button('.btn', [
-						i('.fa.fa-pencil.mr-5'),
-						span('.hide-sm', 'Edit'),
-					]) : null,
-				]),
+				renderPostButtons(author, username),
 			]),
 			div('.post-text', text.split('\n').map(x => p(x))),
 		]),
 	])
+
+const renderPostButtons = (author, username) => div('.button-container', [
+	author === username ? button('.btn', {
+		attrs: { title: 'Edit this post' }
+	}, [
+		i('.fa.fa-pencil.mr-5'),
+		span('.hide-sm', 'Edit'),
+	]) : null,
+])
 
 export default Story
