@@ -1,0 +1,23 @@
+@import 'scss/variables';
+
+.edit-panel {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	max-height: 0;
+	overflow: hidden;
+	background: darken($color-background, 2%);
+	transition: all 0.5s;
+	border-top: 0 solid $color-primary;
+
+	textarea {
+		background: darken($color-background, 5%);
+		height: 200px;
+	}
+
+	&.open {
+		max-height: 354px;
+		border-top: 5px solid $color-primary;
+	}
+}

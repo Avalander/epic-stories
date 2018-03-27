@@ -19,7 +19,7 @@ import {
 	makePost,
 } from 'app/http'
 
-import NewPost from './new-post'
+import EditPost from './edit-post'
 
 import pinkie from 'app/pinkie.png'
 
@@ -39,16 +39,19 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 	)
 	const api_errors = apiErrors(fetch_posts, fetch_story, save_post)
 
-	const new_post = NewPost({ DOM, clear$: save_post.response$ })
+	const open$ = DOM.select('[data-action="reply"]').events('click')
+		.mapTo(true)
+		.startWith(false)
+	const edit_post = EditPost({ DOM, open$, save_post })
 
 	const posts$ = fetch_posts.response$
 		.map(x => x.map(timestampToDate))
 	const story$ = fetch_story.response$
 
-	const save_post_request$ = save_post.makeRequest(new_post.new_post$)
+	const save_post_request$ = save_post.makeRequest(edit_post.post$)
 	
 	return {
-		DOM: view(story$, posts$, new_post.DOM, user$, api_errors),
+		DOM: view(story$, posts$, edit_post.DOM, user$, api_errors),
 		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
 	}
 }
@@ -73,12 +76,14 @@ const requestErrors = ({ error$, response$ }) => xs.merge(
 )
 .startWith([])
 
-const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$, posts$, new_post$, user$, api_errors.fetch_posts$, api_errors.save_post$)
-	.map(([ story, posts, new_post, user, fetch_errors, save_errors ]) => article('.content', [
+const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$, posts$, new_post$, user$, api_errors.fetch_posts$)
+	.map(([ story, posts, new_post, user, fetch_errors ]) => article('.content', [
 		h1('.title', story.title),
 		renderErrors(fetch_errors),
 		div('.post-list', posts.map(x => renderPost(x, user))),
-		renderErrors(save_errors),
+		div('.button-container.mt-10', [
+			button('.btn.primary', { dataset: { action: 'reply' }}, 'Reply'),
+		]),
 		new_post,
 	]))
 
