@@ -14,3 +14,15 @@
 	margin: auto;
 	padding: 5px;
 }
+
+@media (min-width: 769px) {
+	.show-sm {
+		display: none;
+	}
+}
+
+@media (max-width: 768px) {
+	.hide-sm {
+		display: none;
+	}
+}

@@ -35,6 +35,8 @@
     "serviceworker-webpack-plugin": "^0.2.3",
     "style-loader": "^0.20.3",
     "switch-path": "^1.2.0",
+    "tap-diff": "^0.1.1",
+    "tape": "^4.9.0",
     "url-loader": "^1.0.1",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12",

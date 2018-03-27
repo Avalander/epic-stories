@@ -15,11 +15,16 @@ import {
 } from '@cycle/dom'
 import { makeHTTPDriver } from '@cycle/http'
 
+import makeIdbDriver from 'cycle-idb'
+
 import { routerify } from 'cyclic-router'
 import { makeHistoryDriver } from '@cycle/history'
 import switchPath from 'switch-path'
 
 import { error_codes } from 'result'
+
+import initApp from 'app/init'
+import initDatabase from 'app/database'
 
 import Sidebar from 'app/components/sidebar'
 
@@ -57,10 +62,12 @@ const app = sources => {
 	const page_dom$ = page$.map(x => x.DOM).flatten()
 	const page_router$ = page$.filter(x => 'router' in x).map(x => x.router).flatten()
 
-	sources.HTTP.select()
+	const invalid_credentials$ = sources.HTTP.select()
 		.flatten()
 		.map(res => res.body)
 		.filter(result => 'ok' in result && !result.ok && result.error.code === error_codes.INVALID_CREDENTIALS)
+	
+	invalid_credentials$
 		.addListener({
 			next: () => window.location.href = '/login.html'
 		})
@@ -74,9 +81,16 @@ const app = sources => {
 	const open_sidebar$ = sources.DOM.select('[data-show="sidebar"').events('click')
 	const sidebar = Sidebar({ ...sources, open$: open_sidebar$, current_story$ })
 
+	const init_app = initApp({ ...sources, invalid_credentials$ })
+	const http$ = xs.merge(
+		page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
+		init_app.HTTP,
+	)
+
 	return {
 		DOM: view(page_dom$, sidebar.DOM),
-		HTTP: page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
+		HTTP: http$,
+		IDB: init_app.IDB,
 		router: xs.merge(page_router$, sidebar.router),
 	}
 }
@@ -84,6 +98,7 @@ const app = sources => {
 const drivers = {
 	DOM: makeDOMDriver('#root'),
 	HTTP: makeHTTPDriver(),
+	IDB: makeIdbDriver('epic-stories', 1, initDatabase),
 	history: makeHistoryDriver(),
 }
 
