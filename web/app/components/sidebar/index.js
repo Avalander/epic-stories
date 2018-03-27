@@ -25,29 +25,17 @@ const state = {
 	remove_overlay: { active: false, overlay: false },
 }
 
-const Sidebar = sources => isolate(({ DOM, open$, current_story$ }) => {
+const Sidebar = sources => isolate(({ DOM, IDB, open$, current_story$ }) => {
 	const show$ = open$
 		.mapTo(state.show)
 	const hide$ = xs.merge(DOM.select('[data-hide]').events('click'))
 		.mapTo(state.hide)
 	const remove_overlay$ = DOM.select('.overlay.disappear').events('transitionend')
 		.mapTo(state.remove_overlay)
+	const current_user$ = IDB.store('user-cache').get('current_user')
+		.map(({ username }) => username)
 
 	const items$ = current_story$.startWith([])
-	/*
-		.map(stories => [
-			{ name: 'All Stories', href: '/stories' },
-			...stories.map(({ title, _id }) => ({
-				name: title, href: `/stories/${_id}`
-			})),
-			...stories.map(({ _id }) => ({
-				name: 'My Character', href: `/stories/${_id}/my-character`, subcomponent: true
-			})),
-			...stories.map(({ _id }) => ({
-				name: 'Characters', href: `/stories/${_id}/characters`, subcomponent: true
-			})),
-		])
-		*/
 	
 	const route$ = DOM.select('[data-href]').events('click')
 		.map(ev => ev.target.dataset.href)
@@ -56,7 +44,7 @@ const Sidebar = sources => isolate(({ DOM, open$, current_story$ }) => {
 		.startWith(state.remove_overlay)
 
 	return {
-		DOM: view(state$, items$),
+		DOM: view(state$, items$, current_user$),
 		router: route$,
 	}
 })(sources)
@@ -67,24 +55,19 @@ const renderStory = ({ title, _id }) => ([
 	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/characters`}}, 'Characters')),
 ])
 
-const view = (state$, stories$/*, active_id$*/) => xs.combine(state$, stories$/*, active_id$*/)
-	.map(([{ active, overlay }, stories ]) => div([
+const view = (state$, stories$, current_user$) => xs.combine(state$, stories$, current_user$)
+	.map(([{ active, overlay }, stories, user ]) => div([
 		nav('.sidebar', { class: { active }}, [
 			div([
 				button('.dismiss', { dataset: { hide: true }}, i('.fa.fa-arrow-left')),
 				div('.sidebar-header', [
 					img('.avatar', { props: { src: pinkie }}),
-					h3('Epic Stories'),
+					h3(user),
 				]),
 				ul('.components', [
 					li(a({ dataset: { hide: true, href: `/stories`}}, 'All Stories')),
 					...(stories.length > 0 ? renderStory(stories[0]) : []),
 				]),
-				/*
-				ul('.components', items.map(({ name, href, subcomponent }) =>
-					li(a({ class: { subcomponent }, dataset: { href, hide: true }}, name))
-				))
-				*/
 			]),
 		]),
 		div('.overlay', {
