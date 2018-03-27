@@ -20,7 +20,7 @@ module.exports.validateCharacter = makeValidator(
 
 module.exports.validatePost = makeValidator(
 	[ 'text', 'story_id', 'author', 'created_on' ],
-	[ '_id', 'type' ]
+	[ '_id', 'type', 'edited_on' ]
 )
 
 module.exports.validateStory = makeValidator(

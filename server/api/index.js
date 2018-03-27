@@ -11,6 +11,13 @@ const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
+const makePost = (payload, { user }, { story_id }) => Object.assign(
+	{ created_on: Date.now() },
+	payload,
+	{ author: user, story_id },
+	('_id' in payload ? { edited_on: Date.now() } : {}),
+)
+
 module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }) => {
 	const api = Router()
 
@@ -78,11 +85,16 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 	)
 
 	api.post('/stories/:story_id/posts', authorise, (req, res, next) =>
-		Promise.resolve(Object.assign({}, req.body, { author: req.bearer.user, created_on: Date.now(), story_id: req.params.story_id }))
-			.then(validatePost)
-			.then(savePost)
-			.then(x => res.json(Result.ok(x)))
-			.catch(e => res.json(Result.OTHER(e)))
+		Promise.all([
+			req.body.author && req.body.author !== req.bearer.user
+				? Promise.reject('You can\'t edit somebody else\'s posts.')
+				: Promise.resolve(makePost(req.body, req.bearer, req.params))
+		])
+		.then(([ x ]) => x)
+		.then(validatePost)
+		.then(savePost)
+		.then(x => res.json(Result.ok(x)))
+		.catch(e => res.json(Result.OTHER(e)))
 	)
 
 	api.post('/stories', authorise, (req, res, next) =>

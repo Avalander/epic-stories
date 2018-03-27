@@ -1,6 +1,7 @@
 import './story.scss'
 
 import xs from 'xstream'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
 import {
 	article,
@@ -20,6 +21,7 @@ import {
 } from 'app/http'
 
 import EditPost from './edit-post'
+import { timestampToDate } from './util'
 
 import pinkie from 'app/pinkie.png'
 
@@ -42,7 +44,13 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 	const open$ = DOM.select('[data-action="reply"]').events('click')
 		.mapTo(true)
 		.startWith(false)
-	const edit_post = EditPost({ DOM, open$, save_post })
+	const edit_click$ = DOM.select('[data-action="edit"]').events('click')
+		.map(ev => ev.target.tagName === 'BUTTON' ? ev.target : ev.target.parentElement)
+		.map(target => target.dataset.post)
+	const edit_post$ = edit_click$.compose(sampleCombine(fetch_posts.response$))
+		.map(([ id, posts ]) => posts.find(x => x._id === id))
+
+	const edit_post = EditPost({ DOM, open$, edit_post$, save_post })
 
 	const posts$ = fetch_posts.response$
 		.map(x => x.map(timestampToDate))
@@ -55,15 +63,6 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
 	}
 }
-
-const parseDate = date => `${date.toDateString()} - ${date.toTimeString()}`
-	.replace(/GMT.*/g, '')
-	.substring(0, 23)
-
-const timestampToDate = post => ({
-	...post,
-	created_on: parseDate(new Date(post.created_on))
-})
 
 const apiErrors = (fetch_posts, fetch_story, save_post) => ({
 	fetch_posts$: xs.merge(requestErrors(fetch_posts), requestErrors(fetch_story)),
@@ -87,7 +86,7 @@ const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$
 		new_post,
 	]))
 
-const renderPost = ({ author, text, created_on, type }, { username }) =>
+const renderPost = ({ author, text, created_on, type, _id }, { username }) =>
 	div('.post', { class: { meta: type === 'meta' }}, [
 		div('.post-header', [
 			div(img('.avatar', { props: { src: pinkie }})),
@@ -99,15 +98,16 @@ const renderPost = ({ author, text, created_on, type }, { username }) =>
 					span('.post-date.mr-20', created_on),
 					type === 'meta' ? span('.post-tag', 'Meta') : null,
 				]),
-				renderPostButtons(author, username),
+				renderPostButtons({ author, username, text, type, _id }),
 			]),
 			div('.post-text', text.split('\n').map(x => p(x))),
 		]),
 	])
 
-const renderPostButtons = (author, username) => div('.button-container', [
+const renderPostButtons = ({ author, username, text, type, _id }) => div('.button-container', [
 	author === username ? button('.btn', {
-		attrs: { title: 'Edit this post' }
+		attrs: { title: 'Edit this post' },
+		dataset: { action: 'edit', post: _id },
 	}, [
 		i('.fa.fa-pencil.mr-5'),
 		span('.hide-sm', 'Edit'),
