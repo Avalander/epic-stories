@@ -10,6 +10,7 @@
 	background: darken($color-background, 2%);
 	transition: all 0.5s;
 	border-top: 0 solid $color-primary;
+	color: darken($color-text, 5%);
 
 	textarea {
 		background: darken($color-background, 5%);
@@ -20,4 +21,8 @@
 		max-height: 354px;
 		border-top: 5px solid $color-primary;
 	}
+}
+
+.text-muted {
+	color: darken($color-text, 50%);
 }

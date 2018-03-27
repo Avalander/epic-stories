@@ -15,7 +15,7 @@ import isolate from '@cycle/isolate'
 import { renderErrors } from 'app/render'
 import { makeReducer } from 'app/reducer'
 
-import { timestampToDate } from './util'
+import { parseDate } from './util'
 
 
 const post_reducer = makeReducer({
@@ -75,6 +75,9 @@ const view = (open$, state$, errors$) => xs.combine(open$, state$, errors$)
 		div('.edit-panel', { class: { open }}, 
 			div('.content', [
 				renderErrors(errors),
+				div(_id ? [
+					span('.text-muted', `Editing post created on ${parseDate(new Date(created_on))}`)
+				] : []),
 				div('.form-group', [
 					textarea({ props: { name: 'text', id: 'text', value: text }}),
 				]),
