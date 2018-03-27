@@ -33,6 +33,7 @@ const Sidebar = sources => isolate(({ DOM, IDB, open$, current_story$ }) => {
 	const remove_overlay$ = DOM.select('.overlay.disappear').events('transitionend')
 		.mapTo(state.remove_overlay)
 	const current_user$ = IDB.store('user-cache').get('current_user')
+		.filter(x => x !== undefined)
 		.map(({ username }) => username)
 
 	const items$ = current_story$.startWith([])
