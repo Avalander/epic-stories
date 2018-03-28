@@ -60,8 +60,9 @@ const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
 	}
 }
 
-const formGroup = (value, name, display_text) => div('.form-group', [
+const formGroup = (value, name, display_text, description) => div('.form-group', [
 	label(display_text || name),
+	description ? span('.text-description', description) : null,
 	input({ attrs: { name, id: name, value }}),
 ])
 
@@ -70,8 +71,10 @@ const view = (input$, errors$) => xs.combine(input$, errors$).map(([ state, erro
 		h1('My Character'),
 		renderErrors(errors),
 		formGroup(state.name, 'name', 'Name'),
-		formGroup(state.high_concept, 'high_concept', 'Character Concept'),
-		formGroup(state.trouble, 'trouble', 'Trouble'),
+		formGroup(state.high_concept, 'high_concept', 'Character Concept',
+			'A phrase that sums up what your character is about. Who they are and what they do.'),
+		formGroup(state.trouble, 'trouble', 'Trouble',
+			'Something that usually complicates your character\'s existence, bringing chaos into their life and driving them into interesting situations.'),
 		div('.form-group', [
 			label('Description'),
 			textarea({ props: { name: 'description', id: 'description', value: state.description }})
