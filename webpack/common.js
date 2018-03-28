@@ -25,7 +25,8 @@ module.exports = ({ base_dir, folders }) => ({
 					}]],
 					plugins: [
 						['transform-object-rest-spread', { useBuiltIns: true }]
-					]
+					],
+					babelrc: false,
 				},
 			}
 		}, {
