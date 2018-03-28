@@ -9,7 +9,7 @@
     "dev": "webpack-dev-server --env=dev --mode=development",
     "start": "NODE_PATH=server:shared node server/index.js",
     "test": "npm run test:web",
-    "test:web": "NODE_PATH=web:shared tape -r babel-register 'web/**/*.test.js' | tap-diff"
+    "test:web": "NODE_PATH=web:shared:web/__test__ tape -r babel-register 'web/**/*.test.js' | tap-diff"
   },
   "keywords": [],
   "author": "",
