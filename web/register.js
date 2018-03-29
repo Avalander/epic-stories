@@ -41,6 +41,6 @@ document.querySelector('#register').onclick = event => {
 		body: JSON.stringify({ username, password }),
 	})
 		.then(res => res.ok ? res.json() : res.json().then(e => { throw e }))
-		.then(result => window.location.href = '/')
+		.then(result => window.location.href = '/welcome')
 		.catch(error => form.errors.innerHTML = `<div class="alert-error">${error.message}</div>`)
 }
