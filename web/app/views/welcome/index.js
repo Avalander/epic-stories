@@ -29,7 +29,7 @@ const view = () => xs.of(
 		h1('Welcome to Epic Stories!'),
 		p('Epic Stories is a game where you create a collaborative story with your friends one post at a time.'),
 		h2('How does it work?'),
-		p('Epic Stories is played by multiple people adding a fragment to the ongoing story, one person at a time. Each participant creates a character and writes from that character\'s point of view, most of the time at least. This is the basic premise, but there aren\'t any hard rules, really. Just play however is most fun for your group.'),
+		p('Epic Stories is played by multiple people adding a fragment to the ongoing story, one person at a time. Each participant creates a character and writes from that character\'s point of view, most of the time at least. This is the basic premise, but there aren\'t any hard and fast rules. Just play however is most fun for your group.'),
 		p([
 			span('When you click the '),
 			span('.bold', 'Let\'s start!'),
@@ -50,7 +50,7 @@ const view = () => xs.of(
 		h3('Yes, and...'),
 		p('When another player has brought something into the story, it\'s preferable to build on that instead of moving the story towards a completely different direction and dismissing the previous player\'s contribution, even if that means abandoning a great idea. If James suggests that the Stone of Destiny might be hidden in the City of Amber, don\'t just write that the stone is actually hidden in the Forest of Doom. You can probably find another reason to visit the Forest of Doom in the future anyway!'),
 		p('Due to the asynchronous nature of Epic Stories - it might take hours or days for somebody else to pick the story where you left it and continue, sometimes the players write other characters\' reactions, dialogues and/or actions to be able to give some meaningful advancement to the story. Be considerate and mindful when this happens.'),
-		p('When you are writing somebody else\'s character try to adhere to the nature of that character as much as you can - that\'s why each player wrote a thorough description of their character!'),
+		p('When you are writing about somebody else\'s character try to adhere to the nature of that character as much as you can - that\'s why each player wrote a thorough description of their character!'),
 		p('When someone else is writing your character, try to accept whatever they wrote and go with it, even if it\'s not what you think your character would have done. Don\'t have your friend write an action for your character just to answer that your character actually did the opposite. If you really disagree with what has been written about your character, you can always post a meta comment requesting an edit.'),
 		h3('Make the other characters look good'),
 		p([
