@@ -11,6 +11,11 @@
 
 .story-header {
 	padding: 10px;
+
+	h4 + .link-to-latest {
+		position: relative;
+		top: -10px;
+	}
 }
 
 .btn.join {
@@ -31,6 +36,17 @@
 
 	i, span {
 		padding: 0 5px;
+	}
+}
+
+.link-to-latest {
+	cursor: pointer;
+	text-decoration: none;
+	font-style: italic;
+	font-size: 0.9em;
+
+	&:hover {
+		text-decoration: underline;
 	}
 }
 

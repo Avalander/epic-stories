@@ -18,7 +18,7 @@ const makePost = (payload, { user }, { story_id }) => Object.assign(
 	('_id' in payload ? { edited_on: Date.now() } : {}),
 )
 
-module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }) => {
+module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -52,6 +52,11 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		.then(([ stories, characters ]) => stories.map(s => Object.assign(s, {
 			is_playing: characters.some(c => c.story_id == s._id)
 		})))
+		.then(stories => Promise.all(
+			stories.map(x => findLatestStoryPost(x._id.toString())
+				.then(({ author, created_on }) => Object.assign({}, x, { _latest: { author, created_on }}))
+			)
+		))
 		.then(stories => res.json(Result.ok(stories)))
 		.catch(e => res.json(Result.OTHER(e)))
 	)

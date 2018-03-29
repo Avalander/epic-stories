@@ -19,6 +19,7 @@ const {
 	makeSaveCharacter,
 } = require('store/character')
 const {
+	makeFindLatestStoryPost,
 	makeFindStoryPosts,
 	makeSavePost,
 } = require('store/post')
@@ -42,6 +43,7 @@ const findStoryCharacters = makeFindStoryCharacters(database)
 const findUserCharacters = makeFindUserCharacters(database)
 const findCharacter = makeFindCharacter(database)
 const saveCharacter = makeSaveCharacter(database)
+const findLatestStoryPost = makeFindLatestStoryPost(database)
 const findStoryPosts = makeFindStoryPosts(database)
 const savePost = makeSavePost(database)
 
@@ -54,7 +56,10 @@ app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(bodyParser.json())
 
-app.use('/api', makeApi({ Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost }))
+app.use('/api', makeApi({
+	Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory,
+	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
+}))
 
 const static_root = path.join(__dirname, '..', 'static')
 app.use(express.static(static_root, { extensions: [ 'html' ]}))

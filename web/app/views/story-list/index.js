@@ -16,6 +16,8 @@ import {
 	makePost,
 } from 'app/http'
 
+import { parseDate } from 'app/date'
+
 import CreateNewStory from './create-new-story'
 
 
@@ -47,12 +49,19 @@ export default ({ DOM, HTTP }) => {
 	}
 }
 
-const displayStories = stories => stories.map(({ title, _id, is_playing }) => div('.panel.story', [
-	div('.story-header', h4(title)),
+const displayStories = stories => stories.map(({ title, _id, is_playing, _latest }) => div('.panel.story', [
+	div('.story-header', [
+		h4(title),
+		latestPost({ ..._latest, _id }),
+	]),
 	is_playing
 		? button('.btn.join', { dataset: { href: `/stories/${_id}` }}, 'View')
 		: button('.btn.join', { dataset: { href: `/stories/${_id}/my-character` }}, 'Join'),
 ]))
+
+const latestPost = ({ _id, author, created_on }) => created_on
+	? a('.link-to-latest', { dataset: { href: `/stories/${_id}` }}, `Latest post on ${parseDate(new Date(created_on))} by ${author}`)
+	: null
 
 const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, errors$, create_new_story$)
 	.map(([stories, errors, new_story]) =>
