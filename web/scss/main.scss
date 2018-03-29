@@ -64,3 +64,8 @@ main {
 .mr-5 {
 	margin-right: 5px;
 }
+
+::selection {
+	background: deeppink;
+	color: $color-text;
+}
