@@ -1,0 +1,16 @@
+@import 'scss/variables';
+
+.welcome {
+	p {
+		text-align: justify;
+		
+		a, a:visited {
+			color: $color-primary-light;
+			text-decoration: none;
+		}
+	
+		a:hover {
+			text-decoration: underline;
+		}
+	}
+}
