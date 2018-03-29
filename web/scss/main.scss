@@ -31,7 +31,6 @@ main {
 	font-family: 'Caveat';
 	font-size: 2.5em;
 	text-align: center;
-	//text-shadow: 0 1px $color-primary-light;
 }
 
 .primary {
@@ -48,6 +47,10 @@ main {
 
 .hide {
 	display: none;
+}
+
+.bold {
+	font-weight: bold;
 }
 
 .text p:first-child {

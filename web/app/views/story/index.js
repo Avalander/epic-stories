@@ -20,6 +20,8 @@ import {
 	makePost,
 } from 'app/http'
 
+import { textToVdom } from 'app/syntax'
+
 import EditPost from './edit-post'
 import { timestampToDate } from './util'
 
@@ -100,7 +102,8 @@ const renderPost = ({ author, text, created_on, type, _id }, { username }) =>
 				]),
 				renderPostButtons({ author, username, text, type, _id }),
 			]),
-			div('.post-text', text.split('\n').map(x => p(x))),
+			//div('.post-text', text.split('\n').map(x => p(x))),
+			div('.post-text', textToVdom(text)),
 		]),
 	])
 
