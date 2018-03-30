@@ -86,7 +86,7 @@ const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$
 
 const stashMetaPosts = posts => posts.reduce((prev, x) => x.type === 'meta'
 	? addMetaPost(prev, x)
-	: [...prev, x])
+	: [...prev, x], [])
 
 const addMetaPost = (prev, x) => {
 	const last = prev[prev.length - 1]
