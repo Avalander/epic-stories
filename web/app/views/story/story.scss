@@ -43,6 +43,19 @@ h1.title {
 				color: #eaeaea;
 			}
 
+			/* Maybe in the future...
+			@media (min-width: 769px) {
+				.button-container {
+					opacity: 0;
+					transition: opacity 0.3s;
+				}
+
+				&:hover .button-container {
+					opacity: 1;
+				}
+			}
+			*/
+
 			.post-body-header {
 				display: flex;
 				flex-direction: row;

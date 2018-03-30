@@ -13,7 +13,7 @@ const openConnection = () => mongo.MongoClient.connect(DB_URL)
 	]))
 
 const generateToken = value => {
-	if (value) return Promise.resolve(value)
+	if (value && value !== 'none') return Promise.resolve(value)
 	const chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
 	const result = []
 	for (let i=0; i<64; i++) {
