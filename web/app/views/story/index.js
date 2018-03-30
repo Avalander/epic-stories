@@ -6,11 +6,7 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import {
 	article,
 	div,
-	span,
-	p,
 	h1,
-	img,
-	i,
 	button,
 } from '@cycle/dom'
 
@@ -20,12 +16,10 @@ import {
 	makePost,
 } from 'app/http'
 
-import { textToVdom } from 'app/syntax'
-
-import EditPost from './edit-post'
 import { timestampToDate } from 'app/date'
 
-import pinkie from 'app/pinkie.png'
+import EditPost from './edit-post'
+import renderPost from './render-post'
 
 
 const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
@@ -56,6 +50,8 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 
 	const posts$ = fetch_posts.response$
 		.map(x => x.map(timestampToDate))
+		.map(stashMetaPosts)
+
 	const story$ = fetch_story.response$
 
 	const save_post_request$ = save_post.makeRequest(edit_post.post$)
@@ -88,33 +84,18 @@ const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$
 		new_post,
 	]))
 
-const renderPost = ({ author, text, created_on, type, _id }, { username }) =>
-	div('.post', { class: { meta: type === 'meta' }}, [
-		div('.post-header', [
-			div(img('.avatar', { props: { src: pinkie }})),
-		]),
-		div('.post-body', [
-			div('.post-body-header', [
-				div([
-					span('.post-author.mr-20', author),
-					span('.post-date.mr-20', created_on),
-					type === 'meta' ? span('.post-tag', 'Meta') : null,
-				]),
-				renderPostButtons({ author, username, text, type, _id }),
-			]),
-			//div('.post-text', text.split('\n').map(x => p(x))),
-			div('.post-text', textToVdom(text)),
-		]),
-	])
+const stashMetaPosts = posts => posts.reduce((prev, x) => x.type === 'meta'
+	? addMetaPost(prev, x)
+	: [...prev, x])
 
-const renderPostButtons = ({ author, username, text, type, _id }) => div('.button-container', [
-	author === username ? button('.btn', {
-		attrs: { title: 'Edit this post' },
-		dataset: { action: 'edit', post: _id },
-	}, [
-		i('.fa.fa-pencil.mr-5'),
-		span('.hide-sm', 'Edit'),
-	]) : null,
-])
+const addMetaPost = (prev, x) => {
+	const last = prev[prev.length - 1]
+	if (!last || last.type !== 'meta-group') return [ ...prev, {
+		type: 'meta-group',
+		posts: [ x ],
+	}]
+	last.posts = [ ...last.posts, x ]
+	return [ ...prev ]
+}
 
 export default Story
