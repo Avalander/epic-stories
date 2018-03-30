@@ -32,6 +32,7 @@ export default ({ DOM, HTTP }) => {
 
 	const stories$ = fetch_stories.response$
 		.startWith([])
+		.map(sortByLatestPost)
 	
 	const route$ = DOM.select('[data-href]').events('click')
 		.map(ev => ev.target.dataset.href)
@@ -47,6 +48,12 @@ export default ({ DOM, HTTP }) => {
 		HTTP: request$,
 		router: route$,
 	}
+}
+
+const sortByLatestPost = stories => {
+	const result = [...stories]
+	result.sort((a, b) => (b._latest.created_on || 0) - (a._latest.created_on || 0))
+	return result
 }
 
 const displayStories = stories => stories.map(({ title, _id, is_playing, _latest }) => div('.panel.story', [
