@@ -15,7 +15,7 @@ import isolate from '@cycle/isolate'
 import { renderErrors } from 'app/render'
 import { makeReducer } from 'app/reducer'
 
-import { parseDate } from './util'
+import { parseDate } from 'app/date'
 
 
 const post_reducer = makeReducer({
@@ -72,6 +72,8 @@ export default sources => isolate(({ DOM, open$, edit_post$, save_post }) => {
 
 const view = (open$, state$, errors$) => xs.combine(open$, state$, errors$)
 	.map(([ open, { text, _id, created_on }, errors ]) =>
+	div([
+		div('.bottom-margin', { class: { open }}),
 		div('.edit-panel', { class: { open }}, 
 			div('.content', [
 				renderErrors(errors),
@@ -88,4 +90,5 @@ const view = (open$, state$, errors$) => xs.combine(open$, state$, errors$)
 				])
 			])
 		)
+	])
 	)

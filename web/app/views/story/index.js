@@ -23,7 +23,7 @@ import {
 import { textToVdom } from 'app/syntax'
 
 import EditPost from './edit-post'
-import { timestampToDate } from './util'
+import { timestampToDate } from 'app/date'
 
 import pinkie from 'app/pinkie.png'
 
