@@ -32,6 +32,10 @@ h1.title {
 			.post-header, .post-body {
 				padding: 0 20px;
 			}
+
+			.post-header {
+				min-width: 80px;
+			}
 		}
 
 		.post-author {
