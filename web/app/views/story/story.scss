@@ -6,11 +6,11 @@ h1.title {
 }
 
 .post-list {
-	.post {
+	.post, .meta-group {
 		border-bottom: 1px solid $color-background-light;
 	}
 
-	.post:first-child {
+	.post:first-child, .meta-group:first-child {
 		border-top: 1px solid darken($color-text, 20%);
 	}
 
@@ -18,8 +18,25 @@ h1.title {
 		display: flex;
 		flex-direction: row;
 
-		&.meta .post-body {
-			color: darken($color-text, 50%);
+		&.meta {
+			border-bottom: none;
+
+			.button-container {
+				flex-shrink: 0;
+			}
+
+			.post-body {
+				color: darken($color-text, 50%);
+			}
+
+			.post-header, .post-body {
+				padding: 0 20px;
+			}
+
+			.post-header {
+				min-width: 80px;
+				align-items: flex-start; 
+			}
 		}
 
 		.post-author {
@@ -69,14 +86,6 @@ h1.title {
 			.post-author {
 				font-size: 1.1em;
 			}
-			.post-tag {
-				color: $color-text;
-				background: $color-secondary-gradient;
-				text-transform: uppercase;
-				font-weight: bold;
-				padding: 5px 10px;
-				border-radius: 4px;
-			}
 		}
 
 		.post-header {
@@ -100,6 +109,19 @@ h1.title {
 			text-align: justify;
 		}
 	}
+}
+
+.meta-title {
+	text-transform: uppercase;
+}
+
+.post-tag {
+	color: $color-text;
+	background: $color-secondary-gradient;
+	text-transform: uppercase;
+	font-weight: bold;
+	padding: 5px 10px;
+	border-radius: 4px;
 }
 
 .mt-10 {
