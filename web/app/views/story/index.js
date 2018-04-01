@@ -18,6 +18,7 @@ import {
 
 import { timestampToDate } from 'app/date'
 
+import StoryHeader from './header'
 import EditPost from './edit-post'
 import renderPost from './render-post'
 
@@ -54,11 +55,14 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 
 	const story$ = fetch_story.response$
 
+	const story_header = StoryHeader({ DOM, story$ })
+
 	const save_post_request$ = save_post.makeRequest(edit_post.post$)
 	
 	return {
-		DOM: view(story$, posts$, edit_post.DOM, user$, api_errors),
+		DOM: view(story_header.DOM, story$, posts$, edit_post.DOM, user$, api_errors),
 		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
+		router: story_header.router,
 	}
 }
 
@@ -73,9 +77,10 @@ const requestErrors = ({ error$, response$ }) => xs.merge(
 )
 .startWith([])
 
-const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$, posts$, new_post$, user$, api_errors.fetch_posts$)
-	.map(([ story, posts, new_post, user, fetch_errors ]) => article('.content', [
-		h1('.title', story.title),
+const view = (header$, story$, posts$, new_post$, user$, api_errors) => xs.combine(header$, story$, posts$, new_post$, user$, api_errors.fetch_posts$)
+	.map(([ story_header, story, posts, new_post, user, fetch_errors ]) => article('.content', [
+		story_header,
+		//h1('.title', story.title),
 		renderErrors(fetch_errors),
 		div('.post-list', posts.map(x => renderPost(x, user))),
 		div('.button-container.mt-10', [
