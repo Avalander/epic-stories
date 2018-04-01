@@ -6,25 +6,9 @@ import {
 } from '@cycle/dom'
 
 
-const bold_regex = /\*([\w|\.][^\n\*]*[\w|\.])\*/
-
-const regular = text => span('', text)
-const bold = text => span('.bold', text)
-
-const addIfNotEmpty = (arr, str, elem) => (str.length > 0 ? arr.push(elem(str)) : {})
-
-const parseBold = text => {
-	const result = []
-	let rest = text
-	let match = bold_regex.exec(rest)
-	while (match !== null) {
-		addIfNotEmpty(result, match.input.substring(0, match.index), regular)
-		addIfNotEmpty(result, match[1], bold)
-		rest = match.input.substring(match.index + match[0].length)
-		match = bold_regex.exec(rest)
-	}
-	addIfNotEmpty(result, rest, regular)
-	return result.length > 1 ? result : text
+const type_parsers = {
+	'span': x => span('', x),
+	'strong': x => strong('', x),
 }
 
 export const textToVdom = text => {
@@ -32,4 +16,50 @@ export const textToVdom = text => {
 		.filter(x => x.length > 0)
 		.map(parseBold)
 		.map(x => p(x))
+}
+
+const parseBold = text => generateSyntaxTree(text)
+	.map(({ text, type }) => type_parsers[type](text))
+
+const generateSyntaxTree = (text) => {
+	if (text.length === 0) return []
+	for (let i = 0; i < text.length; i++) {
+		if (i === 0 || text[i - 1] === ' ') {
+			const bold = scan('*', '*', text.substring(i))
+			if (bold !== -1) {
+				const end_i = bold + i
+				return [
+					...partialTree(text, i, end_i),
+					...generateSyntaxTree(text.substring(end_i + 1))
+				]
+			}
+		}
+	}
+
+	return [{
+		text,
+		type: 'span',
+	}]
+}
+
+const partialTree = (text, start, end) => start === 0 ? [{
+	text: text.substring(1, end), type: 'strong'
+}] : [{
+	text: text.substring(0, start), type: 'span'
+}, {
+	text: text.substring(start + 1, end), type: 'strong'
+}]
+
+const scan = (start_seq, end_seq, text) =>
+	text.startsWith(start_seq) ? findEndSeq(1, end_seq, text) : -1
+
+const findEndSeq = (start_index, end_seq, text) => {
+	for (let i=start_index; i<text.length; i++) {
+		if (text[i] === end_seq
+			&& (i === (text.length - 1) || ' ,.;:¡!¿?-'.includes(text[i + 1]))
+			&& (text[i - 1] !== ' ')) {
+				return i
+			}
+	}
+	return -1
 }
