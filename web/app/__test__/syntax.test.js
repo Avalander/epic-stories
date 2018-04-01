@@ -32,7 +32,7 @@ test('textToVdom should remove empty lines.', t => {
 	t.end()
 })
 
-test('textToVdom should put text wrapped in * within span.bold tags.', t => {
+test('textToVdom should put text wrapped in * within strong tags.', t => {
 	const text = 'This should be *bold* text.'
 
 	const actual = textToVdom(text)
@@ -107,7 +107,7 @@ test('textToVdom should parse bold items separated with a period correctly.', t 
 	t.end()
 })
 
-test('textToVdom should put text wrapped in _ within span.italic tags.', t => {
+test('textToVdom should put text wrapped in _ within em tags.', t => {
 	const text = '_Italics_ normal.'
 
 	const actual = textToVdom(text)
@@ -140,6 +140,17 @@ test('textToVdom should parse italics and bold.', t => {
 
 	t.equal(actual.length, 1)
 	htmlLooksLike(t, actual[0], expected)
+
+	t.end()
+})
+
+test('textToVdom should put text between ~ within del tags.', t => {
+	const text = '~Some strikethrough~'
+
+	const actual = textToVdom(text)
+
+	t.equal(actual.length, 1)
+	htmlLooksLike(t, actual[0], '<p><del>Some strikethrough</del></p>')
 
 	t.end()
 })
