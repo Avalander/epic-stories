@@ -68,7 +68,7 @@ const renderCharacter = ({ name, username, high_concept, trouble, description=''
 	div('.character-panel', [
 		div('.character-header', [
 			h4(name),
-			i('.fa.pointer', {
+			i('.fa.tap-icon', {
 				class: { 'fa-caret-down': !_expand, 'fa-caret-up': _expand },
 				dataset: { toggle: _id },
 			}),
