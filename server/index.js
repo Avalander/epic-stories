@@ -11,6 +11,7 @@ const {
 	makeCreateStory,
 	makeFindStoriesByGroups,
 	makeFindStory,
+	makeSaveChapter,
 } = require('store/story')
 const {
 	makeFindStoryCharacters,
@@ -39,6 +40,7 @@ const registerUser = makeRegisterUser(database)
 const createStory = makeCreateStory(database)
 const findStoriesByGroups = makeFindStoriesByGroups(database)
 const findStory = makeFindStory(database)
+const saveChapter = makeSaveChapter(database)
 const findStoryCharacters = makeFindStoryCharacters(database)
 const findUserCharacters = makeFindUserCharacters(database)
 const findCharacter = makeFindCharacter(database)
@@ -59,6 +61,7 @@ app.use(bodyParser.json())
 app.use('/api', makeApi({
 	Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory,
 	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
+	saveChapter,
 }))
 
 const static_root = path.join(__dirname, '..', 'static')

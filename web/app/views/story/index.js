@@ -55,7 +55,7 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 
 	const story$ = fetch_story.response$
 
-	const story_header = StoryHeader({ DOM, story$ })
+	const story_header = StoryHeader({ DOM, story$, active$: xs.of('none') })
 
 	const save_post_request$ = save_post.makeRequest(edit_post.post$)
 	
@@ -80,7 +80,6 @@ const requestErrors = ({ error$, response$ }) => xs.merge(
 const view = (header$, story$, posts$, new_post$, user$, api_errors) => xs.combine(header$, story$, posts$, new_post$, user$, api_errors.fetch_posts$)
 	.map(([ story_header, story, posts, new_post, user, fetch_errors ]) => article('.content', [
 		story_header,
-		//h1('.title', story.title),
 		renderErrors(fetch_errors),
 		div('.post-list', posts.map(x => renderPost(x, user))),
 		div('.button-container.mt-10', [

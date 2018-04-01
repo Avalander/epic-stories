@@ -11,23 +11,27 @@ import {
 import isolate from '@cycle/isolate'
 
 
-export default sources => isolate(({ DOM, story$, }) => {
+export default sources => isolate(({ DOM, story$, active$ }) => {
 	const link_click$ = DOM.select('[data-href]').events('click')
 		.map(ev => ev.target.dataset.href)
 
 	return {
-		DOM: view(story$),
+		DOM: view(story$, active$),
 		router: link_click$,
 	}
 })(sources)
 
-const view = story$ => story$.map(({ _id, title }) =>
-	header('.story-header', [
-		h1(title),
-		div('.tab-container', [
-			a('.header-link', {}, 'Chapters'),
-			a('.header-link', { dataset: { href: `/stories/${_id}/characters` }}, 'Characters'),
-			a('.header-link', { dataset: { href: `/stories/${_id}/my-character` }}, 'My character'),
-		]),
-	])
-)
+const view = (story$, active$) => xs.combine(story$, active$)
+	.map(([{ _id, title }, active ]) =>
+		header('.story-header', [
+			h1(title),
+			div('.tab-container', [
+				renderLink('Chapters', `/stories/${_id}/chapters`, active === 'chapters'),
+				renderLink('Characters', `/stories/${_id}/characters`, active === 'characters'),
+				renderLink('My Character', `/stories/${_id}/my-character`, active === 'my-character'),
+			]),
+		])
+	)
+
+const renderLink = (title, href, active) =>
+	a('.header-link', { class: { active }, dataset: (active ? {} : { href })}, title)

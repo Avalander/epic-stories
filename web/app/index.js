@@ -31,7 +31,8 @@ import Sidebar from 'app/components/sidebar'
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
 import MyCharacter from 'app/views/my-character'
-import StoryCharacters from 'app/views/story-characters'
+import StoryCharacters from 'app/views/story/story-characters'
+import StoryChapters from 'app/views/story/story-chapters'
 import Welcome from 'app/views/welcome'
 
 
@@ -49,6 +50,8 @@ const view = (page$, sidebar$) => xs.combine(page$, sidebar$)
 		])
 	)
 
+const withStoryId = component => story_id => sources => component({ story_id$: xs.of(story_id), ...sources })
+
 const app = sources => {
 	const match$ = sources.router.define({
 		'/': StoryList,
@@ -56,6 +59,7 @@ const app = sources => {
 		'/stories/:story_id': story_id => sources => Story({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/characters': story_id => sources => StoryCharacters({ story_id$: xs.of(story_id), ...sources }),
+		'/stories/:story_id/chapters': story_id => sources => StoryChapters({ story_id$: xs.of(story_id), ...sources }),
 		'/welcome': Welcome,
 	})
 

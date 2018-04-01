@@ -25,5 +25,10 @@ module.exports.validatePost = makeValidator(
 
 module.exports.validateStory = makeValidator(
 	[ 'title', 'group' ],
-	[ '_id', 'description' ]
+	[ '_id', 'description', 'chapters' ]
+)
+
+module.exports.validateChapter = makeValidator(
+	[ 'title' ],
+	[]
 )

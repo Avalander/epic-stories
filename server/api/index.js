@@ -2,6 +2,7 @@ const { Result, error_codes } = require('result')
 
 const {
 	validateCharacter,
+	validateChapter,
 	validatePost,
 	validateStory,
 } = require('validators')
@@ -18,7 +19,7 @@ const makePost = (payload, { user }, { story_id }) => Object.assign(
 	('_id' in payload ? { edited_on: Date.now() } : {}),
 )
 
-module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost }) => {
+module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost, saveChapter }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -98,6 +99,16 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		.then(([ x ]) => x)
 		.then(validatePost)
 		.then(savePost)
+		.then(x => res.json(Result.ok(x)))
+		.catch(e => res.json(Result.OTHER(e)))
+	)
+
+	api.post('/stories/:story_id/chapters', authorise, (req, res, next) =>
+		Promise.all([
+			req.params.story_id,
+			validateChapter(req.body),
+		])
+		.then(([ story_id, chapter ]) => saveChapter(story_id, chapter))
 		.then(x => res.json(Result.ok(x)))
 		.catch(e => res.json(Result.OTHER(e)))
 	)
