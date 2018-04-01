@@ -107,13 +107,39 @@ test('textToVdom should parse bold items separated with a period correctly.', t 
 	t.end()
 })
 
-test.skip('textToVdom should put text wrapped in _ within span.italic tags.', t => {
+test('textToVdom should put text wrapped in _ within span.italic tags.', t => {
 	const text = '_Italics_ normal.'
 
 	const actual = textToVdom(text)
 
 	t.equal(actual.length, 1)
-	htmlLooksLike(t, actual[0], '<p><span class="italic">Italics</span><span> normal.</span></p>')
+	htmlLooksLike(t, actual[0], '<p><em>Italics</em><span> normal.</span></p>')
+
+	t.end()
+})
+
+test('textToVdom should parse italics and bold.', t => {
+	const text = 'Some _text_ is _italics and some_ text *is* _bold_. *Or* _bolder_'
+
+	const actual = textToVdom(text)
+
+	const expected = `<p>
+		<span>Some </span>
+		<em>text</em>
+		<span> is </span>
+		<em>italics and some</em>
+		<span> text </span>
+		<strong>is</strong>
+		<span> </span>
+		<em>bold</em>
+		<span>. </span>
+		<strong>Or</strong>
+		<span> </span>
+		<em>bolder</em>
+	</p>`
+
+	t.equal(actual.length, 1)
+	htmlLooksLike(t, actual[0], expected)
 
 	t.end()
 })

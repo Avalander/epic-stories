@@ -1,4 +1,5 @@
 import {
+	em,
 	div,
 	p,
 	span,
@@ -9,6 +10,7 @@ import {
 const type_parsers = {
 	'span': x => span('', x),
 	'strong': x => strong('', x),
+	'em': x => em('', x),
 }
 
 export const textToVdom = text => {
@@ -29,7 +31,15 @@ const generateSyntaxTree = (text) => {
 			if (bold !== -1) {
 				const end_i = bold + i
 				return [
-					...partialTree(text, i, end_i),
+					...partialTree(text, 'strong', i, end_i),
+					...generateSyntaxTree(text.substring(end_i + 1))
+				]
+			}
+			const italic = scan('_', '_', text.substring(i))
+			if (italic !== -1) {
+				const end_i = italic + i
+				return [
+					...partialTree(text, 'em', i, end_i),
 					...generateSyntaxTree(text.substring(end_i + 1))
 				]
 			}
@@ -42,12 +52,12 @@ const generateSyntaxTree = (text) => {
 	}]
 }
 
-const partialTree = (text, start, end) => start === 0 ? [{
-	text: text.substring(1, end), type: 'strong'
+const partialTree = (text, type, start, end) => start === 0 ? [{
+	text: text.substring(1, end), type
 }] : [{
 	text: text.substring(0, start), type: 'span'
 }, {
-	text: text.substring(start + 1, end), type: 'strong'
+	text: text.substring(start + 1, end), type
 }]
 
 const scan = (start_seq, end_seq, text) =>
