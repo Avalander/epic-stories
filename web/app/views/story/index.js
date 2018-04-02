@@ -18,24 +18,20 @@ import {
 
 import { timestampToDate } from 'app/date'
 
+import StoryHeader from './header'
 import EditPost from './edit-post'
 import renderPost from './render-post'
 
 
-const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
+const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
 	const user$ = IDB.store('user-cache').only('current_user').get()
 
-	const save_post = makePost(HTTP, 'save-post',
-		story_id$.map(story_id => `/api/stories/${story_id}/posts`)
-	)
-	const fetch_posts = makeFetch(HTTP, 'fetch-posts', 
-		xs.combine(story_id$, save_post.response$.startWith(true))
-			.map(([ story_id ]) => `/api/stories/${story_id}/posts`)
-	)
-	const fetch_story = makeFetch(HTTP, 'fetch-story',
-		story_id$.map(story_id => `/api/stories/${story_id}`)
-	)
-	const api_errors = apiErrors(fetch_posts, fetch_story, save_post)
+	const {
+		save_post,
+		fetch_posts,
+		fetch_story,
+		api_errors,
+	} = chapter_id$ ? makeHttpChapterComponents(HTTP, story_id$, chapter_id$) : makeHttpStoryComponents(HTTP, story_id$)
 
 	const open$ = DOM.select('[data-action="reply"]').events('click')
 		.mapTo(true)
@@ -54,11 +50,21 @@ const Story = ({ DOM, HTTP, IDB, story_id$ }) => {
 
 	const story$ = fetch_story.response$
 
+	const story_header = StoryHeader({ DOM, story$,
+		active$: xs.of('none'),
+		subtitle$: chapter_id$
+			? xs.combine(chapter_id$, story$)
+				.map(([ chapter_id, { chapters }]) => chapters.find(({ id }) => id == chapter_id))
+				.map(({ id, title }) => `Chapter ${id}: ${title}`)
+			: xs.of(null)
+	})
+
 	const save_post_request$ = save_post.makeRequest(edit_post.post$)
 	
 	return {
-		DOM: view(story$, posts$, edit_post.DOM, user$, api_errors),
+		DOM: view(story_header.DOM, story$, posts$, edit_post.DOM, user$, api_errors),
 		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
+		router: story_header.router,
 	}
 }
 
@@ -73,9 +79,9 @@ const requestErrors = ({ error$, response$ }) => xs.merge(
 )
 .startWith([])
 
-const view = (story$, posts$, new_post$, user$, api_errors) => xs.combine(story$, posts$, new_post$, user$, api_errors.fetch_posts$)
-	.map(([ story, posts, new_post, user, fetch_errors ]) => article('.content', [
-		h1('.title', story.title),
+const view = (header$, story$, posts$, new_post$, user$, api_errors) => xs.combine(header$, story$, posts$, new_post$, user$, api_errors.fetch_posts$)
+	.map(([ story_header, story, posts, new_post, user, fetch_errors ]) => article('.content', [
+		story_header,
 		renderErrors(fetch_errors),
 		div('.post-list', posts.map(x => renderPost(x, user))),
 		div('.button-container.mt-10', [
@@ -96,6 +102,49 @@ const addMetaPost = (prev, x) => {
 	}]
 	last.posts = [ ...last.posts, x ]
 	return [ ...prev ]
+}
+
+// Wow, such hack, much regret later...
+const makeHttpChapterComponents = (HTTP, story_id$, chapter_id$) => {
+	const posts_url$ = xs.combine(story_id$, chapter_id$)
+		.map(([ story_id, chapter_id ]) => `/api/stories/${story_id}/chapters/${chapter_id}/posts`)
+	const save_post = makePost(HTTP, 'save-post', posts_url$)
+	const fetch_posts = makeFetch(HTTP, 'fetch-posts', 
+		xs.combine(posts_url$, save_post.response$.startWith(true))
+			.map(([ url ]) => url)
+	)
+	const fetch_story = makeFetch(HTTP, 'fetch-story',
+		story_id$.map(story_id => `/api/stories/${story_id}`)
+	)
+	const api_errors = apiErrors(fetch_posts, fetch_story, save_post)
+
+	return {
+		save_post,
+		fetch_posts,
+		fetch_story,
+		api_errors,
+	}
+}
+
+const makeHttpStoryComponents = (HTTP, story_id$) => {
+	const save_post = makePost(HTTP, 'save-post',
+		story_id$.map(story_id => `/api/stories/${story_id}/posts`)
+	)
+	const fetch_posts = makeFetch(HTTP, 'fetch-posts', 
+		xs.combine(story_id$, save_post.response$.startWith(true))
+			.map(([ story_id ]) => `/api/stories/${story_id}/posts`)
+	)
+	const fetch_story = makeFetch(HTTP, 'fetch-story',
+		story_id$.map(story_id => `/api/stories/${story_id}`)
+	)
+	const api_errors = apiErrors(fetch_posts, fetch_story, save_post)
+
+	return {
+		save_post,
+		fetch_posts,
+		fetch_story,
+		api_errors,
+	}
 }
 
 export default Story

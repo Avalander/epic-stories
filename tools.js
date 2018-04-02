@@ -29,7 +29,7 @@ const show = ([ name='users' ]) => openConnection()
 		Promise.resolve(client),
 	]))
 	.then(([ items, client ]) => {
-		console.log(items)
+		console.log(JSON.stringify(items, null, 4))
 		client.close()
 	})
 

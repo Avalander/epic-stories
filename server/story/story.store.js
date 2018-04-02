@@ -31,10 +31,16 @@ const makeSaveChapter = database => (id, chapter) => database()
 	]))
 	.then(([ db, story ]) => db.collection('stories')
 		.save(Object.assign({}, story, {
-			chapters: [ ...(story.chapters || []), chapter ]
+			chapters: concatChapter(chapter, story.chapters)
 		}))
 	)
 	
+const concatChapter = (chapter, chapters=[]) => [
+	...chapters,
+	Object.assign({}, chapter, {
+		id: chapters.length + 1,
+	})
+]
 
 module.exports = {
 	makeCreateStory,

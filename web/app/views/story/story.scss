@@ -10,10 +10,6 @@ h1.title {
 		border-bottom: 1px solid $color-background-light;
 	}
 
-	.post:first-child, .meta-group:first-child {
-		border-top: 1px solid darken($color-text, 20%);
-	}
-
 	.post {
 		display: flex;
 		flex-direction: row;

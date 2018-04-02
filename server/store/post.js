@@ -15,6 +15,13 @@ const makeFindStoryPosts = database => story_id => database()
 		.toArray()
 	)
 
+const makeFindChapterPosts = database => (story_id, chapter_id) => database()
+	.then(db => db.collection('posts')
+		.find({ story_id, chapter_id })
+		.sort({ created_on: 1 })
+		.toArray()
+	)
+
 const makeFindLatestStoryPost = database => story_id => database()
 	.then(db => db.collection('posts')
 		.find({ story_id })
@@ -27,5 +34,6 @@ const makeFindLatestStoryPost = database => story_id => database()
 module.exports = {
 	makeFindLatestStoryPost,
 	makeFindStoryPosts,
+	makeFindChapterPosts,
 	makeSavePost,
 }

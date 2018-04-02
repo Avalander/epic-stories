@@ -1,10 +1,24 @@
 @import 'variables';
 
-.alert-error {
-	background: $color-error;
+@mixin alert {
 	padding: 5px 20px;
 	margin: 5px;
 	width: auto;
+	animation: fade-in 0.2s;
+}
+
+@keyframes fade-in {
+	from { opacity: 0; }
+}
+
+.alert-error {
+	background: $color-error;
+	@include alert;
+}
+
+.alert-success {
+	background: $color-success;
+	@include alert;
 }
 
 .alert-container {

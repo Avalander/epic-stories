@@ -1,6 +1,7 @@
 const path = require('path')
 
 const express = require('express')
+const { Router } = express
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const fallback = require('express-history-api-fallback')
@@ -11,6 +12,7 @@ const {
 	makeCreateStory,
 	makeFindStoriesByGroups,
 	makeFindStory,
+	makeSaveChapter,
 } = require('store/story')
 const {
 	makeFindStoryCharacters,
@@ -21,11 +23,14 @@ const {
 const {
 	makeFindLatestStoryPost,
 	makeFindStoryPosts,
+	makeFindChapterPosts,
 	makeSavePost,
 } = require('store/post')
 
 const makeApi = require('api')
 const { makeSignIn, makeAuthorise } = require('api/auth')
+
+const makeStoryApi = require('story')
 
 const errorHandler = require('error-handler')
 
@@ -39,12 +44,14 @@ const registerUser = makeRegisterUser(database)
 const createStory = makeCreateStory(database)
 const findStoriesByGroups = makeFindStoriesByGroups(database)
 const findStory = makeFindStory(database)
+const saveChapter = makeSaveChapter(database)
 const findStoryCharacters = makeFindStoryCharacters(database)
 const findUserCharacters = makeFindUserCharacters(database)
 const findCharacter = makeFindCharacter(database)
 const saveCharacter = makeSaveCharacter(database)
 const findLatestStoryPost = makeFindLatestStoryPost(database)
 const findStoryPosts = makeFindStoryPosts(database)
+const findChapterPosts = makeFindChapterPosts(database)
 const savePost = makeSavePost(database)
 
 const signIn = makeSignIn({ SECRET, findUser })
@@ -59,7 +66,10 @@ app.use(bodyParser.json())
 app.use('/api', makeApi({
 	Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory,
 	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
+	saveChapter, findChapterPosts,
 }))
+
+app.use('/api', makeStoryApi({ Router, authorise, database }))
 
 const static_root = path.join(__dirname, '..', 'static')
 app.use(express.static(static_root, { extensions: [ 'html' ]}))

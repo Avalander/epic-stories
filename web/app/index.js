@@ -30,8 +30,9 @@ import Sidebar from 'app/components/sidebar'
 
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
-import MyCharacter from 'app/views/my-character'
-import StoryCharacters from 'app/views/story-characters'
+import MyCharacter from 'app/views/story/my-character'
+import StoryCharacters from 'app/views/story/story-characters'
+import StoryChapters from 'app/views/story/story-chapters'
 import Welcome from 'app/views/welcome'
 
 
@@ -56,6 +57,8 @@ const app = sources => {
 		'/stories/:story_id': story_id => sources => Story({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/characters': story_id => sources => StoryCharacters({ story_id$: xs.of(story_id), ...sources }),
+		'/stories/:story_id/chapters': story_id => sources => StoryChapters({ story_id$: xs.of(story_id), ...sources }),
+		'/stories/:story_id/chapters/:chapter_id/posts': (story_id, chapter_id) => sources => Story({ ...sources, story_id$: xs.of(story_id), chapter_id$: xs.of(chapter_id) }),
 		'/welcome': Welcome,
 	})
 

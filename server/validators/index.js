@@ -20,10 +20,15 @@ module.exports.validateCharacter = makeValidator(
 
 module.exports.validatePost = makeValidator(
 	[ 'text', 'story_id', 'author', 'created_on' ],
-	[ '_id', 'type', 'edited_on' ]
+	[ '_id', 'type', 'edited_on', 'chapter_id' ]
 )
 
 module.exports.validateStory = makeValidator(
 	[ 'title', 'group' ],
-	[ '_id', 'description' ]
+	[ '_id', 'description', 'chapters' ]
+)
+
+module.exports.validateChapter = makeValidator(
+	[ 'title' ],
+	[ 'id' ]
 )

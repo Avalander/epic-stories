@@ -1,0 +1,20 @@
+.chapter-container {
+	display: flex;
+	flex-direction: column;
+
+	.chapter {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 10px 20px;
+
+		.chapter-title {
+			text-decoration: none;
+			cursor: pointer;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}

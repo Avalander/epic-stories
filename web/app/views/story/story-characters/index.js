@@ -15,6 +15,8 @@ import { makeFetch } from 'app/http'
 import { makeReducer } from 'app/reducer'
 import { renderErrors } from 'app/render'
 
+import StoryHeader from '../header'
+
 
 const charactersReducer = makeReducer({
 	fetch: (prev, characters) => characters,
@@ -29,6 +31,11 @@ const StoryCharacters = ({ DOM, HTTP, story_id$}) => {
 		fetch_story.error$,
 		fetch_characters.error$,
 	)
+	.startWith([])
+
+	const story$ = fetch_story.response$
+
+	const story_header = StoryHeader({ DOM, story$, active$: xs.of('characters') })
 
 	const characters_response$ = fetch_characters.response$
 		.map(data => ({ type: 'fetch', data }))
@@ -43,22 +50,24 @@ const StoryCharacters = ({ DOM, HTTP, story_id$}) => {
 
 	return {
 		DOM: view(
-			fetch_story.response$,
+			story_header.DOM,
+			story$,
 			characters$,
-			errors$.startWith([]),
+			errors$,
 		),
 		HTTP: xs.merge(
 			fetch_characters.request$,
 			fetch_story.request$,
 		),
+		router: story_header.router,
 	}
 }
 
-const view = (story$, characters$, errors$) => xs.combine(story$, characters$, errors$)
-	.startWith([{}, [], []])
-	.map(([ story, characters, errors ]) =>
+const view = (story_header$, story$, characters$, errors$) => xs.combine(story_header$, story$, characters$, errors$)
+	.startWith([null, {}, [], []])
+	.map(([ story_header, story, characters, errors ]) =>
 		div('.content', [
-			h1(`${story.title} characters`),
+			story_header,
 			renderErrors(errors),
 			div(characters.map(renderCharacter)),
 		])
