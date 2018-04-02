@@ -14,7 +14,7 @@ module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findSt
 		})))
 		.then(stories => Promise.all(
 			stories.map(x => findLatestStoryPost(x._id.toString())
-				.then(({ author, created_on }) => Object.assign({}, x, { _latest: { author, created_on }}))
+				.then(({ author, created_on, chapter_id }) => Object.assign({}, x, { _latest: { author, created_on, chapter_id }}))
 			)
 		))
 		.then(stories => res.json(Result.ok(stories)))

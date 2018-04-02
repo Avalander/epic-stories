@@ -66,8 +66,10 @@ const displayStories = stories => stories.map(({ title, _id, is_playing, _latest
 		: button('.btn.join', { dataset: { href: `/stories/${_id}/my-character` }}, 'Join'),
 ]))
 
-const latestPost = ({ _id, author, created_on }) => created_on
-	? a('.link-to-latest', { dataset: { href: `/stories/${_id}` }}, `Latest post on ${parseDate(new Date(created_on))} by ${author}`)
+const latestPost = ({ _id, author, created_on, chapter_id }) => created_on
+	? a('.link-to-latest', { dataset: {
+		href: chapter_id ? `/stories/${_id}/chapters/${chapter_id}/posts` : `/stories/${_id}`
+	}}, `Latest post on ${parseDate(new Date(created_on))} by ${author}`)
 	: null
 
 const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, errors$, create_new_story$)
