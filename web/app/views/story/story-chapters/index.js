@@ -34,7 +34,7 @@ export default ({ DOM, HTTP, story_id$ }) => {
 	const story$ = fetch_story.response$
 	
 	const story_header = StoryHeader({ DOM, story$, active$: xs.of('chapters') })
-	const new_chapter = CreateNewChapter({ DOM, story$ })
+	const new_chapter = CreateNewChapter({ DOM, story$, clear$: save_chapter.response$ })
 
 	const request_errors$ = xs.merge(
 		fetch_story.error$,
@@ -76,8 +76,8 @@ const renderHeader = ({ title }) =>
 const renderChapters = ({ chapters=[] }) =>
 	div('.chapter-container.mb-10', chapters.map(renderChapter))
 
-const renderChapter = ({ title }) =>
+const renderChapter = ({ id, title }) =>
 	div('.chapter', [
-		a('.chapter-title', title),
-		a('Last post'),
+		a('.chapter-title', `${id}. ${title}`),
+		//a('Last post'),
 	])

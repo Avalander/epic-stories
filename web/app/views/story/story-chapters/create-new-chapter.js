@@ -11,16 +11,17 @@ import isolate from '@cycle/isolate'
 import { renderFormGroup } from 'app/render'
 
 
-export default sources => isolate(({ DOM, story$ }) => {
+export default sources => isolate(({ DOM, story$, clear$ }) => {
 	const open_click$ = DOM.select('[data-action="open"]').events('click')
 		.mapTo(true)
 	const close_click$ = DOM.select('[data-action="close"]').events('click')
 		.mapTo(false)
-	const open$ = xs.merge(open_click$, close_click$)
+	const open$ = xs.merge(open_click$, close_click$, clear$.mapTo(false))
 		.startWith(false)
 	
-	const title$ = DOM.select('input').events('input')
+	const input$ = DOM.select('input').events('input')
 		.map(ev => ev.target.value)
+	const title$ = xs.merge(input$, clear$.mapTo(''))
 		.startWith('')
 	
 	const save_click$ = DOM.select('[data-action="save"]').events('click')
