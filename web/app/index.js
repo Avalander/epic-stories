@@ -58,6 +58,7 @@ const app = sources => {
 		'/stories/:story_id/my-character': story_id => sources => MyCharacter({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/characters': story_id => sources => StoryCharacters({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/chapters': story_id => sources => StoryChapters({ story_id$: xs.of(story_id), ...sources }),
+		'/stories/:story_id/chapters/:chapter_id/posts': (story_id, chapter_id) => sources => Story({ ...sources, story_id$: xs.of(story_id), chapter_id$: xs.of(chapter_id) }),
 		'/welcome': Welcome,
 	})
 

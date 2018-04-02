@@ -23,6 +23,7 @@ const {
 const {
 	makeFindLatestStoryPost,
 	makeFindStoryPosts,
+	makeFindChapterPosts,
 	makeSavePost,
 } = require('store/post')
 
@@ -50,6 +51,7 @@ const findCharacter = makeFindCharacter(database)
 const saveCharacter = makeSaveCharacter(database)
 const findLatestStoryPost = makeFindLatestStoryPost(database)
 const findStoryPosts = makeFindStoryPosts(database)
+const findChapterPosts = makeFindChapterPosts(database)
 const savePost = makeSavePost(database)
 
 const signIn = makeSignIn({ SECRET, findUser })
@@ -64,7 +66,7 @@ app.use(bodyParser.json())
 app.use('/api', makeApi({
 	Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory,
 	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
-	saveChapter,
+	saveChapter, findChapterPosts,
 }))
 
 app.use('/api', makeStoryApi({ Router, authorise, database }))

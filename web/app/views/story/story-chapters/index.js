@@ -1,6 +1,7 @@
 import './story-chapters.scss'
 
 import xs from 'xstream'
+import sampleCombine from 'xstream/extra/sampleCombine'
 
 import {
 	a,
@@ -23,6 +24,11 @@ import CreateNewChapter from './create-new-chapter'
 
 
 export default ({ DOM, HTTP, story_id$ }) => {
+	const link_click$ = DOM.select('[data-id]').events('click')
+		.map(ev => ev.target.dataset.id)
+	const route$ = link_click$.compose(sampleCombine(story_id$))
+		.map(([ chapter_id, story_id ]) => `/stories/${story_id}/chapters/${chapter_id}/posts`)
+
 	const save_chapter = makePost(HTTP, 'save-chapter',
 		story_id$.map(story_id => `/api/stories/${story_id}/chapters`)
 	)
@@ -54,7 +60,7 @@ export default ({ DOM, HTTP, story_id$ }) => {
 	return {
 		HTTP: request$,
 		DOM: view(story$, errors$, story_header.DOM, new_chapter.DOM),
-		router: story_header.router,
+		router: xs.merge(story_header.router, route$),
 	}
 }
 
@@ -78,6 +84,6 @@ const renderChapters = ({ chapters=[] }) =>
 
 const renderChapter = ({ id, title }) =>
 	div('.chapter', [
-		a('.chapter-title', `${id}. ${title}`),
+		a('.chapter-title', { dataset: { id: `${id}` }}, `${id}. ${title}`),
 		//a('Last post'),
 	])

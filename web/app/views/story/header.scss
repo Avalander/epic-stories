@@ -10,10 +10,17 @@ header.story-header {
 	h1 {
 		font-family: 'Caveat';
 		font-size: 48px;
-		margin: 10px 0 30px;
+		margin: 10px 0;
+	}
+
+	h2 {
+		font-family: 'Caveat';
+		font-size: 28px;
+		margin: 10px 0;
 	}
 
 	.tab-container {
+		margin-top: 20px;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-around;
