@@ -56,14 +56,12 @@ const sortByLatestPost = stories => {
 	return result
 }
 
-const displayStories = stories => stories.map(({ title, _id, is_playing, _latest }) => div('.panel.story', [
+const renderStories = stories => stories.map(({ title, _id, is_playing, _latest }) => div('.panel.story', [
 	div('.story-header', [
 		h4(title),
 		latestPost({ ..._latest, _id }),
 	]),
-	is_playing
-		? button('.btn.join', { dataset: { href: `/stories/${_id}` }}, 'View')
-		: button('.btn.join', { dataset: { href: `/stories/${_id}/my-character` }}, 'Join'),
+	button('.btn.join', { dataset: { href: `/stories/${_id}/chapters` }}, 'View'),
 ]))
 
 const latestPost = ({ _id, author, created_on, chapter_id }) => created_on
@@ -76,7 +74,7 @@ const view = (stories$, errors$, create_new_story$) => xs.combine(stories$, erro
 	.map(([stories, errors, new_story]) =>
 		div('.content', [
 			renderErrors(errors),
-			...displayStories(stories),
+			...renderStories(stories),
 			new_story,
 		])
 	)
