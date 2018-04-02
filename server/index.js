@@ -1,6 +1,7 @@
 const path = require('path')
 
 const express = require('express')
+const { Router } = express
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const fallback = require('express-history-api-fallback')
@@ -27,6 +28,8 @@ const {
 
 const makeApi = require('api')
 const { makeSignIn, makeAuthorise } = require('api/auth')
+
+const makeStoryApi = require('story')
 
 const errorHandler = require('error-handler')
 
@@ -63,6 +66,8 @@ app.use('/api', makeApi({
 	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
 	saveChapter,
 }))
+
+app.use('/api', makeStoryApi({ Router, authorise, database }))
 
 const static_root = path.join(__dirname, '..', 'static')
 app.use(express.static(static_root, { extensions: [ 'html' ]}))

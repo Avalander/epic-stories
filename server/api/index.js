@@ -45,6 +45,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		groups: req.bearer.groups,
 	})))
 
+	/*
 	api.get('/stories', authorise, (req, res, next) =>
 		Promise.all([
 			findStoriesByGroups(req.bearer.groups),
@@ -66,6 +67,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		.then(story => res.json(Result.ok(story)))
 		.catch(next)
 	)
+	*/
 
 	api.get('/stories/:story_id/characters', authorise, (req, res, next) => findStoryCharacters(req.params.story_id)
 		.then(characters => res.json(Result.ok(characters)))
@@ -103,6 +105,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		.catch(e => res.json(Result.OTHER(e)))
 	)
 
+	/*
 	api.post('/stories/:story_id/chapters', authorise, (req, res, next) =>
 		Promise.all([
 			req.params.story_id,
@@ -120,6 +123,7 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 			.then(({ insertedId }) => res.json(Result.ok({ insertedId })))
 			.catch(e => res.json(Result.OTHER(e)))
 	)
+	*/
 
 	return api
 }
