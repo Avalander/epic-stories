@@ -17,7 +17,7 @@ import {
 	makeFetch,
 	makePost,
 } from 'app/http'
-import { renderErrors } from 'app/render'
+import { renderErrors, renderAlerts } from 'app/render'
 
 import StoryHeader from '../header'
 
@@ -42,8 +42,6 @@ const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
 		)
 		.fold((prev, x) => ({ ...prev, ...x }), {})
 	
-	const cancel$ = DOM.select('[data-action="cancel"]').events('click')
-		.mapTo({ type: 'goBack' })
 	const save$ = DOM.select('[data-action="save"]').events('click')
 
 	const save_character_request$ = save_character.makeRequest(
@@ -52,18 +50,20 @@ const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
 	)
 	const request$ = xs.merge(fetch_character.request$, save_character_request$, fetch_story.request$)
 
-	const errors$ = xs.merge(
-		save_character.error$.map(error => [ error ]),
-		save$.mapTo([])
-	)
-	.startWith([])
 	const success$ = save_character.response$.compose(sampleCombine(story_id$))
 		.map(([ _, story_id ]) => `/stories/${story_id}`)
+	
+	const messages$ = xs.merge(
+		save_character.error$.map(error => [{ ...error, type: 'error' }]),
+		save$.mapTo([]),
+		success$.mapTo([{ message: 'Character saved successfylly.', type: 'success' }])
+	)
+	.startWith([])
 
 	return {
-		DOM: view(story_header.DOM, character_data$, errors$),
+		DOM: view(story_header.DOM, character_data$, messages$),
 		HTTP: request$,
-		router: xs.merge(cancel$, success$, story_header.router),
+		router: story_header.router,
 	}
 }
 
@@ -73,11 +73,11 @@ const formGroup = (value, name, display_text, description) => div('.form-group',
 	input({ attrs: { name, id: name, value }}),
 ])
 
-const view = (story_header$, input$, errors$) => xs.combine(story_header$, input$, errors$)
-	.map(([ story_header, state, errors ]) =>
+const view = (story_header$, input$, messages$) => xs.combine(story_header$, input$, messages$)
+	.map(([ story_header, state, messages ]) =>
 		div('.content', [
 			story_header,
-			renderErrors(errors),
+			renderAlerts(messages),
 			formGroup(state.name, 'name', 'Name'),
 			formGroup(state.high_concept, 'high_concept', 'Character Concept',
 				'A phrase that sums up what your character is about. Who they are and what they do.'),
@@ -88,7 +88,6 @@ const view = (story_header$, input$, errors$) => xs.combine(story_header$, input
 				textarea({ props: { name: 'description', id: 'description', value: state.description }})
 			]),
 			div('.button-container', [
-				button('.btn', { dataset: { action: 'cancel' }}, 'Cancel'),
 				button('.btn.primary', { dataset: { action: 'save' }}, 'Save'),
 			])
 		])

@@ -6,6 +6,9 @@ import {
 } from '@cycle/dom'
 
 
+export const renderAlerts = messages =>
+	div('.alert-container', messages.map(({ message, type }) => div(`.alert-${type}`, message)))
+
 export const renderErrors = errors =>
 	div('.alert-container', errors.map(({ message }) => div('.alert-error', message)))
 
