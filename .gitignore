@@ -4,3 +4,4 @@ static
 deploy.sh
 deploy_local.sh
 *.zip
+data/

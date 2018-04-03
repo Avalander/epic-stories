@@ -19,7 +19,7 @@ export default (post, user) => post.type === 'meta-group'
 const renderRegularPost = ({ author, text, created_on, type, _id }, { username }) =>
 	div('.post', { class: { meta: type === 'meta' }}, [
 		div('.post-header', [
-			div(img('.avatar', { props: { src: pinkie }})),
+			div(img('.avatar', { props: { src: `/api/avatars/${author}` }})),
 		]),
 		div('.post-body', [
 			div('.post-body-header', [
@@ -48,12 +48,6 @@ const renderMetaPost = ({ username }) => ({ author, text, created_on, _id }) =>
 			]),
 		]),
 		div('.post-body', [
-			/*
-			div('.post-body-header', [
-				span('.post-date.mr-20', created_on),
-				renderPostButtons({ author, username, _id })
-			]),
-			*/
 			div('.post-text.text', textToVdom(text)),
 		]),
 	])

@@ -36,7 +36,7 @@ const errorHandler = require('error-handler')
 
 require('dotenv').config()
 
-const { SECRET, DB_URL, DB_NAME, PORT } = process.env
+const { SECRET, DB_URL, DB_NAME, PORT, IMAGES_FOLDER } = process.env
 
 const database = makeDatabase({ DB_URL, DB_NAME })
 const findUser = makeFindUser(database)
@@ -64,6 +64,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.use('/api', makeApi({
+	IMAGES_FOLDER,
 	Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory,
 	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
 	saveChapter, findChapterPosts,

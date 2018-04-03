@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const { Result, error_codes } = require('result')
 
 const {
@@ -19,7 +21,7 @@ const makePost = (payload, { user }, { story_id, chapter_id }) => Object.assign(
 	('_id' in payload ? { edited_on: Date.now() } : {}),
 )
 
-module.exports = ({ Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost, saveChapter, findChapterPosts }) => {
+module.exports = ({ IMAGES_FOLDER, Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost, saveChapter, findChapterPosts }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -98,6 +100,14 @@ module.exports = ({ Router, signIn, authorise, registerUser, createStory, findS
 		.then(savePost)
 		.then(x => res.json(Result.ok(x)))
 		.catch(e => res.json(Result.OTHER(e)))
+	)
+
+	api.get('/avatars/:username', (req, res, next) =>
+		Promise.resolve(`${IMAGES_FOLDER}${req.params.username}.png`)
+			.then(filepath => fs.existsSync(filepath)
+				? filepath
+				: `${IMAGES_FOLDER}default.png`)
+			.then(filepath => res.sendFile(filepath))
 	)
 
 	return api
