@@ -74,7 +74,7 @@ const app = sources => {
 	
 	invalid_credentials$
 		.addListener({
-			next: () => window.location.href = '/login.html'
+			next: () => window.location.href = `/login.html?to=${location.pathname}`
 		})
 	
 	const current_story$ = sources.HTTP.select('fetch-story')

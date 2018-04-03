@@ -25,6 +25,7 @@ import renderPost from './render-post'
 
 const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
 	const user$ = IDB.store('user-cache').only('current_user').get()
+		.filter(x => x !== undefined)
 
 	const {
 		save_post,
