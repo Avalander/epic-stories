@@ -62,7 +62,7 @@ const view = (state$, stories$, current_user$) => xs.combine(state$, stories$, c
 			div([
 				button('.dismiss', { dataset: { hide: true }}, i('.fa.fa-arrow-left')),
 				div('.sidebar-header', [
-					img('.avatar', { props: { src: pinkie }}),
+					img('.avatar', { props: { src: `/api/avatars/${user}` }}),
 					h3(user),
 				]),
 				ul('.components', [
