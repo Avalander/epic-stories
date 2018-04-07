@@ -51,7 +51,7 @@ const Sidebar = sources => isolate(({ DOM, IDB, open$, current_story$ }) => {
 })(sources)
 
 const renderStory = ({ title, _id }) => ([
-	li(a({ dataset: { hide: true, href: `/stories/${_id}`}}, title)),
+	li(a({ dataset: { hide: true, href: `/stories/${_id}/chapters`}}, title)),
 	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/chapters`}}, 'Chapters')),
 	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/characters`}}, 'Characters')),
 	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/my-character`}}, 'My Character')),

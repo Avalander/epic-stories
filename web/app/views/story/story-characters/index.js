@@ -41,7 +41,7 @@ const StoryCharacters = ({ DOM, HTTP, story_id$}) => {
 		.map(data => ({ type: 'fetch', data }))
 	
 	const toggle_character$ = DOM.select('[data-toggle]').events('click')
-		.map(ev => ev.target.dataset.toggle)
+		.map(ev => ev.currentTarget.dataset.toggle)
 		.map(character_id => ({ type: 'toggle', data: character_id }))
 	
 	const characters$ = xs.merge(characters_response$, toggle_character$)
@@ -75,11 +75,10 @@ const view = (story_header$, story$, characters$, errors$) => xs.combine(story_h
 
 const renderCharacter = ({ name, username, high_concept, trouble, description='', _id, _expand }) =>
 	div('.character-panel', [
-		div('.character-header', [
+		div('.character-header.pointer', { dataset: { toggle: _id }}, [
 			h4(name),
 			i('.fa.tap-icon', {
 				class: { 'fa-caret-down': !_expand, 'fa-caret-up': _expand },
-				dataset: { toggle: _id },
 			}),
 		]),
 		div('.character-body', { class: { hide: !_expand }}, [
