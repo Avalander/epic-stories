@@ -21,31 +21,8 @@ const makePost = (payload, { user }, { story_id, chapter_id }) => Object.assign(
 	('_id' in payload ? { edited_on: Date.now() } : {}),
 )
 
-module.exports = ({ IMAGES_FOLDER, Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory, findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost, saveChapter, findChapterPosts }) => {
+module.exports = ({ Router, authorise, findStoryCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findChapterPosts }) => {
 	const api = Router()
-
-	api.post('/register/:token', (req, res, next) => {
-		const { token } = req.params
-		const { username, password } = req.body
-		if (!username || !password || !token) return next(new Error('Invalid request.'))
-		registerUser(username, password, token)
-			.then(() => signIn(username, password))
-			.then(loginUser(req, res))
-			.catch(next)
-	})
-
-	api.post('/login', (req, res, next) => {
-		const { username, password } = req.body
-		if (!password) return next(new Error('User not found.'))
-		signIn(username, password)
-			.then(loginUser(req, res))
-			.catch(next)
-	})
-
-	api.get('/user', authorise, (req, res, next) => res.json(Result.ok({
-		username: req.bearer.user,
-		groups: req.bearer.groups,
-	})))
 
 	api.get('/stories/:story_id/characters', authorise, (req, res, next) => findStoryCharacters(req.params.story_id)
 		.then(characters => res.json(Result.ok(characters)))
@@ -80,7 +57,10 @@ module.exports = ({ IMAGES_FOLDER, Router, signIn, authorise, registerUser, cre
 		.then(validatePost)
 		.then(savePost)
 		.then(x => res.json(Result.ok(x)))
-		.catch(e => res.json(Result.OTHER(e)))
+		.catch(e => {
+			console.error(e)
+			res.json(Result.OTHER(e))
+		})
 	)
 
 	api.get('/stories/:story_id/chapters/:chapter_id/posts', authorise, (req, res, next) =>
@@ -99,15 +79,10 @@ module.exports = ({ IMAGES_FOLDER, Router, signIn, authorise, registerUser, cre
 		.then(validatePost)
 		.then(savePost)
 		.then(x => res.json(Result.ok(x)))
-		.catch(e => res.json(Result.OTHER(e)))
-	)
-
-	api.get('/avatars/:username', (req, res, next) =>
-		Promise.resolve(`${IMAGES_FOLDER}${req.params.username}.png`)
-			.then(filepath => fs.existsSync(filepath)
-				? filepath
-				: `${IMAGES_FOLDER}default.png`)
-			.then(filepath => res.sendFile(filepath))
+		.catch(e => {
+			console.error(e)
+			res.json(Result.OTHER(e))
+		})
 	)
 
 	return api

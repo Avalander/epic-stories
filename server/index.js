@@ -7,13 +7,6 @@ const cookieParser = require('cookie-parser')
 const fallback = require('express-history-api-fallback')
 
 const makeDatabase = require('store/database')
-const { makeFindUser, makeRegisterUser } = require('store/user')
-const {
-	makeCreateStory,
-	makeFindStoriesByGroups,
-	makeFindStory,
-	makeSaveChapter,
-} = require('store/story')
 const {
 	makeFindStoryCharacters,
 	makeFindUserCharacters,
@@ -21,16 +14,16 @@ const {
 	makeSaveCharacter,
 } = require('store/character')
 const {
-	makeFindLatestStoryPost,
 	makeFindStoryPosts,
 	makeFindChapterPosts,
 	makeSavePost,
 } = require('store/post')
 
 const makeApi = require('api')
-const { makeSignIn, makeAuthorise } = require('api/auth')
+const { makeAuthorise } = require('api/auth')
 
 const makeStoryApi = require('story')
+const makeUserApi = require('user')
 
 const errorHandler = require('error-handler')
 
@@ -39,22 +32,13 @@ require('dotenv').config()
 const { SECRET, DB_URL, DB_NAME, PORT, IMAGES_FOLDER } = process.env
 
 const database = makeDatabase({ DB_URL, DB_NAME })
-const findUser = makeFindUser(database)
-const registerUser = makeRegisterUser(database)
-const createStory = makeCreateStory(database)
-const findStoriesByGroups = makeFindStoriesByGroups(database)
-const findStory = makeFindStory(database)
-const saveChapter = makeSaveChapter(database)
 const findStoryCharacters = makeFindStoryCharacters(database)
-const findUserCharacters = makeFindUserCharacters(database)
 const findCharacter = makeFindCharacter(database)
 const saveCharacter = makeSaveCharacter(database)
-const findLatestStoryPost = makeFindLatestStoryPost(database)
 const findStoryPosts = makeFindStoryPosts(database)
 const findChapterPosts = makeFindChapterPosts(database)
 const savePost = makeSavePost(database)
 
-const signIn = makeSignIn({ SECRET, findUser })
 const authorise = makeAuthorise({ SECRET })
 
 const app = express()
@@ -64,21 +48,34 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.use('/api', makeApi({
-	IMAGES_FOLDER,
-	Router: express.Router, signIn, authorise, registerUser, createStory, findStoriesByGroups, findStory,
-	findStoryCharacters, findUserCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findLatestStoryPost,
-	saveChapter, findChapterPosts,
+	Router: express.Router, 
+	authorise,
+	findStoryCharacters,
+	findCharacter,
+	saveCharacter,
+	findStoryPosts,
+	savePost,
+	findChapterPosts,
 }))
 
-app.use('/api', makeStoryApi({ Router, authorise, database }))
+console.log(`Connecting to database at ${DB_URL}...`)
+database()
+	.then(db => {
+		app.use('/api', makeStoryApi({ Router, authorise, database, db }))
+		app.use('/api', makeUserApi({ SECRET, IMAGES_FOLDER, Router, authorise, db }))
 
-const static_root = path.join(__dirname, '..', 'static')
-app.use(express.static(static_root, { extensions: [ 'html' ]}))
-app.use(fallback('index.html', { root: static_root }))
+		const static_root = path.join(__dirname, '..', 'static')
+		app.use(express.static(static_root, { extensions: [ 'html' ]}))
+		app.use(fallback('index.html', { root: static_root }))
 
-app.use(errorHandler)
+		app.use(errorHandler)
 
-app.listen(PORT, () => console.log(`Server started listening on port ${PORT}.`))
+		app.listen(PORT, () => console.log(`Server started listening on port ${PORT}.`))
+	})
+	.catch(err => {
+		console.error(err)
+		process.exit(1)
+	})
 
 const exitHandler = () => database.close()
 	.then(() => {

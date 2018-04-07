@@ -21,15 +21,15 @@ const {
 const makeStoryApi = require('./story.api')
 
 
-module.exports = ({ Router, authorise, database }) => makeStoryApi({
+module.exports = ({ Router, authorise, database, db }) => makeStoryApi({
 	Router,
 	authorise,
 	validateStory,
 	validateChapter,
-	createStory: makeCreateStory(database),
-	findStoriesByGroups: makeFindStoriesByGroups(database),
-	findStory: makeFindStory(database),
-	saveChapter: makeSaveChapter(database),
+	createStory: makeCreateStory(db),
+	findStoriesByGroups: makeFindStoriesByGroups(db),
+	findStory: makeFindStory(db),
+	saveChapter: makeSaveChapter(db),
 	findUserCharacters: makeFindUserCharacters(database),
 	findLatestStoryPost: makeFindLatestStoryPost(database),
 })
