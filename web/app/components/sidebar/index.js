@@ -52,8 +52,9 @@ const Sidebar = sources => isolate(({ DOM, IDB, open$, current_story$ }) => {
 
 const renderStory = ({ title, _id }) => ([
 	li(a({ dataset: { hide: true, href: `/stories/${_id}`}}, title)),
-	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/my-character`}}, 'My Character')),
+	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/chapters`}}, 'Chapters')),
 	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/characters`}}, 'Characters')),
+	li(a('.subcomponent', { dataset: { hide: true, href: `/stories/${_id}/my-character`}}, 'My Character')),
 ])
 
 const view = (state$, stories$, current_user$) => xs.combine(state$, stories$, current_user$)

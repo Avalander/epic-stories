@@ -22,7 +22,7 @@ export default sources => isolate(({ DOM }) => {
 
 const view = () => xs.of(
 	header('.toolbar.fixed', [
-		i('.fa.fa-bars.pointer', { dataset: { show: 'sidebar' }}),
+		i('.fa.fa-bars.pointer.toolbar-icon', { dataset: { show: 'sidebar' }}),
 		a('.brand.pointer', { dataset: { href: '/stories' }}, 'Epic Stories'),
 	])
 )
