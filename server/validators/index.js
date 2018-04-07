@@ -34,7 +34,7 @@ module.exports.validateCharacter = makeValidator(
 	[ '_id', 'high_concept', 'trouble', 'description']
 )
 
-module.exports.validatePost = makePromiseValidator(
+module.exports.validatePost = makeValidator(
 	[ 'text', 'story_id', 'author', 'created_on' ],
 	[ '_id', 'type', 'edited_on', 'chapter_id' ]
 )

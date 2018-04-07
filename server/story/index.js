@@ -12,16 +12,16 @@ const {
 
 const {
 	makeFindUserCharacters,
-} = require('store/character')
+} = require('./character.store')
 
 const {
 	makeFindLatestStoryPost,
-} = require('store/post')
+} = require('./post.store')
 
 const makeStoryApi = require('./story.api')
 
 
-module.exports = ({ Router, authorise, database, db }) => makeStoryApi({
+module.exports = ({ Router, authorise, db }) => makeStoryApi({
 	Router,
 	authorise,
 	validateStory,
@@ -30,6 +30,6 @@ module.exports = ({ Router, authorise, database, db }) => makeStoryApi({
 	findStoriesByGroups: makeFindStoriesByGroups(db),
 	findStory: makeFindStory(db),
 	saveChapter: makeSaveChapter(db),
-	findUserCharacters: makeFindUserCharacters(database),
-	findLatestStoryPost: makeFindLatestStoryPost(database),
+	findUserCharacters: makeFindUserCharacters(db),
+	findLatestStoryPost: makeFindLatestStoryPost(db),
 })

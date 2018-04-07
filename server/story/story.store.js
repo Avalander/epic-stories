@@ -4,25 +4,13 @@ const ObjectId = require('mongodb').ObjectId
 const { Result } = require('result')
 
 
-const internalError = error => {
-	console.error(error)
-	return Result.INTERNAL_ERROR(error.message)
-}
-
-const exists = value =>
-	Future((reject, resolve) =>
-		(value !== undefined && value !== null)
-			? resolve(value)
-			: reject())
-
-
-const makeFindStoriesByGroups = db => groups =>
+module.exports.makeFindStoriesByGroups = db => groups =>
 	Future.node(done =>
 		db.collection('stories').find({ group: { $in: groups }}).toArray(done)
 	)
 	.mapRej(internalError)
 
-const makeFindStory = db => id =>
+module.exports.makeFindStory = db => id =>
 	Future.node(done =>
 		db.collection('stories').findOne({ _id: ObjectId(id) }, done)
 	)
@@ -30,14 +18,14 @@ const makeFindStory = db => id =>
 	.chain(exists)
 	.mapRej(err => Result.NOT_FOUND(`Story '${id}' not found.`))
 
-const makeCreateStory = db => story =>
+module.exports.makeCreateStory = db => story =>
 	Future.node(done =>
 		db.collection('stories').insertOne(story, null, done)
 	)
 	.mapRej(internalError)
 
 
-const makeSaveChapter = db => (id, chapter) =>
+module.exports.makeSaveChapter = db => (id, chapter) =>
 	Future.node(done =>
 		db.collection('stories').findOne({ _id: ObjectId(id) }, done)
 	)
@@ -54,19 +42,14 @@ const concatChapter = (story, { title }) => {
 		chapters: [ ...chapters, { title, id: chapters.length + 1 }]
 	})
 }
-/*
-const concatChapter = (story, chapter) => ({
-	...story,
-	chapters: [
-		...(story.chapters || []),
-		{ ...chapter, id: (story.chapters || []).length + 1 }
-	]
-})
-*/
 
-module.exports = {
-	makeCreateStory,
-	makeFindStoriesByGroups,
-	makeFindStory,
-	makeSaveChapter,
+const internalError = error => {
+	console.error(error)
+	return Result.INTERNAL_ERROR(error.message)
 }
+
+const exists = value =>
+	Future((reject, resolve) =>
+		(value !== undefined && value !== null)
+			? resolve(value)
+			: reject())

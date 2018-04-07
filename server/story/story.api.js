@@ -9,13 +9,13 @@ module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findSt
 	api.get('/stories', authorise, (req, res, next) =>
 		Future.parallel(2, [
 			findStoriesByGroups(req.bearer.groups),
-			Future.tryP(() => findUserCharacters(req.bearer.user)),
+			findUserCharacters(req.bearer.user),
 		])
 		.map(([ stories, characters ]) => stories.map(s => Object.assign(s, {
 			is_playing: characters.some(c => c.story_id == s._id)
 		})))
 		.chain(stories => Future.parallel(Infinity,
-			stories.map(x => Future.tryP(() => findLatestStoryPost(x._id.toString()))
+			stories.map(x => findLatestStoryPost(x._id.toString())
 				.map(({ author, created_on, chapter_id }) => Object.assign({}, x, { _latest: { author, created_on, chapter_id }})
 			))
 		))
