@@ -12,24 +12,24 @@ const {
 
 const {
 	makeFindUserCharacters,
-} = require('store/character')
+} = require('./character.store')
 
 const {
 	makeFindLatestStoryPost,
-} = require('store/post')
+} = require('./post.store')
 
 const makeStoryApi = require('./story.api')
 
 
-module.exports = ({ Router, authorise, database }) => makeStoryApi({
+module.exports = ({ Router, authorise, db }) => makeStoryApi({
 	Router,
 	authorise,
 	validateStory,
 	validateChapter,
-	createStory: makeCreateStory(database),
-	findStoriesByGroups: makeFindStoriesByGroups(database),
-	findStory: makeFindStory(database),
-	saveChapter: makeSaveChapter(database),
-	findUserCharacters: makeFindUserCharacters(database),
-	findLatestStoryPost: makeFindLatestStoryPost(database),
+	createStory: makeCreateStory(db),
+	findStoriesByGroups: makeFindStoriesByGroups(db),
+	findStory: makeFindStory(db),
+	saveChapter: makeSaveChapter(db),
+	findUserCharacters: makeFindUserCharacters(db),
+	findLatestStoryPost: makeFindLatestStoryPost(db),
 })

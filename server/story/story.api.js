@@ -1,47 +1,49 @@
-const { Result, error_codes } = require('result')
+const Future = require('fluture')
+
+const { Result } = require('result')
 
 
 module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findStory, saveChapter, validateStory, validateChapter, findUserCharacters, findLatestStoryPost }) => {
 	const api = Router()
 
 	api.get('/stories', authorise, (req, res, next) =>
-		Promise.all([
+		Future.parallel(2, [
 			findStoriesByGroups(req.bearer.groups),
 			findUserCharacters(req.bearer.user),
 		])
-		.then(([ stories, characters ]) => stories.map(s => Object.assign(s, {
+		.map(([ stories, characters ]) => stories.map(s => Object.assign(s, {
 			is_playing: characters.some(c => c.story_id == s._id)
 		})))
-		.then(stories => Promise.all(
+		.chain(stories => Future.parallel(Infinity,
 			stories.map(x => findLatestStoryPost(x._id.toString())
-				.then(({ author, created_on, chapter_id }) => Object.assign({}, x, { _latest: { author, created_on, chapter_id }}))
-			)
+				.map(({ author, created_on, chapter_id }) => Object.assign({}, x, { _latest: { author, created_on, chapter_id }})
+			))
 		))
-		.then(stories => res.json(Result.ok(stories)))
-		.catch(e => res.json(Result.OTHER(e)))
+		.fork(
+			err => res.json(Result.OTHER(err)),
+			stories => res.json(Result.ok(stories))
+		)
 	)
 
 	api.post('/stories', authorise, (req, res, next) =>
-		Promise.resolve(Object.assign({}, req.body, { group: req.bearer.groups[0]}))
-			.then(validateStory)
-			.then(createStory)
-			.then(({ insertedId }) => res.json(Result.ok({ insertedId })))
-			.catch(e => res.json(Result.OTHER(e)))
+		Future.of(Object.assign({}, req.body, { group: req.bearer.groups[0]}))
+			.chain(validateStory)
+			.chain(createStory)
+			.fold(x => x, ({ insertedId }) => Result.ok({ insertedId }))
+			.value(x => res.json(x))
 	)
 
-	api.get('/stories/:id', authorise, (req, res, next) => findStory(req.params.id)
-		.then(story => res.json(Result.ok(story)))
-		.catch(next)
+	api.get('/stories/:id', authorise, (req, res, next) =>
+		findStory(req.params.id)
+			.fold(x => x, story => Result.ok(story))
+			.value(x => res.json(x))
 	)
 
 	api.post('/stories/:story_id/chapters', authorise, (req, res, next) =>
-		Promise.all([
-			req.params.story_id,
-			validateChapter(req.body),
-		])
-		.then(([ story_id, chapter ]) => saveChapter(story_id, chapter))
-		.then(x => res.json(Result.ok(x)))
-		.catch(e => res.json(Result.OTHER(e)))
+		validateChapter(req.body)
+			.chain(chapter => saveChapter(req.params.story_id, chapter))
+			.fold(x => x, result => Result.ok(result))
+			.value(x => res.json(x))
 	)
 
 	return api
