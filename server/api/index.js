@@ -24,24 +24,6 @@ const makePost = (payload, { user }, { story_id, chapter_id }) => Object.assign(
 module.exports = ({ Router, authorise, findStoryCharacters, findCharacter, saveCharacter, findStoryPosts, savePost, findChapterPosts }) => {
 	const api = Router()
 
-	api.get('/stories/:story_id/characters', authorise, (req, res, next) => findStoryCharacters(req.params.story_id)
-		.then(characters => res.json(Result.ok(characters)))
-	)
-
-	api.get('/stories/:story_id/my-character', authorise, (req, res, next) => findCharacter(req.params.story_id, req.bearer.user)
-		.then(character => character
-			? res.json(Result.ok(character))
-			: res.json(Result.NOT_FOUND(`${req.bearer.username} has no character in story ${req.params.story_id}.`))
-		)
-	)
-
-	api.post('/stories/:story_id/my-character', authorise, (req, res, next) => Promise.resolve(Object.assign({}, req.body, { username: req.bearer.user }))
-		.then(validateCharacter)
-		.then(saveCharacter)
-		.then(result => res.json(Result.ok(result)))
-		.catch(error => res.json(Result.INVALID_DATA(error)))
-	)
-
 	api.get('/stories/:story_id/posts', authorise, (req, res, next) => findStoryPosts(req.params.story_id)
 		.then(posts => res.json(Result.ok(posts)))
 		.catch(e => res.json(Result.OTHER(e)))

@@ -22,8 +22,9 @@ const {
 const makeApi = require('api')
 const { makeAuthorise } = require('api/auth')
 
-const makeStoryApi = require('story')
 const makeUserApi = require('user')
+const makeStoryApi = require('story')
+const makeCharacterApi = require('character')
 
 const errorHandler = require('error-handler')
 
@@ -63,6 +64,7 @@ database()
 	.then(db => {
 		app.use('/api', makeStoryApi({ Router, authorise, database, db }))
 		app.use('/api', makeUserApi({ SECRET, IMAGES_FOLDER, Router, authorise, db }))
+		app.use('/api', makeCharacterApi({ Router, authorise, db }))
 
 		const static_root = path.join(__dirname, '..', 'static')
 		app.use(express.static(static_root, { extensions: [ 'html' ]}))
