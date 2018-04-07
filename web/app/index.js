@@ -7,10 +7,6 @@ import { run } from '@cycle/run'
 import {
 	makeDOMDriver,
 	div,
-	span,
-	i,
-	header,
-	h1,
 	main,
 } from '@cycle/dom'
 import { makeHTTPDriver } from '@cycle/http'
@@ -27,6 +23,7 @@ import initApp from 'app/init'
 import initDatabase from 'app/database'
 
 import Sidebar from 'app/components/sidebar'
+import Header from 'app/components/header'
 
 import StoryList from 'app/views/story-list'
 import Story from 'app/views/story'
@@ -36,13 +33,10 @@ import StoryChapters from 'app/views/story/story-chapters'
 import Welcome from 'app/views/welcome'
 
 
-const view = (page$, sidebar$) => xs.combine(page$, sidebar$)
-	.map(([ page, sidebar ]) =>
+const view = (page$, sidebar$, header$) => xs.combine(page$, sidebar$, header$)
+	.map(([ page, sidebar, header ]) =>
 		div([
-			header('.toolbar.fixed', [
-				i('.fa.fa-bars.pointer', { dataset: { show: 'sidebar' }}),
-				span('Epic Stories'),
-			]),
+			header,
 			sidebar,
 			main('.with-fixed-toolbar', [
 				page,
@@ -83,8 +77,8 @@ const app = sources => {
 		.filter(res => res.ok)
 		.map(res => [ res.result ])
 	
-	const open_sidebar$ = sources.DOM.select('[data-show="sidebar"').events('click')
-	const sidebar = Sidebar({ ...sources, open$: open_sidebar$, current_story$ })
+	const header = Header(sources)
+	const sidebar = Sidebar({ ...sources, open$: header.open_sidebar$, current_story$ })
 
 	const init_app = initApp({ ...sources, invalid_credentials$ })
 	const http$ = xs.merge(
@@ -93,10 +87,10 @@ const app = sources => {
 	)
 
 	return {
-		DOM: view(page_dom$, sidebar.DOM),
+		DOM: view(page_dom$, sidebar.DOM, header.DOM),
 		HTTP: http$,
 		IDB: init_app.IDB,
-		router: xs.merge(page_router$, sidebar.router),
+		router: xs.merge(page_router$, sidebar.router, header.router),
 	}
 }
 
