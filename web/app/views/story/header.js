@@ -27,7 +27,7 @@ const view = (story$, active$, subtitle$) => xs.combine(story$, active$, subtitl
 		header('.story-header', [
 			h1(title),
 			subtitle ? h2(subtitle) : null,
-			div('.tab-container', [
+			div('.tab-container.hide-sm', [
 				renderLink('Chapters', `/stories/${_id}/chapters`, active === 'chapters'),
 				renderLink('Characters', `/stories/${_id}/characters`, active === 'characters'),
 				renderLink('My Character', `/stories/${_id}/my-character`, active === 'my-character'),

@@ -23,6 +23,6 @@
 
 @media (max-width: 768px) {
 	.hide-sm {
-		display: none;
+		display: none !important;
 	}
 }
