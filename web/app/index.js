@@ -25,11 +25,12 @@ import initDatabase from 'app/database'
 import Sidebar from 'app/components/sidebar'
 import Header from 'app/components/header'
 
-import StoryList from 'app/views/story-list'
-import Story from 'app/views/story'
+import Preferences from 'app/views/preferences'
 import MyCharacter from 'app/views/story/my-character'
-import StoryCharacters from 'app/views/story/story-characters'
+import Story from 'app/views/story'
 import StoryChapters from 'app/views/story/story-chapters'
+import StoryCharacters from 'app/views/story/story-characters'
+import StoryList from 'app/views/story-list'
 import Welcome from 'app/views/welcome'
 
 
@@ -53,6 +54,7 @@ const app = sources => {
 		'/stories/:story_id/characters': story_id => sources => StoryCharacters({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/chapters': story_id => sources => StoryChapters({ story_id$: xs.of(story_id), ...sources }),
 		'/stories/:story_id/chapters/:chapter_id/posts': (story_id, chapter_id) => sources => Story({ ...sources, story_id$: xs.of(story_id), chapter_id$: xs.of(chapter_id) }),
+		'/preferences': Preferences,
 		'/welcome': Welcome,
 	})
 
