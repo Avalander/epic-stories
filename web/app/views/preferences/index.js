@@ -6,7 +6,9 @@ import {
 	span,
 	input,
 	button,
+	label,
 	h1,
+	p,
 } from '@cycle/dom'
 
 import {
@@ -22,25 +24,37 @@ import {
 
 export default ({ DOM, HTTP }) => {
 	const preferences_url$ = xs.of('/api/preferences')
+	const fetch_user = makeFetch(HTTP, 'fetch-user', xs.of('/api/user'))
 	const fetch_preferences = makeFetch(HTTP, 'fetch-user-preferences', preferences_url$)
 	const save_preferences = makePost(HTTP, 'save-user-preferences', preferences_url$)
 
 	return {
-		DOM: view(),
+		DOM: view(fetch_user.response$),
+		HTTP: xs.merge(fetch_user.request$, fetch_preferences.request$),
 	}
 }
 
-const view = () => xs.of(
-	div('.content', [
-		h1('.page-title', 'Preferences'),
-		renderAlerts([]),
-		renderFormGroup('', 'display_name', 'Display Name',
-			'A name that will be displayed instead of your username. Leave blank to display your username.'),
-		div('.button-container', [
-			button('.btn.primary', { dataset: { action: 'save' }}, 'Save'),
-		]),
+const view = (user$) => xs.combine(user$)
+	.map(([{ username }]) =>
+		div('.content', [
+			h1('.page-title', 'Preferences'),
+			renderAlerts([]),
+			renderReadField(username, 'Username'),
+			renderFormGroup('', 'display_name', 'Display Name',
+				'A name that will be displayed instead of your username. Leave blank to display your username.'),
+			div('.button-container', [
+				button('.btn.primary', { dataset: { action: 'save' }}, 'Save'),
+			]),
+		])
+	)
+
+const renderReadField = (value, name, description) =>
+	div('.form-group', [
+		label(name),
+		description ? span('.text-description') : null,
+		p(value),
 	])
-)
+
 
 
 const MyCharacter = ({ DOM, HTTP, story_id$ }) => {
