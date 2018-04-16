@@ -5,6 +5,7 @@ const {
 const {
 	makeFindStoryPosts,
 	makeSavePost,
+	makeFindDisplayNames,
 } = require('./post.store')
 
 const makePostApi = require('./post.api')
@@ -15,6 +16,7 @@ module.exports = ({ Router, db, authorise }) => makePostApi({
 	authorise,
 	findStoryPosts: makeFindStoryPosts(db),
 	findChapterPosts: makeFindStoryPosts(db),
+	findDisplayNames: makeFindDisplayNames(db),
 	savePost: makeSavePost(db),
 	validatePost,
 })

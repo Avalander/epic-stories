@@ -52,7 +52,7 @@ export default sources => isolate(({ DOM, open$, edit_post$, save_post }) => {
 		.map(ev => ev.target.dataset.meta)
 	
 	const post$ = save_click$.compose(sampleCombine(state$))
-		.map(([ is_meta, post ]) => {
+		.map(([ is_meta, { _display_name, ...post }]) => {
 			const type = is_meta ? 'meta' : 'regular'
 			return { ...post, type }
 		})
