@@ -49,6 +49,12 @@ module.exports.makeFindUserPreferences = db => username =>
 	)
 	.mapRej(internalError)
 
+module.exports.makeSaveUserPreferences = db => preferences =>
+	Future.node(done =>
+		db.collection('user-preferences').save(preferences, null, done)
+	)
+	.mapRej(internalError)
+
 const internalError = error => {
 	console.error(error)
 	return Result.INTERNAL_ERROR(error.message)

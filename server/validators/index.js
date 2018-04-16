@@ -37,3 +37,8 @@ module.exports.validateChapter = makeValidator(
 	[ 'title' ],
 	[ 'id' ]
 )
+
+module.exports.validateUserPreferences = makeValidator(
+	[ 'username' ],
+	[ 'display_name' ]
+)
