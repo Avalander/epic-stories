@@ -40,5 +40,5 @@ module.exports.validateChapter = makeValidator(
 
 module.exports.validateUserPreferences = makeValidator(
 	[ 'username' ],
-	[ 'display_name' ]
+	[ '_id', 'display_name' ]
 )
