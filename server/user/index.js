@@ -2,6 +2,7 @@ const {
 	makeRegisterUser,
 	makeFindUser,
 	makeFindUserAvatar,
+	makeFindUserPreferences,
 } = require('./user.store')
 
 const {
@@ -19,5 +20,6 @@ module.exports = ({ IMAGES_FOLDER, SECRET, Router, authorise, db }) => {
 		registerUser: makeRegisterUser(db),
 		findUser,
 		findUserAvatar: makeFindUserAvatar(IMAGES_FOLDER),
+		findUserPreferences: makeFindUserPreferences(db),
 	})
 }

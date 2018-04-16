@@ -23,13 +23,13 @@ import {
 
 
 export default ({ DOM, HTTP }) => {
-	const preferences_url$ = xs.of('/api/preferences')
+	const preferences_url$ = xs.of('/api/user/preferences')
 	const fetch_user = makeFetch(HTTP, 'fetch-user', xs.of('/api/user'))
 	const fetch_preferences = makeFetch(HTTP, 'fetch-user-preferences', preferences_url$)
 	const save_preferences = makePost(HTTP, 'save-user-preferences', preferences_url$)
 
 	return {
-		DOM: view(fetch_user.response$),
+		DOM: view(fetch_user.response$, fetch_preferences.response$),
 		HTTP: xs.merge(fetch_user.request$, fetch_preferences.request$),
 	}
 }

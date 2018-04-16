@@ -3,6 +3,8 @@ const fs = require('fs')
 const bcrypt = require('bcrypt')
 const Future = require('fluture')
 
+const { Result } = require('result')
+
 
 const hashPassword = password => Future.tryP(() => bcrypt.hash(password, 10))
 const comparePassword = (password, hash) => Future.tryP(() => bcrypt.compare(password, hash))
@@ -39,4 +41,15 @@ module.exports.makeFindUser = db => (username, password) =>
 module.exports.makeFindUserAvatar = IMAGES_FOLDER => username => {
 	const filepath = `${IMAGES_FOLDER}${username}.png`
 	return fs.existsSync(filepath) ? filepath : `${IMAGES_FOLDER}default.png`
+}
+
+module.exports.makeFindUserPreferences = db => username =>
+	Future.node(done =>
+		db.collection('user-preferences').findOne({ username }, done)
+	)
+	.mapRej(internalError)
+
+const internalError = error => {
+	console.error(error)
+	return Result.INTERNAL_ERROR(error.message)
 }
