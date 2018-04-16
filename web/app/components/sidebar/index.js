@@ -69,6 +69,7 @@ const view = (state$, stories$, current_user$) => xs.combine(state$, stories$, c
 				ul('.components', [
 					li(a({ dataset: { hide: true, href: `/stories`}}, 'All Stories')),
 					...(stories.length > 0 ? renderStory(stories[0]) : []),
+					li(a({ dataset: { hide: true, href: `/preferences`}}, 'Preferences')),
 				]),
 			]),
 		]),

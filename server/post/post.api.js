@@ -2,7 +2,7 @@ const Future = require('fluture')
 const { Result } = require('result')
 
 
-module.exports = ({ Router, authorise, findStoryPosts, findChapterPosts, savePost, validatePost }) => {
+module.exports = ({ Router, authorise, findStoryPosts, findChapterPosts, findDisplayNames, savePost, validatePost }) => {
 	const api = Router()
 
 	api.get('/stories/:story_id/posts', authorise, (req, res) =>
@@ -21,9 +21,17 @@ module.exports = ({ Router, authorise, findStoryPosts, findChapterPosts, savePos
 	)
 
 	api.get('/stories/:story_id/chapters/:chapter_id/posts', authorise, (req, res) =>
-		findChapterPosts(req.params.story_id, req.params.chapter_id)
-			.fold(x => x, posts => Result.ok(posts))
-			.value(x => res.json(x))
+		Future.both(
+			findChapterPosts(req.params.story_id, req.params.chapter_id),
+			findDisplayNames(),
+		)
+		.map(([ posts, display_names ]) =>
+			posts.map(x => Object.assign({}, x, {
+				_display_name: display_names[x.author] || x.author,
+			}))
+		)
+		.fold(x => x, posts => Result.ok(posts))
+		.value(x => res.json(x))
 	)
 
 	api.post('/stories/:story_id/chapters/:chapter_id/posts', authorise, (req, res) =>

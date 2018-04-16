@@ -16,7 +16,7 @@ export default (post, user) => post.type === 'meta-group'
 	? renderMetaGroup(post, user)
 	: renderRegularPost(post, user)
 
-const renderRegularPost = ({ author, text, created_on, type, _id }, { username }) =>
+const renderRegularPost = ({ author, _display_name, text, created_on, type, _id }, { username }) =>
 	div('.post', { class: { meta: type === 'meta' }}, [
 		div('.post-header', [
 			div(img('.avatar', { props: { src: `/api/avatars/${author}` }})),
@@ -24,7 +24,7 @@ const renderRegularPost = ({ author, text, created_on, type, _id }, { username }
 		div('.post-body', [
 			div('.post-body-header', [
 				div([
-					span('.post-author.mr-20', author),
+					span('.post-author.mr-20', _display_name || author),
 					span('.post-date.mr-20', created_on),
 					type === 'meta' ? span('.post-tag', 'Meta') : null,
 				]),
@@ -40,11 +40,11 @@ const renderMetaGroup = (group, user) =>
 		...group.posts.map(renderMetaPost(user))
 	])
 
-const renderMetaPost = ({ username }) => ({ author, text, created_on, _id }) =>
+const renderMetaPost = ({ username }) => ({ author, _display_name, text, created_on, _id }) =>
 	div('.post.meta', [
 		div('.post-header', [
 			div([
-				span('.post-author', author),
+				span('.post-author', _display_name || author),
 			]),
 		]),
 		div('.post-body', [

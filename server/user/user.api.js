@@ -7,7 +7,7 @@ const loginUser = (req, res) => ({ token, user }) =>
 	res.cookie('bearer', token, { httpOnly: true })
 		.json({ username: user.username, groups: user.groups })
 
-module.exports = ({ Router, authorise, signIn, registerUser, findUser, findUserAvatar }) => {
+module.exports = ({ Router, authorise, signIn, registerUser, findUser, findUserAvatar, findUserPreferences, saveUserPreferences, validateUserPreferences }) => {
 	const api = Router()
 
 	api.post('/register/:token', (req, res, next) => {
@@ -32,6 +32,19 @@ module.exports = ({ Router, authorise, signIn, registerUser, findUser, findUserA
 			groups: req.bearer.groups,
 		}))
 	})
+
+	api.get('/user/preferences', authorise, (req, res) =>
+		findUserPreferences(req.bearer.user)
+			.fold(x => x, y => Result.ok(y))
+			.value(x => res.json(x))
+	)
+
+	api.post('/user/preferences', authorise, (req, res) =>
+		validateUserPreferences(Object.assign({}, req.body, { username: req.bearer.user }))
+			.chain(saveUserPreferences)
+			.fold(x => x, y => Result.ok(y))
+			.value(x => res.json(x))
+	)
 	
 	api.get('/avatars/:username', (req, res) =>
 		res.sendFile(findUserAvatar(req.params.username))
