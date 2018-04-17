@@ -6,9 +6,9 @@
 
 	.chapter {
 		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		padding: 10px 20px;
+		flex-direction: column;
+		//justify-content: space-between;
+		padding: 15px 20px;
 		transition: all 0.3s;
 		cursor: pointer;
 
@@ -24,8 +24,12 @@
 			text-decoration: none;
 		}
 
-		&:hover .chapter-title {
-			text-decoration: underline;
+		h4.chapter-title {
+			margin: 0;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 }

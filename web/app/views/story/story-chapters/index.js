@@ -9,6 +9,7 @@ import {
 	div,
 	header,
 	h1,
+	h4,
 	span,
 	button,
 	input,
@@ -87,7 +88,7 @@ const renderChapters = ({ chapters=[] }) =>
 
 const renderChapter = ({ id, title, _latest }) =>
 	div('.chapter', { dataset: { id: `${id}` }}, [
-		a('.chapter-title', { dataset: { id: `${id}` }}, `${id}. ${title}`),
+		h4('.chapter-title', { dataset: { id: `${id}` }}, `${id}. ${title}`),
 		renderLatestLink(id, _latest),
 	])
 
