@@ -2,6 +2,7 @@ import './story-chapters.scss'
 
 import xs from 'xstream'
 import sampleCombine from 'xstream/extra/sampleCombine'
+import dropRepeats from 'xstream/extra/dropRepeats'
 
 import {
 	a,
@@ -26,6 +27,7 @@ import CreateNewChapter from './create-new-chapter'
 
 export default ({ DOM, HTTP, story_id$ }) => {
 	const link_click$ = DOM.select('[data-id]').events('click')
+		.compose(dropRepeats())
 		.map(ev => ev.target.dataset.id)
 	const route$ = link_click$.compose(sampleCombine(story_id$))
 		.map(([ chapter_id, story_id ]) => `/stories/${story_id}/chapters/${chapter_id}/posts`)
@@ -84,7 +86,7 @@ const renderChapters = ({ chapters=[] }) =>
 	div('.chapter-container.mb-10', chapters.map(renderChapter))
 
 const renderChapter = ({ id, title, _latest }) =>
-	div('.chapter', [
+	div('.chapter', { dataset: { id: `${id}` }}, [
 		a('.chapter-title', { dataset: { id: `${id}` }}, `${id}. ${title}`),
 		renderLatestLink(id, _latest),
 	])

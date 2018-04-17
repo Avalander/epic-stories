@@ -1,3 +1,5 @@
+@import 'scss/variables';
+
 .chapter-container {
 	display: flex;
 	flex-direction: column;
@@ -7,18 +9,23 @@
 		flex-direction: row;
 		justify-content: space-between;
 		padding: 10px 20px;
+		transition: all 0.3s;
+		cursor: pointer;
 
 		@media (max-width: 768px) {
 			flex-direction: column;
 		}
 
+		&:hover, &:active {
+			background: $color-primary;
+		}
+
 		.chapter-title {
 			text-decoration: none;
-			cursor: pointer;
+		}
 
-			&:hover {
-				text-decoration: underline;
-			}
+		&:hover .chapter-title {
+			text-decoration: underline;
 		}
 	}
 }
