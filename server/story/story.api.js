@@ -3,7 +3,7 @@ const Future = require('fluture')
 const { Result } = require('result')
 
 
-module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findStory, saveChapter, validateStory, validateChapter, findUserCharacters, findLatestStoryPost }) => {
+module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findStory, saveChapter, validateStory, validateChapter, findUserCharacters, findLatestStoryPost, findLatestChapterPost }) => {
 	const api = Router()
 
 	api.get('/stories', authorise, (req, res, next) =>
@@ -35,6 +35,23 @@ module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findSt
 
 	api.get('/stories/:id', authorise, (req, res, next) =>
 		findStory(req.params.id)
+			.chain(story =>
+				Future.parallel(Infinity, [
+					Future.of(story),
+					...(story.chapters || []).map(
+						x => findLatestChapterPost(story._id.toString(), x.id.toString())
+					)
+				])
+			)
+			.map(([ story, ...latest_posts ]) =>
+				Object.assign({}, story, {
+					chapters: (story.chapters || []).map(
+						x => Object.assign({}, x, {
+							_latest: latest_posts.find(y => y.chapter_id == x.id)
+						})
+					)
+				})
+			)
 			.fold(x => x, story => Result.ok(story))
 			.value(x => res.json(x))
 	)

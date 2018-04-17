@@ -18,6 +18,7 @@ import {
 	makeFetch,
 	makePost,
 } from 'app/http'
+import { parseDate } from 'app/date'
 
 import StoryHeader from '../header'
 import CreateNewChapter from './create-new-chapter'
@@ -82,8 +83,13 @@ const renderHeader = ({ title }) =>
 const renderChapters = ({ chapters=[] }) =>
 	div('.chapter-container.mb-10', chapters.map(renderChapter))
 
-const renderChapter = ({ id, title }) =>
+const renderChapter = ({ id, title, _latest }) =>
 	div('.chapter', [
 		a('.chapter-title', { dataset: { id: `${id}` }}, `${id}. ${title}`),
-		//a('Last post'),
+		renderLatestLink(id, _latest),
 	])
+
+const renderLatestLink = (id, { _id, author, created_on }) =>
+	(_id
+		? a('.link-to-latest', { dataset: { id }}, `Latest post by ${author} on ${parseDate(new Date(created_on))}`)
+		: null)
