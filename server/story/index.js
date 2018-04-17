@@ -16,6 +16,7 @@ const {
 
 const {
 	makeFindLatestStoryPost,
+	makeFindLatestChapterPost,
 } = require('./post.store')
 
 const makeStoryApi = require('./story.api')
@@ -32,4 +33,5 @@ module.exports = ({ Router, authorise, db }) => makeStoryApi({
 	saveChapter: makeSaveChapter(db),
 	findUserCharacters: makeFindUserCharacters(db),
 	findLatestStoryPost: makeFindLatestStoryPost(db),
+	findLatestChapterPost: makeFindLatestChapterPost(db),
 })
