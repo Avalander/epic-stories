@@ -92,7 +92,7 @@ const renderChapter = ({ id, title, _latest }) =>
 		renderLatestLink(id, _latest),
 	])
 
-const renderLatestLink = (id, { _id, author, created_on }) =>
+const renderLatestLink = (id, { _id, author, created_on }={}) =>
 	(_id
 		? a('.link-to-latest', { dataset: { id }}, `Latest post by ${author} on ${parseDate(new Date(created_on))}`)
 		: null)
