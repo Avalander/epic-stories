@@ -34,13 +34,18 @@ export const timestampToDate = post => ({
 })
 
 const dateToString = date => {
-	const days_past = daysInBetween(new Date(), date)
+	const now = new Date()
+	const days_past = daysInBetween(now, date)
+	const years_past = now.getFullYear() - date.getFullYear()
 	if (days_past < 1) return 'Today'
 	if (days_past < 2) return 'Yesterday'
 	if (days_past < 7) {
 		return `Last ${WEEK_DAYS[date.getDay()]}`
 	}
-	return `${WEEK_DAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${dateWithSuffix(date)}`
+	if (years_past < 1) {
+		return `${WEEK_DAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${dateWithSuffix(date)}`
+	}
+	return `${WEEK_DAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${dateWithSuffix(date)} ${date.getFullYear()}`
 }
 
 const dateWithSuffix = date => {
