@@ -40,7 +40,7 @@ const dateToString = date => {
 	if (days_past < 1) return 'Today'
 	if (days_past < 2) return 'Yesterday'
 	if (days_past < 7) {
-		return `Last ${WEEK_DAYS[date.getDay()]}`
+		return `last ${WEEK_DAYS[date.getDay()]}`
 	}
 	if (years_past < 1) {
 		return `${WEEK_DAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${dateWithSuffix(date)}`
