@@ -12,6 +12,8 @@ import {
 } from '@cycle/dom'
 import isolate from '@cycle/isolate'
 
+import { $put } from 'cycle-idb'
+
 import { renderErrors } from 'app/render'
 import { makeReducer } from 'app/reducer'
 
@@ -23,7 +25,7 @@ const post_reducer = makeReducer({
 	input: (prev, text) => ({ ...prev, text }),
 })
 
-export default sources => isolate(({ DOM, open$, edit_post$, save_post }) => {
+export default sources => isolate(({ DOM, IDB, open$, edit_post$, save_post }) => {
 	const close$ = xs.merge(
 		DOM.select('[data-toggle="hide"]').events('click'),
 		save_post.response$,
@@ -48,6 +50,13 @@ export default sources => isolate(({ DOM, open$, edit_post$, save_post }) => {
 	)
 	.fold(post_reducer, { text: '' })
 
+	const username$ = IDB.store('user-cache').only('current_user').get()
+		.filter(x => x !== undefined)
+		.map(({ username }) => username)
+
+	const save_draft$ = input$.compose(sampleCombine(xs.combine(state$, username$)))
+		.map(([ _, [ post, username ]]) => $put('user-drafts', { post, username }))
+
 	const save_click$ = DOM.select('[data-action="save"]').events('click')
 		.map(ev => ev.target.dataset.meta)
 	
@@ -66,6 +75,7 @@ export default sources => isolate(({ DOM, open$, edit_post$, save_post }) => {
 
 	return {
 		DOM: view(show$, state$, errors$),
+		IDB: save_draft$,
 		post$,
 	}
 })(sources)
