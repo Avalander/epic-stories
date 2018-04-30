@@ -43,7 +43,7 @@ const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
 	const edit_post$ = edit_click$.compose(sampleCombine(fetch_posts.response$))
 		.map(([ id, posts ]) => posts.find(x => x._id === id))
 
-	const edit_post = EditPost({ DOM, open$, edit_post$, save_post })
+	const edit_post = EditPost({ DOM, IDB, open$, edit_post$, save_post })
 
 	const posts$ = fetch_posts.response$
 		.map(x => x.map(timestampToDate))
@@ -65,6 +65,7 @@ const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
 	return {
 		DOM: view(story_header.DOM, story$, posts$, edit_post.DOM, user$, api_errors),
 		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
+		IDB: edit_post.IDB,
 		router: story_header.router,
 	}
 }

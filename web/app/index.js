@@ -20,7 +20,10 @@ import switchPath from 'switch-path'
 import { error_codes } from 'result'
 
 import initApp from 'app/init'
-import initDatabase from 'app/database'
+import {
+	database_version,
+	initDatabase,
+} from 'app/database'
 
 import Sidebar from 'app/components/sidebar'
 import Header from 'app/components/header'
@@ -60,8 +63,17 @@ const app = sources => {
 
 	const page$ = match$.map(({ path, value }) =>
 		value({...sources, router: sources.router.path(path)}))
-	const page_dom$ = page$.map(x => x.DOM).flatten()
-	const page_router$ = page$.filter(x => 'router' in x).map(x => x.router).flatten()
+	const page_dom$ = page$
+		.map(x => x.DOM)
+		.flatten()
+	const page_router$ = page$
+		.filter(x => 'router' in x)
+		.map(x => x.router)
+		.flatten()
+	const page_idb$ = page$
+		.filter(x => 'IDB' in x)
+		.map(x => x.IDB)
+		.flatten()
 
 	const invalid_credentials$ = sources.HTTP.select()
 		.flatten()
@@ -91,7 +103,7 @@ const app = sources => {
 	return {
 		DOM: view(page_dom$, sidebar.DOM, header.DOM),
 		HTTP: http$,
-		IDB: init_app.IDB,
+		IDB: xs.merge(init_app.IDB, page_idb$),
 		router: xs.merge(page_router$, sidebar.router, header.router),
 	}
 }
@@ -99,7 +111,7 @@ const app = sources => {
 const drivers = {
 	DOM: makeDOMDriver('#root'),
 	HTTP: makeHTTPDriver(),
-	IDB: makeIdbDriver('epic-stories', 1, initDatabase),
+	IDB: makeIdbDriver('epic-stories', database_version, initDatabase),
 	history: makeHistoryDriver(),
 }
 
