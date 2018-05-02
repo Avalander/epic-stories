@@ -1,7 +1,7 @@
 const path = require('path')
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const ServiceWorkerPlugin = require('serviceworker-webpack-plugin')
+//const ServiceWorkerPlugin = require('serviceworker-webpack-plugin')
 const PwaManifestPlugin = require('webpack-pwa-manifest')
 
 const merge = require('webpack-merge')
