@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = ({ base_dir, folders }) => ({
 	entry: {
-		main: path.resolve(folders.src, 'app', 'index.js'),
+		main: [ 'babel-polyfill', path.resolve(folders.src, 'app', 'index.js') ],
 		register: path.resolve(folders.src, 'register.js'),
 		login: path.resolve(folders.src, 'login.js'),
 	},
