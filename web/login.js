@@ -42,6 +42,6 @@ document.querySelector('#register').onclick = event => {
 		body: JSON.stringify({ username, password }),
 	})
 		.then(res => res.ok ? res.json() : res.json().then(e => { throw e }))
-		.then(result => window.location.href = parseQueryString(window.location.search).to || '/')
+		.then(result => window.location.replace(parseQueryString(window.location.search).to || '/'))
 		.catch(error => form.errors.innerHTML = `<div class="alert-error">${error.message}</div>`)
 }

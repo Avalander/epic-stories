@@ -63,8 +63,20 @@ const app = sources => {
 		'/welcome': Welcome,
 	})
 
+	const invalid_credentials$ = sources.HTTP.select()
+		.flatten()
+		.map(res => res.body)
+		.filter(result => 'ok' in result && !result.ok && result.error.code === error_codes.INVALID_CREDENTIALS)
+	
+	invalid_credentials$
+		.addListener({
+			next: () => window.location.href = `/login.html?to=${location.pathname}`
+		})
+	
+	const init_app = initApp({ ...sources, invalid_credentials$ })
+
 	const page$ = match$.map(({ path, value }) =>
-		value({...sources, router: sources.router.path(path)}))
+		value({...sources, router: sources.router.path(path) }))
 	const page_dom$ = page$
 		.map(x => x.DOM)
 		.flatten()
@@ -76,16 +88,6 @@ const app = sources => {
 		.filter(x => 'IDB' in x)
 		.map(x => x.IDB)
 		.flatten()
-
-	const invalid_credentials$ = sources.HTTP.select()
-		.flatten()
-		.map(res => res.body)
-		.filter(result => 'ok' in result && !result.ok && result.error.code === error_codes.INVALID_CREDENTIALS)
-	
-	invalid_credentials$
-		.addListener({
-			next: () => window.location.href = `/login.html?to=${location.pathname}`
-		})
 	
 	const current_story$ = sources.HTTP.select('fetch-story')
 		.flatten()
@@ -96,7 +98,6 @@ const app = sources => {
 	const header = Header(sources)
 	const sidebar = Sidebar({ ...sources, open$: header.open_sidebar$, current_story$ })
 
-	const init_app = initApp({ ...sources, invalid_credentials$ })
 	const http$ = xs.merge(
 		page$.filter(x => 'HTTP' in x).map(x => x.HTTP).flatten(),
 		init_app.HTTP,
