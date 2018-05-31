@@ -10,6 +10,9 @@ const static_cache = {
 		'/index.html',
 		'/main.bundle.js',
 		'/main.css',
+		'/offline.html',
+		'/offline.bundle.js',
+		'/offline.css',
 	]
 }
 
@@ -34,9 +37,20 @@ self.addEventListener('activate', event =>
 
 self.addEventListener('fetch', event => {
 	const request_url = new URL(event.request.url)
-	if (request_url.origin === location.origin && request_url.pathname === '/') {
-		event.respondWith(caches.match('/index.html'))
-		return
+	const { request } = event
+	if (request_url.origin === location.origin) {
+		if (request.mode === 'navigate'
+			|| (request.method === 'GET' && request.headers.get('accept').indexOf('text/html') !== -1)) {
+				return event.respondWith(
+					caches.match(request)
+						.then(response => response || fetch(request))
+						.catch(() => caches.match('/offline.html'))
+				)
+		}
+		if (request_url.pathname === '/') {
+			event.respondWith(caches.match('/index.html'))
+			return
+		}
 	}
 	event.respondWith(
 		caches.match(event.request)

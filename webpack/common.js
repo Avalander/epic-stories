@@ -1,6 +1,5 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const WorkboxPlugin = require('workbox-webpack-plugin')
 
 
 module.exports = ({ base_dir, folders }) => ({
@@ -8,6 +7,7 @@ module.exports = ({ base_dir, folders }) => ({
 		main: [ 'babel-polyfill', path.resolve(folders.src, 'app', 'index.js') ],
 		register: path.resolve(folders.src, 'register.js'),
 		login: path.resolve(folders.src, 'login.js'),
+		offline: path.resolve(folders.src, 'offline.js'),
 	},
 	output: {
 		path: folders.dist,
@@ -90,10 +90,11 @@ module.exports = ({ base_dir, folders }) => ({
 			filename: 'login.html',
 			chunks: [ 'login' ],
 		}),
-		new WorkboxPlugin.GenerateSW({
-			clientsClaim: true,
-			skipWaiting: true,
-		}),
+		new HtmlWebpackPlugin({
+			template: path.join(folders.src, 'offline.html'),
+			filename: 'offline.html',
+			chunks: [ 'offline' ],
+		})
 	],
 	resolve: {
 		modules: [
