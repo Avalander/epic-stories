@@ -19,7 +19,7 @@ import switchPath from 'switch-path'
 
 import { error_codes } from 'result'
 
-import initApp from 'app/init'
+import initApp, { initSW } from 'app/init'
 import {
 	database_version,
 	initDatabase,
@@ -36,6 +36,8 @@ import StoryCharacters from 'app/views/story/story-characters'
 import StoryList from 'app/views/story-list'
 import Welcome from 'app/views/welcome'
 
+
+initSW()
 
 const view = (page$, sidebar$, header$) => xs.combine(page$, sidebar$, header$)
 	.map(([ page, sidebar, header ]) =>

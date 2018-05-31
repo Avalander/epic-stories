@@ -1,5 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const WorkboxPlugin = require('workbox-webpack-plugin')
+
 
 module.exports = ({ base_dir, folders }) => ({
 	entry: {
@@ -87,6 +89,10 @@ module.exports = ({ base_dir, folders }) => ({
 			template: path.join(folders.src, 'login.html'),
 			filename: 'login.html',
 			chunks: [ 'login' ],
+		}),
+		new WorkboxPlugin.GenerateSW({
+			clientsClaim: true,
+			skipWaiting: true,
 		}),
 	],
 	resolve: {

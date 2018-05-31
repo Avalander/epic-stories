@@ -18,9 +18,12 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.NamedModulesPlugin(),
 		new webpack.SourceMapDevToolPlugin(),
+		new webpack.DefinePlugin({
+			VERSION: JSON.stringify(Date.now()),
+		})
 	],
 	devServer: {
-		contentBase: folders.dist,
+		contentBase: folders.dist_dev,
 		compress: true,
 		hot: true,
 		stats: 'minimal',

@@ -27,3 +27,14 @@ export default ({ HTTP, IDB, invalid_credentials$ }) => {
 		IDB: idb$,
 	}
 }
+
+export const initSW = () => {
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('/sw.js')
+			.then(reg => {
+				if (reg.waiting) reg.waiting.postMessage({ action: 'skipWaiting' })
+				console.log('Service worker registered.')
+			})
+			.catch(err => console.error(`Could not register service worker.`))
+	}
+}

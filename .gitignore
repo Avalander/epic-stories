@@ -2,6 +2,7 @@ node_modules
 .vscode
 .env
 static
+static-dev
 deploy.sh
 deploy_local.sh
 *.zip
