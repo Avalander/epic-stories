@@ -4,8 +4,10 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 //const ServiceWorkerPlugin = require('serviceworker-webpack-plugin')
 const PwaManifestPlugin = require('webpack-pwa-manifest')
 
+const webpack = require('webpack')
 const merge = require('webpack-merge')
 const common_config = require('./common')
+const { version } = require('../package.json')
 
 
 module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, folders }), {
@@ -33,6 +35,9 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 			filename: '[name].css',
 			allChunks: true,
 		}),
+		new webpack.DefinePlugin({
+			VERSION: JSON.stringify(version),
+		})
 		/*
 		new ServiceWorkerPlugin({
 			entry: path.resolve(base_dir, folders.src, 'sw', 'index.js')

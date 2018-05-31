@@ -23,9 +23,9 @@ import EditPost from './edit-post'
 import renderPost from './render-post'
 
 
-const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
-	const user$ = IDB.store('user-cache').only('current_user').get()
-		.filter(x => x !== undefined)
+const Story = ({ DOM, HTTP, IDB, cache, story_id$, chapter_id$ }) => {
+	const fetch_user = makeFetch(HTTP, 'fetch-user', xs.of('/api/user'))
+	const user$ = fetch_user.response$
 
 	const {
 		save_post,
@@ -43,7 +43,7 @@ const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
 	const edit_post$ = edit_click$.compose(sampleCombine(fetch_posts.response$))
 		.map(([ id, posts ]) => posts.find(x => x._id === id))
 
-	const edit_post = EditPost({ DOM, IDB, open$, edit_post$, save_post })
+	const edit_post = EditPost({ DOM, IDB, open$, edit_post$, save_post, user$ })
 
 	const posts$ = fetch_posts.response$
 		.map(x => x.map(timestampToDate))
@@ -64,7 +64,7 @@ const Story = ({ DOM, HTTP, IDB, story_id$, chapter_id$ }) => {
 	
 	return {
 		DOM: view(story_header.DOM, story$, posts$, edit_post.DOM, user$, api_errors),
-		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$),
+		HTTP: xs.merge(fetch_posts.request$, fetch_story.request$, save_post_request$, fetch_user.request$),
 		IDB: edit_post.IDB,
 		router: story_header.router,
 	}

@@ -26,7 +26,7 @@ const post_reducer = makeReducer({
 	draft: (prev, post) => prev.text ? prev : post,
 })
 
-export default sources => isolate(({ DOM, IDB, open$, edit_post$, save_post }) => {
+export default sources => isolate(({ DOM, IDB, open$, edit_post$, user$, save_post }) => {
 	const close$ = xs.merge(
 		DOM.select('[data-toggle="hide"]').events('click'),
 		save_post.response$,
@@ -44,16 +44,11 @@ export default sources => isolate(({ DOM, IDB, open$, edit_post$, save_post }) =
 		.map(ev => ev.target.value)
 		.map(data => ({ type: 'input', data }))
 
-	const username$ = IDB.store('user-cache').only('current_user').get()
-		.filter(x => x !== undefined)
+	const username$ = user$
 		.map(({ username }) => username)
-	
+
 	const get_draft$ = username$
-		.map(username => IDB.store('user-drafts')
-			.only(username)
-			.get()
-			.filter(x => x !== undefined)
-		)
+		.map(createDraft$(IDB))
 		.flatten()
 		.map(({ post }) => ({ type: 'draft', data: post }))
 	
@@ -65,8 +60,10 @@ export default sources => isolate(({ DOM, IDB, open$, edit_post$, save_post }) =
 	.fold(post_reducer, { text: '' })
 
 	const save_draft$ = xs.merge(input$, incoming_post$)
-		.compose(sampleCombine(xs.combine(state$, username$)))
-		.map(([ _, [ post, username ]]) => $put('user-drafts', { post, username }))
+		.compose(sampleCombine(state$))
+		.compose(sampleCombine(username$))
+		.map(([[ _, post ], username ]) => [ post, username ])
+		.map(([ post, username ]) => $put('user-drafts', { post, username }))
 
 	const save_click$ = DOM.select('[data-action="save"]').events('click')
 		.map(ev => ev.target.dataset.meta)
@@ -113,3 +110,9 @@ const view = (open$, state$, errors$) => xs.combine(open$, state$, errors$)
 			)
 		])
 	)
+
+const createDraft$ = IDB => username =>
+	IDB.store('user-drafts')
+		.only(username)
+		.get()
+		.filter(x => x !== undefined)
