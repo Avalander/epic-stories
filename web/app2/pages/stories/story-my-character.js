@@ -60,6 +60,7 @@ const actions = {
 	onCreate: story_id => [
 		action('clearState'),
 		action('fetchStory', story_id),
+		action('fetchCharacter', story_id),
 	],
 	// Save character
 	save: () => state =>
