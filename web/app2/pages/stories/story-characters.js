@@ -1,4 +1,4 @@
-import { article, div, h4, i, p, span, section } from '@hyperapp/html'
+import { article, div, h4, i, span, section } from '@hyperapp/html'
 import { action } from '@hyperapp/fx'
 
 import { fetchJson } from 'App/fx'

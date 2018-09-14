@@ -2,11 +2,12 @@ import { article, h4, span, div, label, input, section, button } from '@hyperapp
 import { Link } from '@hyperapp/router'
 import { action } from '@hyperapp/fx'
 
-import { fetchJson, postJson } from 'App/fx'
+import { postJson } from 'App/fx'
 import { parseDate } from 'App/date'
 import { Notifications } from 'App/components'
 
 import StoryHeader from './_story-header'
+import makeFetchStory from './_story-fetch'
 
 
 // State
@@ -21,6 +22,7 @@ const state = {
 // Actions
 
 const actions = {
+	...makeFetchStory(),
 	cleanState: state =>
 		({
 			story: null,
@@ -59,17 +61,6 @@ const actions = {
 			new_chapter,
 		),
 	// HTTP
-	fetchStory: story_id =>
-		fetchJson(
-			`/api/stories/${story_id}`,
-			'onFetchStorySuccess',
-			'onApiError'
-		),
-	onFetchStorySuccess: ({ result }) => state =>
-		({
-			...state,
-			story: result,
-		}),
 	onSaveChapterSuccess: () => state =>
 		action('onCreate', state.story._id),
 	onApiError: ({ error }) => state =>
