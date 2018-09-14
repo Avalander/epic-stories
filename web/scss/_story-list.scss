@@ -1,0 +1,52 @@
+.story {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 0;
+	box-shadow: $box-shadow-sm;
+}
+
+.story-header {
+	padding: 10px;
+
+	h4 + .link-to-latest {
+		position: relative;
+		top: -10px;
+	}
+}
+
+.btn.join {
+	background: $color-primary;
+	position: relative;
+	width: 90px;
+
+	&:after {
+		@include speech-marker(left, $color-primary);
+	}
+}
+
+.new-story.panel {
+	background: transparent;
+	border: 2px dashed $color-primary;
+	text-align: center;
+	cursor: pointer;
+
+	i, span {
+		padding: 0 5px;
+	}
+}
+
+.link-to-latest {
+	cursor: pointer;
+	text-decoration: none;
+	font-style: italic;
+	font-size: 0.9em;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.m-10 {
+	margin: 10px;
+}
