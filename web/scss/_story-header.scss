@@ -1,0 +1,48 @@
+header.story-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-family: 'Montserrat';
+	border-bottom: 1px solid darken($color-text, 20%);
+
+	h1 {
+		font-family: 'Caveat';
+		font-size: 48px;
+		margin: 10px 0;
+	}
+
+	h2 {
+		font-family: 'Caveat';
+		font-size: 28px;
+		margin: 10px 0;
+	}
+
+	.tab-container {
+		margin-top: 20px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		width: 100%;
+	}
+
+	.header-link {
+		cursor: pointer;
+		transition: opacity 0.2s;
+		opacity: 0.75;
+
+		&.active {
+			color: $color-primary-light;
+			opacity: 1;
+			cursor: auto;
+		}
+	}
+
+	.tab-container:hover {
+		.header-link:not(:hover):not(.active) {
+			opacity: 0.5;
+		}
+		.header-link:hover {
+			opacity: 1;
+		}
+	}
+}

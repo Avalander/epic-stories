@@ -1,5 +1,3 @@
-@import 'scss/variables';
-
 $border-color: #fff;
 
 .markdown-content {
@@ -7,6 +5,11 @@ $border-color: #fff;
 		box-shadow: $box-shadow-sm;
 		padding: 5px 20px;
 		background: $color-background-light;
+	}
+	
+	a, a:visited {
+		color: $color-primary-light;
+		text-decoration: none;
 	}
 
 	table {
