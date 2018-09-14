@@ -1,18 +1,21 @@
 import Welcome from './welcome'
 import StoryList from './stories/story-list'
 import StoryChapters from './stories/story-chapters'
+import StoryMyCharacter from './stories/story-my-character'
 
 
 export const state = {
 	welcome: Welcome.state,
 	story_list: StoryList.state,
 	story_chapters: StoryChapters.state,
+	story_my_character: StoryMyCharacter.state,
 }
 
 export const actions = {
 	welcome: Welcome.actions,
 	story_list: StoryList.actions,
 	story_chapters: StoryChapters.actions,
+	story_my_character: StoryMyCharacter.actions,
 }
 
 export const routes = [{
@@ -24,4 +27,7 @@ export const routes = [{
 }, {
 	path: '/stories/:story_id/chapters',
 	view: StoryChapters.view,
+}, {
+	path: '/stories/:story_id/my-character',
+	view: StoryMyCharacter.view,
 }]

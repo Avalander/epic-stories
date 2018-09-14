@@ -86,3 +86,8 @@ a, a:visited {
 	color: inherit;
 	display: inline-block;
 }
+
+.text-description {
+	color: darken($color-text, 20%);
+	font-size: 0.9em;
+}

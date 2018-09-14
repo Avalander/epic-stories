@@ -18,5 +18,5 @@ export default ({ _id, title, active, subtitle }) =>
 const HeaderLink = (title, to, is_active) =>
 	Link({
 		class: `header-link${is_active ? ' active' : ''}`,
-		to: is_active ? to : undefined,
+		to: !is_active ? to : undefined,
 	}, title)

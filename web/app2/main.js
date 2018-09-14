@@ -3,7 +3,7 @@ import 'scss/main.scss'
 import { app } from 'hyperapp'
 import { location, Route, Switch } from '@hyperapp/router'
 import { withFx } from '@hyperapp/fx'
-import { article, h1, div, main } from '@hyperapp/html'
+import { div, main } from '@hyperapp/html'
 
 import { makeFetchJson, makeGo } from 'App/fx'
 
