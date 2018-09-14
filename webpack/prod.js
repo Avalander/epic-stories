@@ -1,13 +1,10 @@
-const path = require('path')
-
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-//const ServiceWorkerPlugin = require('serviceworker-webpack-plugin')
-const PwaManifestPlugin = require('webpack-pwa-manifest')
-
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const common_config = require('./common')
 const { version } = require('../package.json')
+
+const MiniCssPlugin = require('mini-css-extract-plugin')
+const OptimiseCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
 
 module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, folders }), {
@@ -19,24 +16,27 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 	module: {
 		rules: [{
 			test: /\.scss/,
-			use: ExtractTextPlugin.extract({
-				fallback: 'style-loader',
-				use: [ 'css-loader', {
+			use: [
+				MiniCssPlugin.loader,
+				'css-loader',
+				{
 					loader: 'sass-loader',
 					options: {
-						includePaths: [ folders.src ],
-					},
-				}],
-			})
+						includePaths: [ folders.web ]
+					}
+				}
+			]
 		}]
 	},
 	plugins: [
-		new ExtractTextPlugin({
-			filename: '[name].css',
-			allChunks: true,
+		new MiniCssPlugin({
+			filename: '[name].[hash].css',
+			chunkFilename: '[id].[hash].css',
 		}),
+		new OptimiseCssAssetsPlugin(),
 		new webpack.DefinePlugin({
 			VERSION: JSON.stringify(version),
+			$VERSION$: JSON.stringify(version),
 		})
 		/*
 		new ServiceWorkerPlugin({
