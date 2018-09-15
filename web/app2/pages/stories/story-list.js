@@ -121,7 +121,7 @@ const Inactive = (state, { enableNew }) =>
 
 const Active = ({ title }, { onInputTitle, save, cancel }) =>
 	div({ class: 'phantom-panel m-10' }, [
-		div({ class: '.form-group' }, [
+		div({ class: 'form-group' }, [
 			label('Title'),
 			input({
 				type: 'text',

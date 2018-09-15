@@ -1,4 +1,4 @@
-import { div, span, label, input, button, textarea, article } from '@hyperapp/html'
+import { div, span, a, label, input, button, textarea, article } from '@hyperapp/html'
 import { action } from '@hyperapp/fx'
 
 import { fetchJson, postJson } from 'App/fx'
@@ -114,6 +114,13 @@ const view = (state, actions, matcher) =>
 		}),
 		div({ class: 'form-group' }, [
 			label('Description'),
+			div({ class: 'text-description' }, [
+				span('This field supports markdown syntax. Check '),
+				a({ class: 'link', href: 'https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet', target: '_blank' },
+					'this link'
+				),
+				span(' for more information.'),
+			]),
 			textarea({
 				value: state.story_my_character.form.description,
 				oninput: ev => actions.story_my_character.onInput([ 'description', ev.target.value ]),

@@ -266,6 +266,13 @@ const EditPost = ({ is_open, text, _id, created_on, _alerts=[] }, { savePost, ca
 				_id
 					? span({ class: 'text-muted' }, `Editing post created on ${parseDate(new Date(created_on))}`)
 					: [],
+				div([
+					span({ class: 'text-muted' }, 'This field supports markdown syntax. Check '),
+					a({ class: 'link', href: 'https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet', target: '_blank' },
+						'this link'
+					),
+					span({ class: 'text-muted' }, ' for more information.'),
+				]),
 				div({ class: 'form-group' }, [
 					textarea({
 						value: text,
