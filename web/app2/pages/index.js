@@ -4,6 +4,7 @@ import StoryChapters from './stories/story-chapters'
 import StoryMyCharacter from './stories/story-my-character'
 import StoryCharacters from './stories/story-characters'
 import StoryPosts from './stories/story-posts'
+import Preferences from './preferences'
 
 
 export const state = {
@@ -13,6 +14,7 @@ export const state = {
 	story_my_character: StoryMyCharacter.state,
 	story_characters: StoryCharacters.state,
 	story_posts: StoryPosts.state,
+	preferences: Preferences.state,
 }
 
 export const actions = {
@@ -22,6 +24,7 @@ export const actions = {
 	story_my_character: StoryMyCharacter.actions,
 	story_characters: StoryCharacters.actions,
 	story_posts: StoryPosts.actions,
+	preferences: Preferences.actions,
 }
 
 export const routes = [{
@@ -42,4 +45,7 @@ export const routes = [{
 }, {
 	path: '/stories/:story_id/chapters/:chapter_id/posts',
 	view: StoryPosts.view,
+}, {
+	path: '/preferences',
+	view: Preferences.view,
 }]
