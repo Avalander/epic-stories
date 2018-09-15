@@ -12,7 +12,7 @@ const validateUser = username => username && username.length > 0
 const validatePassword = (password, repeat_password) =>
 	password && password.length > 0 && password == repeat_password
 
-document.querySelector('#register').onclick = event => {
+document.querySelector('#register').onsubmit = event => {
 	event.preventDefault()
 	const username = form.username.value
 	const password = form.password.value

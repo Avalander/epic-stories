@@ -14,7 +14,7 @@ const parseQueryString = query_string => (query_string.startsWith('?')
 		.reduce((prev, x) => ({ ...prev, [x[0]]: x[1] || true }), {})
 	: {})
 
-document.querySelector('#register').onclick = event => {
+document.querySelector('#login').onsubmit = event => {
 	event.preventDefault()
 	const username = form.username.value
 	const password = form.password.value

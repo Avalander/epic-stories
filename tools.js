@@ -6,7 +6,7 @@ const { DB_URL, DB_NAME } = process.env
 const command = process.argv[2]
 const params = process.argv.slice(3)
 
-const openConnection = () => mongo.MongoClient.connect(DB_URL)
+const openConnection = () => mongo.MongoClient.connect(DB_URL, { useNewUrlParser: true })
 	.then(client => Promise.all([
 		client.db(DB_NAME),
 		Promise.resolve(client),

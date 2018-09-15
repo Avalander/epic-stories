@@ -4,11 +4,11 @@ $color-input: darken($color-background, 5%);
 
 input, textarea {
 	display: block;
-	//background: inherit;
 	background: $color-input;
 	color: inherit;
 	border: none;
 	padding: 10px;
+	font-family: 'Ubuntu Mono', monospace;
 
 	&:focus {
 		outline: none;

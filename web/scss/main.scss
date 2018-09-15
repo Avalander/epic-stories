@@ -3,14 +3,24 @@ $fa-font-path: '../../node_modules/font-awesome/fonts';
 
 @import 'normalize';
 @import 'variables';
+@import 'mixins';
 @import 'layout';
 @import 'buttons';
 @import 'forms';
 @import 'toolbar';
+@import 'sidebar';
 @import 'panels';
 @import 'alerts';
+@import 'markdown';
 
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:400,700|Caveat:400,700');
+@import 'story-list';
+@import 'story-header';
+@import 'story-chapters';
+@import 'story-characters';
+@import 'story-posts';
+@import 'story-edit-post';
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:400,700|Caveat:400,700|Ubuntu+Mono');
 
 body {
 	font-family: 'Raleway';
@@ -72,4 +82,23 @@ main {
 ::selection {
 	background: deeppink;
 	color: $color-text;
+}
+
+a, a:visited {
+	text-decoration: none;
+	color: inherit;
+	display: inline-block;
+}
+
+a.link, a.link:visited {
+	color: $color-primary-light;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.text-description {
+	color: darken($color-text, 20%);
+	font-size: 0.9em;
 }

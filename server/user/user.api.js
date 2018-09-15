@@ -26,12 +26,21 @@ module.exports = ({ Router, authorise, signIn, registerUser, findUser, findUserA
 			.fork(next, loginUser(req, res))
 	})
 
-	api.get('/user', authorise, (req, res) => {
-		res.json(Result.ok({
-			username: req.bearer.user,
-			groups: req.bearer.groups,
-		}))
-	})
+	api.get('/user', authorise, (req, res) =>
+		findUserPreferences(req.bearer.user)
+			.map(x =>
+				({
+					...x,
+					username: req.bearer.user,
+					groups: req.bearer.groups,
+				})
+			)
+			.fold(
+				x => x,
+				y => Result.ok(y)
+			)
+			.value(x => res.json(x))
+	)
 
 	api.get('/user/preferences', authorise, (req, res) =>
 		findUserPreferences(req.bearer.user)

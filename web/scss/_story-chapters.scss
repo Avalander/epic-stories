@@ -1,0 +1,33 @@
+.chapter-container {
+	display: flex;
+	flex-direction: column;
+
+	.chapter {
+		display: flex;
+		flex-direction: column;
+		//justify-content: space-between;
+		padding: 15px 20px;
+		transition: all 0.3s;
+		cursor: pointer;
+
+		@media (max-width: 768px) {
+			flex-direction: column;
+		}
+
+		&:hover, &:active {
+			background: $color-primary;
+		}
+
+		.chapter-title {
+			text-decoration: none;
+		}
+
+		h4.chapter-title {
+			margin: 0;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}

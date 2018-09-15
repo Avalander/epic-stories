@@ -34,7 +34,3 @@ const parsePost = post => Object.assign(
 	post._id ? { _id: ObjectId(post._id) } : {}
 )
 
-const getDisplayName = (user_preferences, username) => {
-	const preferences = user_preferences.find(x => x.username === username) || {}
-	return preferences.display_name || username
-}

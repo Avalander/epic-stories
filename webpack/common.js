@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = ({ base_dir, folders }) => ({
 	entry: {
-		main: [ 'babel-polyfill', path.resolve(folders.src, 'app', 'index.js') ],
+		main: path.resolve(folders.src, 'app', 'main.js'),
 		register: path.resolve(folders.src, 'register.js'),
 		login: path.resolve(folders.src, 'login.js'),
 		offline: path.resolve(folders.src, 'offline.js'),
@@ -20,13 +20,15 @@ module.exports = ({ base_dir, folders }) => ({
 			use: {
 				loader: 'babel-loader',
 				options: {
-					presets: [[ 'env', {
+					presets: [[ '@babel/env', {
 						targets: {
-							browsers: [ 'last 2 versions' ],
+							chrome: 67,
+							firefox: 60,
 						}
 					}]],
 					plugins: [
-						['transform-object-rest-spread', { useBuiltIns: true }]
+						[ '@babel/plugin-syntax-object-rest-spread', { useBuiltIns: true }],
+						[ '@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
 					],
 					babelrc: false,
 				},
@@ -101,6 +103,10 @@ module.exports = ({ base_dir, folders }) => ({
 			folders.src,
 			folders.shared,
 			'node_modules',
-		]
+		],
+		alias: {
+			App: path.join(folders.src, 'app'),
+			Shared: folders.shared,
+		}
 	},
 })
