@@ -4,24 +4,18 @@ import { action } from '@hyperapp/fx'
 import { fetchJson, postJson } from 'App/fx'
 import { Notifications } from 'App/components'
 
-import StoryHeader from './_story-header'
-import makeFetchStory from './_story-fetch'
-
 
 // State
 
 const state = {
 	alerts: [],
 	form: {},
-	story: {},
 }
 
 
 // Actions
 
 const actions = {
-	// Fetch story
-	...makeFetchStory(),
 	onApiError: ({ error }) => state =>
 		({
 			...state,
@@ -51,25 +45,23 @@ const actions = {
 				[key]: value,
 			},
 		}),
-	clearState: () => state =>
+	clearState: () =>
 		({
 			alerts: [],
-			story: {},
 			form: {},
 		}),
 	onCreate: story_id => [
 		action('clearState'),
-		action('fetchStory', story_id),
 		action('fetchCharacter', story_id),
 	],
 	// Save character
-	save: () => state =>
+	save: story_id => state =>
 		postJson(
-			`/api/stories/${state.story._id}/my-character`,
+			`/api/stories/${story_id}/my-character`,
 			'onSaveSuccess',
 			'onApiError',
 			{ ...state.form,
-				story_id: state.story._id
+				story_id,
 			}
 		),
 	onSaveSuccess: () => state =>
@@ -87,31 +79,32 @@ const actions = {
 const view = (state, actions, matcher) =>
 	article({
 		key: 'story-my-character',
-		class: 'content',
-		oncreate: () => actions.story_my_character.onCreate(matcher.params.story_id),
-		ondestroy: () => actions.story_my_character.clearState(),
+		oncreate: () => {
+			actions.story.setActive('my-character')
+			actions.story.my_character.onCreate(matcher.params.story_id)
+		},
+		ondestroy: () => actions.story.my_character.clearState(),
 	}, [
-		StoryHeader({ ...state.story_my_character.story, active: 'my-character' }),
-		Notifications(state.story_my_character.alerts),
+		Notifications(state.story.my_character.alerts),
 		FormGroup({
-			value: state.story_my_character.form.name,
+			value: state.story.my_character.form.name,
 			name: 'name',
 			title: 'Name',
-			onInput: actions.story_my_character.onInput,
+			onInput: actions.story.my_character.onInput,
 		}),
 		FormGroup({
-			value: state.story_my_character.form.high_concept,
+			value: state.story.my_character.form.high_concept,
 			name: 'high_concept',
 			title: 'Character Concept',
 			description: 'A phrase that sums up what your character is about. Who they are and what they do.',
-			onInput: actions.story_my_character.onInput,
+			onInput: actions.story.my_character.onInput,
 		}),
 		FormGroup({
-			value: state.story_my_character.form.trouble,
+			value: state.story.my_character.form.trouble,
 			name: 'trouble',
 			title: 'Trouble',
 			description: 'Something that usually complicates your character\'s existence, bringing chaos into their life and driving them into interesting situations.',
-			onInput: actions.story_my_character.onInput,
+			onInput: actions.story.my_character.onInput,
 		}),
 		div({ class: 'form-group' }, [
 			label('Description'),
@@ -123,14 +116,14 @@ const view = (state, actions, matcher) =>
 				span(' for more information.'),
 			]),
 			textarea({
-				value: state.story_my_character.form.description,
-				oninput: ev => actions.story_my_character.onInput([ 'description', ev.target.value ]),
+				value: state.story.my_character.form.description,
+				oninput: ev => actions.story.my_character.onInput([ 'description', ev.target.value ]),
 			}),
 		]),
 		div({ class: 'button-container' }, [
 			button({
 				class: 'btn primary',
-				onclick: () => actions.story_my_character.save()
+				onclick: () => actions.story.my_character.save(state.story.story._id),
 			}, 'Save'),
 		]),
 	])

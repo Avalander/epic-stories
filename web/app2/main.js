@@ -52,15 +52,16 @@ const view = (state, actions) =>
 		Toolbar(state, actions),
 		//Sidebar.view(state, actions),
 		main({ class: 'with-fixed-toolbar' }, [
-			Switch({},
-				routes.map(
-					({ path, view }) =>
+			//Switch({},
+				...routes.map(
+					({ parent, path, view }) =>
 						Route({
+							parent,
 							path,
 							render: ({ match }) => Page(view, state, actions, match)
 						})
 				)
-			),
+			//),
 		]),
 	])
 

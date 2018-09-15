@@ -2,19 +2,16 @@ import { article, h4, span, div, label, input, section, button } from '@hyperapp
 import { Link } from '@hyperapp/router'
 import { action } from '@hyperapp/fx'
 
-import { postJson } from 'App/fx'
+import { postJson, fetchJson } from 'App/fx'
 import { parseDate } from 'App/date'
 import { Notifications } from 'App/components'
-
-import StoryHeader from './_story-header'
-import makeFetchStory from './_story-fetch'
 
 
 // State
 
 const state = {
-	story: null,
 	alerts: [],
+	story: {},
 	new_chapter: null,
 }
 
@@ -22,17 +19,12 @@ const state = {
 // Actions
 
 const actions = {
-	...makeFetchStory(),
-	cleanState: state =>
+	clearState: () =>
 		({
-			story: null,
+			story: {},
 			alerts: [],
 			new_chapter: null,
 		}),
-	onCreate: story_id => [
-		action('cleanState'),
-		action('fetchStory', story_id),
-	],
 	enableNewChapter: state =>
 		({
 			...state,
@@ -48,21 +40,38 @@ const actions = {
 				title: value,
 			},
 		}),
-	onCancel: state =>
+	cancel: state =>
 		({
 			...state,
 			new_chapter: null,
 		}),
-	onSave: () => ({ story, new_chapter }) =>
+	save: () => ({ new_chapter, story }) =>
 		postJson(
 			`/api/stories/${story._id}/chapters`,
 			'onSaveChapterSuccess',
 			'onApiError',
 			new_chapter,
 		),
+	init: story_id =>
+		[
+			action('clearState'),
+			action('fetchStory', story_id),
+		],
 	// HTTP
-	onSaveChapterSuccess: () => state =>
-		action('onCreate', state.story._id),
+	fetchStory: story_id =>
+		fetchJson(
+			`/api/stories/${story_id}`,
+			'onFetchStorySuccess',
+			'onApiError'
+		),
+	onFetchStorySuccess: ({ result }) => state =>
+		({
+			...state,
+			story: result,
+			new_chapter: null,
+		}),
+	onSaveChapterSuccess: ({ result }) => state =>
+		action('fetchStory', state.story._id),
 	onApiError: ({ error }) => state =>
 		({
 			...state,
@@ -78,18 +87,19 @@ const actions = {
 const view = (state, actions, matcher) =>
 	article({
 		key: 'story-chapters',
-		class: 'content',
-		oncreate: () => actions.story_chapters.onCreate(matcher.params.story_id),
-		ondestroy: () => actions.story_chapters.cleanState(),
+		oncreate: () => {
+			actions.story.setActive('chapters')
+			actions.story.chapters.init(matcher.params.story_id)
+		},
+		ondestroy: () => actions.story.chapters.clearState(),
 	},
-	state.story_chapters.story
-		? Chapters(state.story_chapters, actions.story_chapters)
+	state.story.chapters.story
+		? Chapters(state.story.chapters, actions.story.chapters)
 		: Empty()
 	)
 
 const Chapters = ({ story, alerts, new_chapter }, actions) =>
 	[
-		StoryHeader({ ...story, active: 'chapters' }),
 		Notifications(alerts),
 		article({ class: 'chapter-container mb-10' },
 			(story.chapters || []).map(
@@ -120,7 +130,7 @@ const Empty = () => []
 
 const NewChapter = {}
 
-NewChapter.Active = ({ title }, { onInputTitle, onCancel, onSave }) =>
+NewChapter.Active = ({ title }, { onInputTitle, cancel, save }) =>
 	section([
 		div({ class: 'form-group' }, [
 			label('Title'),
@@ -133,11 +143,11 @@ NewChapter.Active = ({ title }, { onInputTitle, onCancel, onSave }) =>
 		div({ class: 'button-container' }, [
 			button({
 				class: 'btn',
-				onclick: () => onCancel(),
+				onclick: () => cancel(),
 			}, 'Cancel'),
 			button({
 				class: 'btn primary',
-				onclick: () => onSave(),
+				onclick: () => save(),
 			}, 'Save'),
 		]),
 	])

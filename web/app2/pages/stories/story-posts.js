@@ -8,9 +8,6 @@ import { Notifications, Markdown } from 'App/components'
 
 import { parseDate } from 'App/date'
 
-import StoryHeader from './_story-header'
-import makeFetchStory from './_story-fetch'
-
 
 // State
 
@@ -26,7 +23,6 @@ const state = {
 // Actions
 
 const actions = {
-	...makeFetchStory(),
 	onApiError: ({ error }) => state =>
 		({
 			...state,
@@ -72,14 +68,19 @@ const actions = {
 		[
 			action('clearState'),
 			action('fetchUser'),
-			action('fetchStory', story_id),
 			action('fetchPosts', [ story_id, chapter_id ]),
 			action('setChapterId', chapter_id),
+			action('setStoryId', story_id),
 		],
 	setChapterId: chapter_id => state =>
 		({
 			...state,
 			chapter_id,
+		}),
+	setStoryId: story_id => state =>
+		({
+			...state,
+			story_id,
 		}),
 	// Edit post
 	editPost: post_id => state =>
@@ -141,14 +142,14 @@ const actions = {
 	// Save to backend
 	savePost: type => state =>
 		postJson(
-			`/api/stories/${state.story._id}/chapters/${state.chapter_id}/posts`,
+			`/api/stories/${state.story_id}/chapters/${state.chapter_id}/posts`,
 			'onSavePostSuccess',
 			'onSavePostFailure',
 			cleanPostState({ ...state.new_post, type })
 		),
 	onSavePostSuccess: ({ result }) => state =>
 		[
-			action('fetchPosts', [ state.story._id, state.chapter_id ]),
+			action('fetchPosts', [ state.story_id, state.chapter_id ]),
 			action('cancelEditPost'),
 		],
 	onSavePostFailure: ({ error }) => state =>
@@ -202,28 +203,29 @@ const addMetaPost = (prev, x) => {
 const view = (state, actions, matcher) =>
 	article({
 		key: 'story-posts',
-		class: 'content',
-		oncreate: () => actions.story_posts.init([ matcher.params.story_id, matcher.params.chapter_id ]),
-		ondestroy: () => actions.story_posts.clearState(),
+		oncreate: () => {
+			actions.story.setActive('')
+			actions.story.setSubtitle(getSubtitle(state.story.story, matcher.params.chapter_id))
+			actions.story.posts.init([ matcher.params.story_id, matcher.params.chapter_id ])
+		},
+		ondestroy: () => {
+			actions.story.setSubtitle(undefined)
+			actions.story.posts.clearState()
+		},
 	}, [
-		StoryHeader({
-			...state.story_posts.story,
-			active: 'posts',
-			subtitle: getSubtitle(state.story_posts.story, state.story_posts.chapter_id),
-		}),
-		Notifications(state.story_posts.alerts),
+		Notifications(state.story.posts.alerts),
 		article({ class: 'post-list' },
-			state.story_posts.posts.map(
-				x => Post(x, state.story_posts.user, actions.story_posts)
+			state.story.posts.posts.map(
+				x => Post(x, state.story.posts.user, actions.story.posts)
 			)
 		),
 		div({ class: 'button-container mt-10' }, [
 			button({
 				class: 'btn primary',
-				onclick: () => actions.story_posts.editPost(),
+				onclick: () => actions.story.posts.editPost(),
 			}, 'Reply'),
 		]),
-		EditPost(state.story_posts.new_post, actions.story_posts),
+		EditPost(state.story.posts.new_post, actions.story.posts),
 	])
 
 const getSubtitle = (story, chapter_id) =>
@@ -243,7 +245,7 @@ const Post = (post, user, actions) =>
 		: StoryPost(post, user, actions)
 	)
 
-const StoryPost = ({ author, _display_name, text, created_on, type, _id }, { username }, { editPost }) =>
+const StoryPost = ({ author, _display_name, text, created_on, _id }, { username }, { editPost }) =>
 	section({ class: 'post' }, [
 		div({ class: 'post-header' }, [
 			div([

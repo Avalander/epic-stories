@@ -4,13 +4,9 @@ import { action } from '@hyperapp/fx'
 import { fetchJson } from 'App/fx'
 import { Notifications, Markdown } from 'App/components'
 
-import StoryHeader from './_story-header'
-import makeFetchStory from './_story-fetch'
-
 
 // State
 const state = {
-	story: {},
 	characters: [],
 	alerts: [],
 }
@@ -18,7 +14,6 @@ const state = {
 
 // Actions
 const actions = {
-	...makeFetchStory(),
 	onApiError: ({ error }) => state =>
 		({
 			...state,
@@ -28,15 +23,13 @@ const actions = {
 			],
 		}),
 	// Init
-	clearState: () => state =>
+	clearState: () =>
 		({
-			story: {},
 			characters: [],
 			alerts: [],
 		}),
 	onCreate: story_id => [
 		action('clearState'),
-		action('fetchStory', story_id),
 		action('fetchCharacters', story_id),
 	],
 	// Fetch Characters
@@ -72,15 +65,16 @@ const setCharacterExpand = (id, value, characters) => {
 const view = (state, actions, matcher) =>
 	article({
 		key: 'story-characters',
-		class: 'content',
-		oncreate: () => actions.story_characters.onCreate(matcher.params.story_id),
-		ondestroy: () => actions.story_characters.clearState(),
+		oncreate: () => {
+			actions.story.setActive('characters')
+			actions.story.characters.onCreate(state.story.story._id)
+		},
+		ondestroy: () => actions.story.characters.clearState(),
 	}, [
-		StoryHeader({ ...state.story_characters.story, active: 'characters' }),
-		Notifications(state.story_characters.alerts),
+		Notifications(state.story.characters.alerts),
 		article(
-			state.story_characters.characters.map(
-				x => Character(x, actions.story_characters)
+			state.story.characters.characters.map(
+				x => Character(x, actions.story.characters)
 			)
 		),
 	])
