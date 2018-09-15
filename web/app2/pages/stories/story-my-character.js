@@ -40,7 +40,7 @@ const actions = {
 	onFetchCharacterSuccess: ({ result }) => state =>
 		({
 			...state,
-			form: result,
+			form: result || {},
 		}),
 	// Form
 	onInput: ([ key, value ]) => state =>

@@ -24,6 +24,14 @@
 
 	ul.components {
 		padding: 20px 0;
+
+		.border-bottom {
+			border-bottom: 1px solid #fff;
+		}
+
+		.border-top {
+			border-top: 1px solid #fff;
+		}
 	}
 
 	ul {

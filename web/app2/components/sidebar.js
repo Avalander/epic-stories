@@ -7,14 +7,25 @@ import {
 	li,
 	button,
 	img,
+	a,
 } from '@hyperapp/html'
-import { Link } from '@hyperapp/router'
+import { action } from '@hyperapp/fx'
 import { Enter, Exit } from '@hyperapp/transitions'
 
+import { fromNullable } from '@avalander/fun/src/maybe'
+
+import { go, fetchJson } from 'App/fx'
+
+
+// State
 
 const state = {
 	is_open: false,
+	stories: []
 }
+
+
+// Actions
 
 const actions = {
 	open: () => state =>
@@ -27,20 +38,49 @@ const actions = {
 			...state,
 			is_open: false,
 		}),
+	go: path =>
+		[
+			action('hide'),
+			go(path),
+		],
+	fetchStories: () =>
+		fetchJson(
+			'/api/stories',
+			'onFetchStoriesSuccess',
+			'onFetchStoriesError'
+		),
+	onFetchStoriesSuccess: ({ result }) => state =>
+		({
+			...state,
+			stories: sortByLatestPost(result),
+		}),
+	onFetchStoriesError: ({ error }) =>
+		console.error(error),
 }
 
-const view = (state, actions) =>
+const sortByLatestPost = stories => {
+	stories.sort(
+		(a, b) =>
+			(b._latest.created_on || 0) - (a._latest.created_on || 0)
+	)
+	return stories
+}
+
+
+// View
+
+const view = (state, actions, matcher) =>
 	(state.sidebar.is_open
-		? Active(state, actions)
+		? Active(state, actions, matcher)
 		: Inactive()
 	)
 
 const Inactive = () =>
 	div({ key: 'sidebar-container' })
 
-const Active = (state, actions) =>
-	div({ key: 'sidebar-container'}, [
-		Sidebar(state, actions),
+const Active = (state, actions, matcher) =>
+	div({ key: 'sidebar-container' }, [
+		Sidebar(state, actions, matcher),
 		Overlay(state, actions),
 	])
 
@@ -52,10 +92,14 @@ const sidebar_animate ={
 	}
 }
 
-const Sidebar = (state, actions) =>
+const Sidebar = (state, actions, matcher) =>
 	Enter(sidebar_animate, 
 		Exit(sidebar_animate, [
-			nav({ class: 'sidebar active', key: 'sidebar' }, [
+			nav({
+				class: 'sidebar active',
+				key: 'sidebar',
+				oncreate: () => actions.sidebar.fetchStories(),
+			}, [
 				div([
 					button({
 						class: 'dismiss fa fa-arrow-left',
@@ -67,6 +111,17 @@ const Sidebar = (state, actions) =>
 							src: `/api/avatars/${state._user.username}`
 						}),
 						Username(state._user),
+					]),
+					ul({ class: 'components' }, [
+						MenuLink({
+							class: 'border-bottom',
+							onclick: () => actions.sidebar.go('/stories'),
+						}, 'All Stories'),
+						StoryList(state, actions, matcher),
+						MenuLink({
+							class: 'border-top',
+							onclick: () => actions.sidebar.go('/preferences'),
+						}, 'Preferences'),
 					]),
 				])
 			])
@@ -80,6 +135,67 @@ const Username = ({ display_name, username }) =>
 			? h4(`(${username})`)
 			: null,
 	])
+
+const MenuLink = (props, children) =>
+	li([
+		a({
+			...props,
+		}, children),
+	])
+
+const StoryList = (state, actions, matcher) =>
+	fromNullable(matcher.params)
+		.chain(params =>
+			fromNullable(params.story_id)
+		)
+		.chain(id =>
+			fromNullable(
+				state.sidebar.stories.find(
+					({ _id }) => _id === id
+				)
+			)
+		)
+		.map(story => [
+			StoryMenu(story, actions),
+			...state.sidebar.stories
+				.filter(
+					({ _id }) => _id !== story._id
+				)
+				.map(
+					x => StoryHeader(x, actions)
+				)
+		])
+		.fold(
+			() => state.sidebar.stories
+				.map(
+					x => StoryHeader(x, actions)
+				),
+			x => x
+		)
+
+const StoryMenu = ({ _id, title }, actions) =>
+	[
+		MenuLink({
+			onclick: () => actions.sidebar.go(`/stories/${_id}/chapters`)
+		}, title),
+		MenuLink({
+			class: 'subcomponent',
+			onclick: () => actions.sidebar.go(`/stories/${_id}/chapters`)
+		}, 'Chapters'),
+		MenuLink({
+			class: 'subcomponent',
+			onclick: () => actions.sidebar.go(`/stories/${_id}/characters`)
+		}, 'Characters'),
+		MenuLink({
+			class: 'subcomponent',
+			onclick: () => actions.sidebar.go(`/stories/${_id}/my-character`)
+		}, 'My Character'),
+	]
+	
+const StoryHeader = ({ _id, title }, actions) =>
+		MenuLink({
+			onclick: () => actions.sidebar.go(`/stories/${_id}/chapters`)
+		}, title)
 
 const overlay_animate = {
 	time: 500,
@@ -99,6 +215,9 @@ const Overlay = (state, actions) =>
 			})
 		])
 	)
+
+
+// Exports
 
 export default {
 	state,

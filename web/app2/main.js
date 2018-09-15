@@ -40,7 +40,7 @@ const actions = {
 			result,
 		onFetchUserError: ({ error }) =>
 			console.error(error),
-	}
+	},
 }
 
 
@@ -50,17 +50,27 @@ const view = (state, actions) =>
 		oncreate: () => actions._user.fetchUser(),
 	}, [
 		Toolbar(state, actions),
-		Sidebar.view(state, actions),
+		//Sidebar.view(state, actions),
 		main({ class: 'with-fixed-toolbar' }, [
 			Switch({},
 				routes.map(
 					({ path, view }) =>
-						Route({ path, render: ({ match }) => view(state, actions, match) })
+						Route({
+							path,
+							render: ({ match }) => Page(view, state, actions, match)
+						})
 				)
 			),
 		]),
 	])
 
+const Page = (view, state, actions, match) =>
+	div([
+		Sidebar.view(state, actions, match),
+		main({ class: 'with-fixed-toolbar' }, [
+			view(state, actions, match),
+		]),
+	])
 
 // Start
 const epic_stories = withFx({

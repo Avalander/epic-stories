@@ -3,7 +3,7 @@ import { Link } from '@hyperapp/router'
 
 
 export default ({ _id, title, active, subtitle }) =>
-	header({ class: 'story-header' }, [
+	header({ class: 'story-header', key: 'story-header' }, [
 		h1(title),
 		subtitle
 			? h2(subtitle)
