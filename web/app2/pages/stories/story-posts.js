@@ -83,21 +83,54 @@ const actions = {
 		}),
 	// Edit post
 	editPost: post_id => state =>
+		(post_id
+			? [
+				action('setNewPost', state.posts.find(
+					({ _id }) => _id === post_id
+				)),
+				action('setPostOpen', true),
+			]
+			: [
+				action('loadPostDraft'),
+				action('setPostOpen', true),
+			]
+		),
+	cancelEditPost: () =>
+		[
+			action('removePostDraft'),
+			action('setNewPost', {}),
+		],
+	setNewPost: post => state =>
 		({
 			...state,
-			new_post: post_id
-				? {
-					...state.posts.find(({ _id }) => _id === post_id),
-					is_open: true,
-				}
-				: { is_open: true },
+			new_post: post,
 		}),
-	cancelEditPost: () => state =>
+	updatePostText: text =>
+		[
+			action('setPostText', text),
+			action('savePostDraft'),
+		],
+	setPostOpen: value => state =>
 		({
 			...state,
-			new_post: {},
+			new_post: {
+				...state.new_post,
+				is_open: value,
+			}
 		}),
-	updatePostText: text => state =>
+	// Save draft
+	savePostDraft: () => state =>
+		localStorage.setItem(`posts-${state.user.username}-draft`, JSON.stringify(state.new_post)),
+	removePostDraft: () => state =>
+		localStorage.removeItem(`posts-${state.user.username}-draft`),
+	loadPostDraft: () => state =>
+		({
+			...state,
+			new_post: parsePostDraft(
+				localStorage.getItem(`posts-${state.user.username}-draft`)
+			),
+		}),
+	setPostText: text => state =>
 		({
 			...state,
 			new_post: {
@@ -105,6 +138,7 @@ const actions = {
 				text,
 			}
 		}),
+	// Save to backend
 	savePost: type => state =>
 		postJson(
 			`/api/stories/${state.story._id}/chapters/${state.chapter_id}/posts`,
@@ -128,6 +162,12 @@ const actions = {
 			}
 		}),
 }
+
+const parsePostDraft = data =>
+	(data
+		? JSON.parse(data)
+		: {}
+	)
 
 const cleanPostState = ({ _alerts, _display_name, is_open, ...post }) =>
 	post
