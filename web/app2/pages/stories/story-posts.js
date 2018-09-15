@@ -204,6 +204,7 @@ const view = (state, actions, matcher) =>
 		key: 'story-posts',
 		class: 'content',
 		oncreate: () => actions.story_posts.init([ matcher.params.story_id, matcher.params.chapter_id ]),
+		ondestroy: () => actions.story_posts.clearState(),
 	}, [
 		StoryHeader({
 			...state.story_posts.story,

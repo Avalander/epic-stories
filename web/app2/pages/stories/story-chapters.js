@@ -80,6 +80,7 @@ const view = (state, actions, matcher) =>
 		key: 'story-chapters',
 		class: 'content',
 		oncreate: () => actions.story_chapters.onCreate(matcher.params.story_id),
+		ondestroy: () => actions.story_chapters.cleanState(),
 	},
 	state.story_chapters.story
 		? Chapters(state.story_chapters, actions.story_chapters)

@@ -89,6 +89,7 @@ const view = (state, actions, matcher) =>
 		key: 'story-my-character',
 		class: 'content',
 		oncreate: () => actions.story_my_character.onCreate(matcher.params.story_id),
+		ondestroy: () => actions.story_my_character.clearState(),
 	}, [
 		StoryHeader({ ...state.story_my_character.story, active: 'my-character' }),
 		Notifications(state.story_my_character.alerts),
