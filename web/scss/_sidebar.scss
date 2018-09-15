@@ -40,6 +40,16 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+
+	.username {
+		h3, h4 {
+			margin: 0;
+		}
+		margin: 20px 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 .sidebar-footer {

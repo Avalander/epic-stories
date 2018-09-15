@@ -2,6 +2,7 @@ import {
 	div,
 	nav,
 	h3,
+	h4,
 	ul,
 	li,
 	button,
@@ -65,12 +66,20 @@ const Sidebar = (state, actions) =>
 							class: 'avatar',
 							src: `/api/avatars/${state._user.username}`
 						}),
-						h3(state._user.username),
+						Username(state._user),
 					]),
 				])
 			])
 		])
 	)
+
+const Username = ({ display_name, username }) =>
+	div({ class: 'username' }, [
+		h3(display_name || username),
+		display_name
+			? h4(`(${username})`)
+			: null,
+	])
 
 const overlay_animate = {
 	time: 500,
