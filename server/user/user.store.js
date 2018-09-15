@@ -51,7 +51,13 @@ module.exports.makeFindUserPreferences = db => username =>
 
 module.exports.makeSaveUserPreferences = db => preferences =>
 	Future.node(done =>
-		db.collection('user-preferences').save(preferences, null, done)
+		db.collection('user-preferences')
+			.updateOne(
+				{ username: preferences.username },
+				{ $set: preferences },
+				{ upsert: true },
+				done
+			)
 	)
 	.mapRej(internalError)
 
