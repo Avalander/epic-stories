@@ -41,7 +41,7 @@ export const makeFetchJson = () => (props, getAction) =>
 	fetch(props.url, props.options)
 		.then(res => res.json())
 		.then(result =>
-			!result.ok && result.code === error_codes.INVALID_CREDENTIALS
+			!result.ok && result.error.code === error_codes.INVALID_CREDENTIALS
 				? window.location.href = `/login.html?to=${window.location.pathname}`
 				: result
 		)
@@ -51,7 +51,7 @@ export const makeFetchJson = () => (props, getAction) =>
 				: getAction(props.failure) (result)
 		)
 		.catch(error =>
-			getAction(props.error || props.action)(error)
+			console.error(error)
 		)
 
 export const makeGo = () => props =>

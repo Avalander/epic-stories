@@ -21,6 +21,7 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 		new webpack.SourceMapDevToolPlugin({}),
 		new webpack.DefinePlugin({
 			VERSION: JSON.stringify(Date.now()),
+			$VERSION$: JSON.stringify(Date.now()),
 		})
 	],
 	devServer: {

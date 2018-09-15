@@ -5,5 +5,6 @@ import marked from 'marked'
 export default raw =>
 	section({
 		class: 'markdown-content',
-		oncreate: el => el.innerHTML = marked(raw)
+		oncreate: el => el.innerHTML = marked(raw),
+		onupdate: el => el.innerHTML = marked(raw),
 	})

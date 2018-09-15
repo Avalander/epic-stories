@@ -5,6 +5,7 @@ import { fetchJson, postJson, go } from 'App/fx'
 import { parseDate } from 'App/date'
 import { Notifications } from 'App/components'
 
+
 // State
 
 const state = {
@@ -52,7 +53,7 @@ const actions = {
 			...state,
 			alerts: [
 				...state.alerts,
-				{ message: error, type: 'error' }
+				{ message: error.message, type: 'error' }
 			],
 		}),
 	fetchStories: () =>
