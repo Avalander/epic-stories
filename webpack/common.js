@@ -4,8 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = ({ base_dir, folders }) => ({
 	entry: {
-		//main: [ '@babel/polyfill', path.resolve(folders.src, 'app', 'index.js') ],
-		main2: path.resolve(folders.src, 'app2', 'main.js'),
+		main: path.resolve(folders.src, 'app', 'main.js'),
 		register: path.resolve(folders.src, 'register.js'),
 		login: path.resolve(folders.src, 'login.js'),
 		offline: path.resolve(folders.src, 'offline.js'),
@@ -80,13 +79,8 @@ module.exports = ({ base_dir, folders }) => ({
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: path.join(folders.src, 'app', 'index.html'),
-			filename: 'index-old.html',
-			chunks: [ 'main' ],
-		}),
-		new HtmlWebpackPlugin({
-			template: path.join(folders.src, 'app2', 'index.html'),
 			filename: 'index.html',
-			chunks: [ 'main2' ],
+			chunks: [ 'main' ],
 		}),
 		new HtmlWebpackPlugin({
 			template: path.join(folders.src, 'register.html'),
@@ -111,7 +105,7 @@ module.exports = ({ base_dir, folders }) => ({
 			'node_modules',
 		],
 		alias: {
-			App: path.join(folders.src, 'app2'),
+			App: path.join(folders.src, 'app'),
 			Shared: folders.shared,
 		}
 	},
