@@ -5,7 +5,7 @@ import { location, Route, Switch } from '@hyperapp/router'
 import { withFx } from '@hyperapp/fx'
 import { div, main } from '@hyperapp/html'
 
-import { makeFetchJson, makeGo } from 'App/fx'
+import { makeFetchJson, makeGo, fetchJson } from 'App/fx'
 
 import { Toolbar, Sidebar } from 'App/components'
 import {
@@ -20,6 +20,7 @@ const state = {
 	location: location.state,
 	sidebar: Sidebar.state,
 	...pages_state,
+	_user: {}
 }
 
 
@@ -28,13 +29,27 @@ const actions = {
 	location: location.actions,
 	sidebar: Sidebar.actions,
 	...pages_actions,
+	_user: {
+		fetchUser: () =>
+			fetchJson(
+				'/api/user',
+				'onFetchUserSuccess',
+				'onFetchUserError'
+			),
+		onFetchUserSuccess: ({ result }) => state =>
+			result,
+		onFetchUserError: ({ error }) =>
+			console.error(error),
+	}
 }
 
 
 // View
 const view = (state, actions) =>
-	div([
-		Toolbar(),
+	div({
+		oncreate: () => actions._user.fetchUser(),
+	}, [
+		Toolbar(state, actions),
 		Sidebar.view(state, actions),
 		main({ class: 'with-fixed-toolbar' }, [
 			Switch({},
