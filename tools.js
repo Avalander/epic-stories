@@ -43,7 +43,7 @@ const create_token = ([ token, ...groups ]) => Promise.all([
 		db.collection('invites').insertOne({ token, groups: groups.length > 0 ? groups : [ '1' ]}),
 	]))
 	.then(([ client, token ]) => {
-		console.log(`Created token '${token}'.`)
+		console.log(token)
 		client.close()
 	})
 

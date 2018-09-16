@@ -1,0 +1,6 @@
+{
+	"baseUrl": "http://localhost:3010",
+	"video": false,
+	"$dbUrl": "mongodb://172.17.0.1:28002/db",
+	"$dbName": "epic-stories"
+}
