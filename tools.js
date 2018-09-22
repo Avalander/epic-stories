@@ -55,8 +55,8 @@ const insert = ([ collection, document ]) =>
 				db.collection(collection).insertOne(JSON.parse(document))
 			])
 		)
-		.then(([ client ]) => {
-			console.log(`Inserted document.`)
+		.then(([ client, data ]) => {
+			console.log(data.insertedId)
 			client.close()
 		})
 

@@ -9,5 +9,7 @@ export default {
 	home: '/stories',
 	stories: {
 		list: () => '/stories',
-	}
+		chapters: id => `/stories/${id}/chapters`,
+		posts: (story_id, chapter_id) => `/stories/${story_id}/chapters/${chapter_id}/posts`,
+	},
 }

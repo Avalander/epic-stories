@@ -6,12 +6,17 @@
 	box-shadow: $box-shadow-sm;
 }
 
-.story-header {
+.story-card {
 	padding: 10px;
 
 	h4 + .link-to-latest {
 		position: relative;
 		top: -10px;
+	}
+
+	a:hover {
+		width: 100%;
+		text-decoration: underline;
 	}
 }
 
