@@ -18,3 +18,5 @@ Cypress.Commands.add('$login', (username='test', password='test') => {
 	cy.getCookie('bearer')
 		.should('have.property', 'value')
 })
+
+Cypress.Commands.add('$path', () => cy.location('pathname'))
