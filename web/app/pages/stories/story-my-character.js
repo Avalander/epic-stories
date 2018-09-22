@@ -87,12 +87,14 @@ const view = (state, actions, matcher) =>
 	}, [
 		Notifications(state.story.my_character.alerts),
 		FormGroup({
+			id: 'name',
 			value: state.story.my_character.form.name,
 			name: 'name',
 			title: 'Name',
 			onInput: actions.story.my_character.onInput,
 		}),
 		FormGroup({
+			id: 'high-concept',
 			value: state.story.my_character.form.high_concept,
 			name: 'high_concept',
 			title: 'Character Concept',
@@ -100,6 +102,7 @@ const view = (state, actions, matcher) =>
 			onInput: actions.story.my_character.onInput,
 		}),
 		FormGroup({
+			id: 'trouble',
 			value: state.story.my_character.form.trouble,
 			name: 'trouble',
 			title: 'Trouble',
@@ -116,25 +119,28 @@ const view = (state, actions, matcher) =>
 				span(' for more information.'),
 			]),
 			textarea({
+				id: 'description',
 				value: state.story.my_character.form.description,
 				oninput: ev => actions.story.my_character.onInput([ 'description', ev.target.value ]),
 			}),
 		]),
 		div({ class: 'button-container' }, [
 			button({
+				id: 'save-btn',
 				class: 'btn primary',
 				onclick: () => actions.story.my_character.save(state.story.story._id),
 			}, 'Save'),
 		]),
 	])
 
-const FormGroup = ({ value, name, title, description, onInput }) =>
+const FormGroup = ({ id, value, name, title, description, onInput }) =>
 	div({ class: 'form-group' }, [
 		label(title || name),
 		description
 			? span({ class: 'text-description' }, description)
 			: null,
 		input({
+			id,
 			type: 'text',
 			value,
 			oninput: ev => onInput([ name, ev.target.value ]),

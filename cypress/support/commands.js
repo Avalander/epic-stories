@@ -2,6 +2,7 @@ Cypress.Commands.add('$fillForm', data => {
 	Object.keys(data)
 		.forEach(
 			key => cy.get(key)
+				.clear()
 				.type(data[key])
 		)
 })
