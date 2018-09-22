@@ -5,4 +5,6 @@ export default {
 			: '/register.html'
 		),
 	login: '/login.html',
+	welcome: '/welcome',
+	home: '/',
 }

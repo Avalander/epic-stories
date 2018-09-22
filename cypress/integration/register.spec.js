@@ -2,6 +2,11 @@ import urls from '../support/urls'
 
 
 describe('Register page', () => {
+	beforeEach(() => {
+		cy.$clearDb()
+		cy.$createTestUser()
+	})
+
 	it('Loads', () => {
 		cy.visit(urls.register())
 		cy.contains('Register')
@@ -67,11 +72,37 @@ describe('Register page', () => {
 		cy.contains('Invalid token')
 	})
 
-	/*
 	it('Can register with a valid token', () => {
-		const token = cy.$db()
-			.createToken()
-		cy.visit(urls.register(token))
+		cy.task('createInviteToken')
+			.then(token => {
+				cy.log(token)
+				cy.visit(urls.register(token))
+				cy.$fillForm({
+					'#username': 'batman',
+					'#password': 'potatoes',
+					'#repeat-password': 'potatoes',
+				})
+				cy.get('form')
+					.submit()
+				cy.location('pathname')
+					.should('eq', urls.welcome)
+				cy.contains('Welcome')
+			})
 	})
-	*/
+
+	it('Fails to register with a taken username', () => {
+		cy.$createInviteToken()
+			.then(token => {
+				cy.log(token)
+				cy.visit(urls.register(token))
+				cy.$fillForm({
+					'#username': 'test',
+					'#password': 'potatoes',
+					'#repeat-password': 'potatoes',
+				})
+				cy.get('form')
+					.submit()
+				cy.contains('Username already exists')
+			})
+	})
 })
