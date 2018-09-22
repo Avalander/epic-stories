@@ -7,6 +7,7 @@ export default (_, actions) =>
 		i({
 			class: 'fa fa-bars pointer toolbar-icon',
 			onclick: () => actions.sidebar.open(),
+			'data-action': 'open-sidebar',
 		}),
 		Link({ class: 'brand pointer', to: '/stories' }, 'Epic Stories'),
 	])
