@@ -6,5 +6,5 @@ export default {
 		),
 	login: '/login.html',
 	welcome: '/welcome',
-	home: '/',
+	home: '/stories',
 }
