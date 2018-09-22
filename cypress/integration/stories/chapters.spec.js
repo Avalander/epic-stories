@@ -77,6 +77,20 @@ describe('Chapters page', () => {
 			})
 	})
 
+	it('Fails to create a chapter without a title', () => {
+		prepareStories()
+			.then(([ _, story_id ]) => {
+				cy.visit(urls.stories.chapters(story_id))
+				cy.contains('Miss Beaver')
+				cy.get('#new-chapter-btn')
+					.click()
+				cy.get('#save-btn')
+					.click()
+				cy.get('.alert-error')
+					.should('contain', `Missing key 'title'`)
+			})
+	})
+
 	function hasChapters(story_id, chapters) {
 		cy.wrap(chapters)
 			.each(([ id, title ]) => {
@@ -85,11 +99,11 @@ describe('Chapters page', () => {
 			})
 	}
 
-	function createChapter() {
+	function createChapter(title='Next chapter') {
 		cy.get('#new-chapter-btn')
 			.click()
 		cy.get('#title')
-			.type('Next chapter')
+			.type(title)
 		cy.get('#save-btn')
 			.click()
 	}

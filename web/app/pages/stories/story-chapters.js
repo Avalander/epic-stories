@@ -77,7 +77,7 @@ const actions = {
 			...state,
 			alerts: [
 				...state.alerts,
-				{ message: error, type: 'error' }
+				{ message: error.message, type: 'error' }
 			]
 		}),
 }
