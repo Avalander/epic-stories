@@ -29,7 +29,7 @@ module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findSt
 		Future.of(Object.assign({}, req.body, { group: req.bearer.groups[0]}))
 			.chain(validateStory)
 			.chain(createStory)
-			.fold(x => x, ({ insertedId }) => Result.ok({ insertedId }))
+			.fold(x => x, ({ insertedId }) => Result.ok({ _id: insertedId }))
 			.value(x => res.json(x))
 	)
 

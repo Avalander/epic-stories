@@ -5,15 +5,16 @@ Cypress.Commands.add('$fillForm', data => {
 				.type(data[key])
 		)
 })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('$login', (username='test', password='test') => {
+	cy.request({
+		url: '/api/login',
+		method: 'POST',
+		body: {
+			username,
+			password,
+		}
+	})
+	cy.getCookie('bearer')
+		.should('have.property', 'value')
+})

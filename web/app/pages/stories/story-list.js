@@ -46,8 +46,8 @@ const actions = {
 			new_story
 		),
 	// HTTP
-	onSaveSuccess: ({ data }) =>
-		go(`/stories/${data._id}`),
+	onSaveSuccess: ({ result }) =>
+		go(`/stories/${result._id}`),
 	onApiError: ({ error }) => state =>
 		({
 			...state,
@@ -124,6 +124,7 @@ const Active = ({ title }, { onInputTitle, save, cancel }) =>
 		div({ class: 'form-group' }, [
 			label('Title'),
 			input({
+				id: 'title',
 				type: 'text',
 				value: title,
 				oninput: ev => onInputTitle(ev.target.value),
@@ -131,10 +132,12 @@ const Active = ({ title }, { onInputTitle, save, cancel }) =>
 		]),
 		div({ class: 'button-container' }, [
 			button({
+				id: 'cancel-btn',
 				class: 'btn',
 				onclick: () => cancel(),
 			}, 'Cancel'),
 			button({
+				id: 'save-btn',
 				class: 'btn primary',
 				onclick: () => save(),
 			}, 'Save'),

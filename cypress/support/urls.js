@@ -7,4 +7,7 @@ export default {
 	login: '/login.html',
 	welcome: '/welcome',
 	home: '/stories',
+	stories: {
+		list: () => '/stories',
+	}
 }

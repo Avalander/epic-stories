@@ -17,6 +17,7 @@
     "e2e:prepare": "npm run build && ./scripts/pre-e2e.sh",
     "e2e:start": "cd .e2e && ./scripts/start.sh",
     "e2e:stop": "cd .e2e && ./scripts/stop.sh",
+    "e2e:relaunch": "npm run e2e:stop && npm run e2e:prepare && npm run e2e:start",
     "cypress:open": "cypress open"
   },
   "keywords": [],
