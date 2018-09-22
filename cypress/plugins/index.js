@@ -13,11 +13,11 @@
 
 const child_process = require('child_process')
 
-const test_user = JSON.stringify({
+const test_user = {
 	password: '$2b$10$lbWdsGejhQfVOS4Hf3Fu3e7AIl0L22Po74El0RHE48qX3q5YZ6ueS',
 	groups: [ '1' ],
 	username: 'test',
-})
+}
 
 const path = `DB_URL=mongodb://172.17.0.1:28002/db`
 
@@ -32,7 +32,7 @@ module.exports = (on, config) => {
 			return null
 		},
 		createTestUser() {
-			child_process.execSync(`${path} node .e2e/tools.js insert users '${test_user}'`)
+			child_process.execSync(`${path} node .e2e/tools.js insert users '${JSON.stringify(test_user)}'`)
 			return null
 		},
 		createInviteToken() {
@@ -51,6 +51,10 @@ module.exports = (on, config) => {
 				runTools(`insert ${collection} '${JSON.stringify(x)}'`)
 					.replace('\n', '')
 			)
+		},
+		createUser(username) {
+			const user = Object.assign({}, test_user, { username })
+			return runTools(`insert users '${JSON.stringify(user)}'`)
 		}
 	})
 }
