@@ -18,6 +18,7 @@
     "e2e:start": "cd .e2e && ./scripts/start.sh",
     "e2e:stop": "cd .e2e && ./scripts/stop.sh",
     "e2e:relaunch": "npm run e2e:stop && npm run e2e:prepare && npm run e2e:start",
+    "e2e:docker": "docker run --name epic-db-e2e -d -p 28002:27017 mongo",
     "cypress:open": "cypress open"
   },
   "keywords": [],
