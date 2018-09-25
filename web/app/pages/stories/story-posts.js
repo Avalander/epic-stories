@@ -246,10 +246,10 @@ const PostList = (state, actions, { story_id, chapter_id }) =>
 				: Just(first)
 			)
 			.fold(
-				() => div({ class: 'pager empty' }),
+				() => div({ class: 'pager empty hide-sm' }),
 				() =>
 					Link({
-						class: 'pager left',
+						class: 'pager left hide-sm',
 						title: 'Previous chapter',
 						to: `/stories/${story_id}/chapters/${findChapterId(state.story.story.chapters, -1, chapter_id)}/posts`,
 					}, [
@@ -266,10 +266,10 @@ const PostList = (state, actions, { story_id, chapter_id }) =>
 				: Just(x)
 			)
 			.fold(
-				() => div({ class: 'pager empty' }),
+				() => div({ class: 'pager empty hide-sm' }),
 				() =>
 					Link({
-						class: 'pager right',
+						class: 'pager right hide-sm',
 						title: 'Next chapter',
 						to: `/stories/${story_id}/chapters/${findChapterId(state.story.story.chapters, 1, chapter_id)}/posts`,
 					}, [
