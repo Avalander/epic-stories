@@ -1,4 +1,4 @@
-import { div, h4, button, article, span, label, input } from '@hyperapp/html'
+import { div, h4, button, article, span, label, input, time } from '@hyperapp/html'
 import { Link } from '@hyperapp/router'
 
 import { fetchJson, postJson, go } from 'App/fx'
@@ -46,8 +46,8 @@ const actions = {
 			new_story
 		),
 	// HTTP
-	onSaveSuccess: ({ data }) =>
-		go(`/stories/${data._id}`),
+	onSaveSuccess: ({ result }) =>
+		go(`/stories/${result._id}`),
 	onApiError: ({ error }) => state =>
 		({
 			...state,
@@ -95,14 +95,12 @@ const view = (state, actions) =>
 
 const Story = ({ title, _id, _latest }) =>
 	div({ class: 'panel story'}, [
-		div({ class: 'story-header' }, [
-			h4(title),
+		div({ class: 'story-card' }, [
+			h4(Link({
+				to: `/stories/${_id}/chapters`,
+			}, title)),
 			LatestPost({ ..._latest, _id }),
 		]),
-		Link({
-			class: 'btn join',
-			to: `/stories/${_id}/chapters`,
-		}, 'View'),
 	])
 
 const LatestPost = ({ _id, author, created_on, chapter_id }) =>
@@ -110,9 +108,17 @@ const LatestPost = ({ _id, author, created_on, chapter_id }) =>
 		? Link({
 			class: 'link-to-latest',
 			to: `/stories/${_id}/chapters/${chapter_id}/posts`,
-		}, `Latest post by ${author}, ${parseDate(new Date(created_on))}`)
+		}, LatestPostText(author, new Date(created_on)))
 		: null
 	)
+
+const LatestPostText = (author, created_on) =>
+		[
+			span(`Latest post by ${author}, `),
+			time({
+				datetime: created_on.toISOString(),
+			}, parseDate(created_on))
+		]
 
 const Inactive = (state, { enableNew }) =>
 	div({ class: 'new-story panel primary', onclick: enableNew }, [
@@ -124,6 +130,7 @@ const Active = ({ title }, { onInputTitle, save, cancel }) =>
 		div({ class: 'form-group' }, [
 			label('Title'),
 			input({
+				id: 'title',
 				type: 'text',
 				value: title,
 				oninput: ev => onInputTitle(ev.target.value),
@@ -131,10 +138,12 @@ const Active = ({ title }, { onInputTitle, save, cancel }) =>
 		]),
 		div({ class: 'button-container' }, [
 			button({
+				id: 'cancel-btn',
 				class: 'btn',
 				onclick: () => cancel(),
 			}, 'Cancel'),
 			button({
+				id: 'save-btn',
 				class: 'btn primary',
 				onclick: () => save(),
 			}, 'Save'),

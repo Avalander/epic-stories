@@ -1,4 +1,4 @@
-import { article, h4, span, div, label, input, section, button } from '@hyperapp/html'
+import { article, h4, span, div, label, input, section, button, time } from '@hyperapp/html'
 import { Link } from '@hyperapp/router'
 import { action } from '@hyperapp/fx'
 
@@ -77,7 +77,7 @@ const actions = {
 			...state,
 			alerts: [
 				...state.alerts,
-				{ message: error, type: 'error' }
+				{ message: error.message, type: 'error' }
 			]
 		}),
 }
@@ -122,9 +122,19 @@ const Chapter = ({ story_id, id, title, _latest }) =>
 
 const LatestPost = ({ _id, author, created_on }={}) =>
 	(_id
-		? span({ class: 'link-to-latest' }, `Latest post by ${author}, ${parseDate(new Date(created_on))}.`)
+		? span({ class: 'link-to-latest' },
+			LatestPostText(author, new Date(created_on))
+		)
 		: null
 	)
+
+const LatestPostText = (author, created_on) =>
+	[
+		span(`Latest post by ${author}, `),
+		time({
+			datetime: created_on.toISOString(),
+		}, parseDate(created_on))
+	]
 
 const Empty = () => []
 
@@ -135,6 +145,7 @@ NewChapter.Active = ({ title }, { onInputTitle, cancel, save }) =>
 		div({ class: 'form-group' }, [
 			label('Title'),
 			input({
+				id: 'title',
 				type: 'text',
 				value: title,
 				oninput: ev => onInputTitle(ev.target.value),
@@ -142,10 +153,12 @@ NewChapter.Active = ({ title }, { onInputTitle, cancel, save }) =>
 		]),
 		div({ class: 'button-container' }, [
 			button({
+				id: 'cancel-btn',
 				class: 'btn',
 				onclick: () => cancel(),
 			}, 'Cancel'),
 			button({
+				id: 'save-btn',
 				class: 'btn primary',
 				onclick: () => save(),
 			}, 'Save'),
@@ -155,6 +168,7 @@ NewChapter.Active = ({ title }, { onInputTitle, cancel, save }) =>
 NewChapter.Inactive = ({ enableNewChapter }) =>
 	section({ class: 'button-container' }, [
 		button({
+			id: 'new-chapter-btn',
 			class: 'btn primary',
 			onclick: () => enableNewChapter(),
 		}, 'New chapter'),

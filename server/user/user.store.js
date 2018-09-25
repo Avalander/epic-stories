@@ -7,7 +7,6 @@ const { Result } = require('result')
 
 
 const hashPassword = password => Future.tryP(() => bcrypt.hash(password, 10))
-const comparePassword = (password, hash) => Future.tryP(() => bcrypt.compare(password, hash))
 
 module.exports.makeRegisterUser = db => (username, password, token) =>
 	Future.node(done => db.collection('users').findOne({ username }, done))

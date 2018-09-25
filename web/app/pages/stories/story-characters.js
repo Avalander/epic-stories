@@ -67,7 +67,7 @@ const view = (state, actions, matcher) =>
 		key: 'story-characters',
 		oncreate: () => {
 			actions.story.setActive('characters')
-			actions.story.characters.onCreate(state.story.story._id)
+			actions.story.characters.onCreate(matcher.params.story_id)
 		},
 		ondestroy: () => actions.story.characters.clearState(),
 	}, [

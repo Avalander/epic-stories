@@ -43,9 +43,22 @@ const create_token = ([ token, ...groups ]) => Promise.all([
 		db.collection('invites').insertOne({ token, groups: groups.length > 0 ? groups : [ '1' ]}),
 	]))
 	.then(([ client, token ]) => {
-		console.log(`Created token '${token}'.`)
+		console.log(token)
 		client.close()
 	})
+
+const insert = ([ collection, document ]) =>
+	openConnection()
+		.then(([ db, client ]) =>
+			Promise.all([
+				Promise.resolve(client),
+				db.collection(collection).insertOne(JSON.parse(document))
+			])
+		)
+		.then(([ client, data ]) => {
+			console.log(data.insertedId)
+			client.close()
+		})
 
 const reset = (names) => openConnection()
 	.then(([ db, client ]) => Promise.all([
@@ -72,6 +85,7 @@ const commands = {
 	remove,
 	reset,
 	show,
+	insert,
 }
 
 commands[command](params)

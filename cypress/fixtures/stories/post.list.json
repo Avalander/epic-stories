@@ -1,0 +1,13 @@
+[{
+	"created_on": 1537031984816,
+	"text": "First post.",
+	"type": "regular",
+	"author": "test",
+	"chapter_id": "1"
+}, {
+	"created_on": 1537031986816,
+	"text": "Second post.",
+	"type": "regular",
+	"author": "batman",
+	"chapter_id": "1"
+}]

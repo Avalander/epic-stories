@@ -1,0 +1,17 @@
+[{
+	"title": "Once upon a time",
+	"group": "1",
+	"chapters": [{
+		"id": 1,
+		"title": "And so it begins"
+	}, {
+		"id": 2,
+		"title": "And so it continues"
+	}]
+}, {
+	"title": "Miss Beaver",
+	"group": "1"
+}, {
+	"title": "Lady Fate",
+	"group": "2"
+}]

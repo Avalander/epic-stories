@@ -1,4 +1,4 @@
-import { article, div, button, section, img, i, span, h4, textarea, a } from '@hyperapp/html'
+import { article, div, button, section, img, i, span, h4, textarea, a, time } from '@hyperapp/html'
 import { action } from '@hyperapp/fx'
 
 import { fromNullable } from '@avalander/fun/src/maybe'
@@ -221,6 +221,7 @@ const view = (state, actions, matcher) =>
 		),
 		div({ class: 'button-container mt-10' }, [
 			button({
+				id: 'reply-btn',
 				class: 'btn primary',
 				onclick: () => actions.story.posts.editPost(),
 			}, 'Reply'),
@@ -307,7 +308,7 @@ const EditPost = ({ is_open, text, _id, created_on, _alerts=[] }, { savePost, ca
 			div({ class: 'content' }, [
 				Notifications(_alerts),
 				_id
-					? span({ class: 'text-muted' }, `Editing post created on ${parseDate(new Date(created_on))}`)
+					? span({ class: 'text-muted' }, EditPostMessage(new Date(created_on)))
 					: [],
 				div([
 					span({ class: 'text-muted' }, 'This field supports markdown syntax. Check '),
@@ -318,20 +319,24 @@ const EditPost = ({ is_open, text, _id, created_on, _alerts=[] }, { savePost, ca
 				]),
 				div({ class: 'form-group' }, [
 					textarea({
+						id: 'edit-text',
 						value: text,
 						oninput: ev => updatePostText(ev.target.value),
 					})
 				]),
 				div({ class: 'button-container' }, [
 					button({
+						id: 'edit-cancel-btn',
 						class: 'btn',
 						onclick: () => cancelEditPost(),
 					}, 'Cancel'),
 					button({
+						id: 'edit-save-meta-btn',
 						class: 'btn',
 						onclick: () => savePost('meta'),
 					}, 'Post meta'),
 					button({
+						id: 'edit-save-btn',
 						class: 'btn primary',
 						onclick: () => savePost('regular'),
 					}, 'Post')
@@ -339,6 +344,15 @@ const EditPost = ({ is_open, text, _id, created_on, _alerts=[] }, { savePost, ca
 			])
 		])
 	])
+
+const EditPostMessage = created_on =>
+	[
+		span(`Editing post created on `),
+		time({
+			datetime: created_on.toISOString(),
+		}, parseDate(created_on))
+	]
+
 
 // Exports
 

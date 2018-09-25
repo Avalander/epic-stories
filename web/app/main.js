@@ -1,7 +1,7 @@
 import 'scss/main.scss'
 
 import { app } from 'hyperapp'
-import { location, Route, Switch } from '@hyperapp/router'
+import { location, Route, Redirect } from '@hyperapp/router'
 import { withFx } from '@hyperapp/fx'
 import { div, main } from '@hyperapp/html'
 
@@ -60,7 +60,11 @@ const view = (state, actions) =>
 							path,
 							render: ({ match }) => Page(view, state, actions, match)
 						})
-				)
+				),
+				Route({
+					path: '/',
+					render: () => Redirect({ to: '/stories' })
+				}),
 			//),
 		]),
 	])

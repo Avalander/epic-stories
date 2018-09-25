@@ -7,3 +7,5 @@ deploy.sh
 deploy_local.sh
 *.zip
 data/
+.build
+.e2e
