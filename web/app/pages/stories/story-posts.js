@@ -1,7 +1,9 @@
 import { article, div, button, section, img, i, span, h4, textarea, a, time } from '@hyperapp/html'
 import { action } from '@hyperapp/fx'
+import { Link } from '@hyperapp/router'
+import { Enter } from '@hyperapp/transitions'
 
-import { fromNullable } from '@avalander/fun/src/maybe'
+import { fromNullable, Nothing, Just } from '@avalander/fun/src/maybe'
 
 import { fetchJson, postJson } from 'App/fx'
 import { Notifications, Markdown } from 'App/components'
@@ -202,7 +204,7 @@ const addMetaPost = (prev, x) => {
 
 const view = (state, actions, matcher) =>
 	article({
-		key: 'story-posts',
+		key: `story-posts-${matcher.params.chapter_id}`,
 		oncreate: () => {
 			actions.story.setActive('')
 			actions.story.setSubtitle(getSubtitle(state.story.story, matcher.params.chapter_id))
@@ -214,11 +216,7 @@ const view = (state, actions, matcher) =>
 		},
 	}, [
 		Notifications(state.story.posts.alerts),
-		article({ class: 'post-list' },
-			state.story.posts.posts.map(
-				x => Post(x, state.story.posts.user, actions.story.posts)
-			)
-		),
+		PostList(state, actions, matcher.params),
 		div({ class: 'button-container mt-10' }, [
 			button({
 				id: 'reply-btn',
@@ -239,6 +237,53 @@ const getSubtitle = (story, chapter_id) =>
 			() => undefined,
 			({ id, title }) => `Chapter ${id}. ${title}`
 		)
+
+const PostList = (state, actions, { story_id, chapter_id }) =>
+	article({ class: 'post-list' }, [
+		getChapters(state.story.story)
+			.chain(([ first ]) => first.id == chapter_id
+				? Nothing()
+				: Just(first)
+			)
+			.fold(
+				() => div({ class: 'pager empty' }),
+				() =>
+					Link({
+						class: 'pager left',
+						title: 'Previous chapter',
+						to: `/stories/${story_id}/chapters/${findChapterId(state.story.story.chapters, -1, chapter_id)}/posts`,
+					}, [
+						i({ class: 'fa fa-angle-left fa-3x' })
+					])
+			),
+		div({ class: 'main' }, state.story.posts.posts.map(
+			x => Post(x, state.story.posts.user, actions.story.posts)
+		)),
+		getChapters(state.story.story)
+			.map(xs => xs[xs.length - 1])
+			.chain(x => x.id == chapter_id
+				? Nothing()
+				: Just(x)
+			)
+			.fold(
+				() => div({ class: 'pager empty' }),
+				() =>
+					Link({
+						class: 'pager right',
+						title: 'Next chapter',
+						to: `/stories/${story_id}/chapters/${findChapterId(state.story.story.chapters, 1, chapter_id)}/posts`,
+					}, [
+						i({ class: 'fa fa-angle-right fa-3x' })
+					])
+			),
+	])
+
+const getChapters = (story) =>
+	fromNullable(story)
+		.chain(story => fromNullable(story.chapters))
+	
+const findChapterId = (chapters, offset, chapter_id) =>
+	chapters[chapters.findIndex(({ id }) => id == chapter_id) + offset].id
 
 const Post = (post, user, actions) =>
 	(post.type === 'meta-group'

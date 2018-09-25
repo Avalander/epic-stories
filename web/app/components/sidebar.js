@@ -84,7 +84,7 @@ const Active = (state, actions, matcher) =>
 		Overlay(state, actions),
 	])
 
-const sidebar_animate ={
+const sidebar_animate = {
 	time: 300,
 	easing: 'ease-in-out',
 	css: {
