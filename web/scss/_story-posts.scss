@@ -3,7 +3,52 @@ h1.title {
 }
 
 .post-list {
-	.post, .meta-group {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	border-bottom: 1px solid darken($color-text, 20%);
+	min-height: 160px;
+
+	.pager {
+		width: 30px;
+		transition: all 0.3s;
+		padding: 20px;
+		cursor: pointer;
+
+		i {
+			color: darken($color-text, 20%);
+			position: fixed;
+			top: 50%;
+		}
+
+		&.empty {
+			cursor: inherit;
+
+			&:hover {
+				background-color: transparent;
+			}
+		}
+
+		&.left {
+			display: flex;
+			justify-content: flex-start;
+		}
+
+		&.right {
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		&:hover {
+			background-color: $color-background-light;
+		}
+	}
+
+	.main {
+		width: 100%;
+	}
+
+	.post:not(:last-child), .meta-group {
 		border-bottom: 1px solid $color-background-light;
 	}
 

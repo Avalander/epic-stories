@@ -4,6 +4,9 @@ header.story-header {
 	align-items: center;
 	font-family: 'Montserrat';
 	border-bottom: 1px solid darken($color-text, 20%);
+	background: $color-background;
+	z-index: 10;
+	position: relative;
 
 	h1 {
 		font-family: 'Caveat';
