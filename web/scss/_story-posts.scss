@@ -48,7 +48,7 @@ h1.title {
 		width: 100%;
 	}
 
-	.post, .meta-group {
+	.post:not(:last-child), .meta-group {
 		border-bottom: 1px solid $color-background-light;
 	}
 
