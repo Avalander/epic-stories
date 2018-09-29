@@ -48,6 +48,13 @@ const actions = {
 			...state,
 			_subtitle: value,
 		}),
+	clearState: () => state =>
+		({
+			...state,
+			story: {},
+			_subtitle: '',
+			_active: '',
+		}),
 	chapters: StoryChapters.actions,
 	characters: StoryCharacters.actions,
 	my_character: StoryMyCharacter.actions,
@@ -62,12 +69,16 @@ const view = (state, actions, match) =>
 		key: `story-${match.params.story_id}`,
 		class: 'content',
 		oncreate: () => actions.story.fetchStory(match.params.story_id),
-	}, [
-		StoryHeader({ ...state.story.story, active: state.story._active, subtitle: state.story._subtitle }),
-		state.story.story
-			? StoryBody(state, actions, match)
-			: null,
-	])
+		ondestroy: () => actions.story.clearState(),
+	}, hasRightStory(state.story.story, match.params.story_id)
+		? [
+			StoryHeader({ ...state.story.story, active: state.story._active, subtitle: state.story._subtitle }),
+			StoryBody(state, actions, match),
+		]
+		: [])
+
+const hasRightStory = (story, story_id) =>
+	story && story._id === story_id
 
 const StoryHeader = ({ _id, title, subtitle, active }) =>
 	header({ class: 'story-header', key: 'story-header' }, [
