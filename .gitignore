@@ -9,3 +9,4 @@ deploy_local.sh
 data/
 .build
 .e2e
+backup

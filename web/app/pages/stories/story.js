@@ -59,33 +59,14 @@ const actions = {
 
 const view = (state, actions, match) =>
 	article({
-		key: 'story',
+		key: `story-${match.params.story_id}`,
 		class: 'content',
 		oncreate: () => actions.story.fetchStory(match.params.story_id),
 	}, [
 		StoryHeader({ ...state.story.story, active: state.story._active, subtitle: state.story._subtitle }),
-		Switch({}, [
-			Route({
-				parent: true,
-				path: `${match.path}/chapters/:chapter_id/posts`,
-				render: ({ match }) => StoryPosts.view(state, actions, match),
-			}),
-			Route({
-				parent: true,
-				path: `${match.path}/chapters`,
-				render: ({ match }) => StoryChapters.view(state, actions, match),
-			}),
-			Route({
-				parent: true,
-				path: `${match.path}/characters`,
-				render: ({ match }) => StoryCharacters.view(state, actions, match),
-			}),
-			Route({
-				parent: true,
-				path: `${match.path}/my-character`,
-				render: ({ match }) => StoryMyCharacter.view(state, actions, match),
-			}),
-		]),
+		state.story.story
+			? StoryBody(state, actions, match)
+			: null,
 	])
 
 const StoryHeader = ({ _id, title, subtitle, active }) =>
@@ -99,6 +80,30 @@ const StoryHeader = ({ _id, title, subtitle, active }) =>
 			HeaderLink('Characters', `/stories/${_id}/characters`, active === 'characters'),
 			HeaderLink('My Character', `/stories/${_id}/my-character`, active === 'my-character'),
 		])
+	])
+
+const StoryBody = (state, actions, match) =>
+	Switch({}, [
+		Route({
+			parent: true,
+			path: `${match.path}/chapters/:chapter_id/posts`,
+			render: ({ match }) => StoryPosts.view(state, actions, match),
+		}),
+		Route({
+			parent: true,
+			path: `${match.path}/chapters`,
+			render: ({ match }) => StoryChapters.view(state, actions, match),
+		}),
+		Route({
+			parent: true,
+			path: `${match.path}/characters`,
+			render: ({ match }) => StoryCharacters.view(state, actions, match),
+		}),
+		Route({
+			parent: true,
+			path: `${match.path}/my-character`,
+			render: ({ match }) => StoryMyCharacter.view(state, actions, match),
+		}),
 	])
 
 const HeaderLink = (title, to, is_active) =>
