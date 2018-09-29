@@ -1,6 +1,6 @@
 {
   "name": "epic-stories",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,8 @@
     "e2e:stop": "cd .e2e && ./scripts/stop.sh",
     "e2e:relaunch": "npm run e2e:stop && npm run e2e:prepare && npm run e2e:start",
     "e2e:docker": "docker run --name epic-db-e2e -d -p 28002:27017 mongo",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "keywords": [],
   "author": "",
