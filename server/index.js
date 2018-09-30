@@ -16,6 +16,7 @@ const makeCharacterApi = require('character')
 const makePostApi = require('post')
 
 const errorHandler = require('error-handler')
+const logger = require('logger')
 
 require('dotenv').config()
 
@@ -31,6 +32,11 @@ app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(bodyParser.json())
 
+app.use((req, res, next) => {
+	logger.debug(`${req.method} ${req.originalUrl}`)
+	next()
+})
+
 console.log(`Connecting to database at ${DB_URL}...`)
 database()
 	.then(db => {
@@ -45,7 +51,7 @@ database()
 
 		app.use(errorHandler)
 
-		app.listen(PORT, () => console.log(`Server started listening on port ${PORT}.`))
+		app.listen(PORT, () => logger.info(`Server started listening on port ${PORT}.`))
 	})
 	.catch(err => {
 		console.error(err)
