@@ -48,7 +48,6 @@ window.onerror = (message, source, lineno, colno, error) => {
 	])
 }
 
-throw Error('Potato')
 
 // State
 const state = {
