@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = ({ base_dir, folders }) => ({
 	entry: {
+		report: path.resolve(folders.src, 'report.js'),
 		main: path.resolve(folders.src, 'app', 'main.js'),
 		register: path.resolve(folders.src, 'register.js'),
 		login: path.resolve(folders.src, 'login.js'),
@@ -80,7 +81,7 @@ module.exports = ({ base_dir, folders }) => ({
 		new HtmlWebpackPlugin({
 			template: path.join(folders.src, 'app', 'index.html'),
 			filename: 'index.html',
-			chunks: [ 'main' ],
+			chunks: [ 'report', 'main' ],
 		}),
 		new HtmlWebpackPlugin({
 			template: path.join(folders.src, 'register.html'),
