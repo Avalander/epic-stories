@@ -23,12 +23,12 @@ module.exports = ({ base_dir, folders }) => ({
 				options: {
 					presets: [[ '@babel/env', {
 						targets: {
-							chrome: 67,
+							chrome: 59,
 							firefox: 60,
 						}
 					}]],
 					plugins: [
-						[ '@babel/plugin-syntax-object-rest-spread', { useBuiltIns: true }],
+						[ '@babel/plugin-proposal-object-rest-spread', { useBuiltIns: true }],
 						[ '@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
 					],
 					babelrc: false,

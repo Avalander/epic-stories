@@ -36,7 +36,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.use((req, res, next) => {
-	logger.debug(`${req.method} ${req.originalUrl}`)
+	logger.debug(`${req.method} ${req.originalUrl}     | ${req.get('User-Agent')}`)
 	next()
 })
 
