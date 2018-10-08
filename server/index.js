@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const fallback = require('express-history-api-fallback')
 
 const makeDatabase = require('database')
+const makeReport = require('reporter')
 
 const { makeAuthorise } = require('api/auth')
 
@@ -14,6 +15,7 @@ const makeUserApi = require('user')
 const makeStoryApi = require('story')
 const makeCharacterApi = require('character')
 const makePostApi = require('post')
+const makeReportApi = require('crash-report')
 
 const errorHandler = require('error-handler')
 const logger = require('logger')
@@ -21,9 +23,10 @@ const logger = require('logger')
 require('dotenv').config()
 
 
-const { SECRET, DB_URL, DB_NAME, PORT, IMAGES_FOLDER } = process.env
+const { SECRET, DB_URL, DB_NAME, PORT, IMAGES_FOLDER, REPORT_URL } = process.env
 
 const database = makeDatabase({ DB_URL, DB_NAME })
+const report = makeReport({ REPORT_URL })
 const authorise = makeAuthorise({ SECRET })
 
 const app = express()
@@ -33,7 +36,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.use((req, res, next) => {
-	logger.debug(`${req.method} ${req.originalUrl}`)
+	logger.debug(`${req.method} ${req.originalUrl}     | ${req.get('User-Agent')}`)
 	next()
 })
 
@@ -44,6 +47,7 @@ database()
 		app.use('/api', makeUserApi({ SECRET, IMAGES_FOLDER, Router, authorise, db }))
 		app.use('/api', makeCharacterApi({ Router, authorise, db }))
 		app.use('/api', makePostApi({ Router, authorise, db}))
+		app.use('/api/report', makeReportApi({ Router, report }))
 
 		const static_root = path.join(__dirname, '..', 'static')
 		app.use(express.static(static_root, { extensions: [ 'html' ]}))

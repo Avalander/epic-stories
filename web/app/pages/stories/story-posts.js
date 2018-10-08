@@ -1,7 +1,6 @@
 import { article, div, button, section, img, i, span, h4, textarea, a, time } from '@hyperapp/html'
 import { action } from '@hyperapp/fx'
 import { Link } from '@hyperapp/router'
-import { Enter } from '@hyperapp/transitions'
 
 import { fromNullable, Nothing, Just } from '@avalander/fun/src/maybe'
 

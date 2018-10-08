@@ -13,6 +13,8 @@ module.exports = ({ base_dir, folders }) => merge(common_config({ base_dir, fol
 		sw: path.resolve(base_dir, folders.src, 'init-sw.js'),
 	},
 	*/
+	mode: 'production',
+	devtool: 'source-map',
 	module: {
 		rules: [{
 			test: /\.scss/,
