@@ -57,7 +57,7 @@ describe('List stories', () => {
 					.should('have.attr', 'datetime', '2018-09-15T17:19:46.816Z')
 					.click()
 				cy.location('pathname')
-					.should('eq', urls.stories.posts(first, 1))
+					.should('contain', urls.stories.posts(first, 1))
 			})
 	})
 })

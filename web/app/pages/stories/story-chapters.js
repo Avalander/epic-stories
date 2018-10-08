@@ -117,13 +117,15 @@ const Chapter = ({ story_id, id, title, _latest }) =>
 		to: `/stories/${story_id}/chapters/${id}/posts`
 	}, [
 		h4({ class: 'chapter-title' }, `${id}. ${title}`),
-		LatestPost(_latest)
+		LatestPost(story_id, id, _latest)
 	])
 
-const LatestPost = ({ _id, author, created_on }={}) =>
+const LatestPost = (story_id, chapter_id, { _id, author, created_on }={}) =>
 	(_id
 		? span({ class: 'link-to-latest' },
-			LatestPostText(author, new Date(created_on))
+			Link({
+				to: `/stories/${story_id}/chapters/${chapter_id}/posts/${_id}`
+			}, LatestPostText(author, new Date(created_on)))
 		)
 		: null
 	)

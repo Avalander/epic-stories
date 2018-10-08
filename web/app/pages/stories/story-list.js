@@ -103,11 +103,11 @@ const Story = ({ title, _id, _latest }) =>
 		]),
 	])
 
-const LatestPost = ({ _id, author, created_on, chapter_id }) =>
+const LatestPost = ({ _id, author, created_on, chapter_id, post_id }) =>
 	(created_on
 		? Link({
 			class: 'link-to-latest',
-			to: `/stories/${_id}/chapters/${chapter_id}/posts`,
+			to: `/stories/${_id}/chapters/${chapter_id}/posts/${post_id}`,
 		}, LatestPostText(author, new Date(created_on)))
 		: null
 	)

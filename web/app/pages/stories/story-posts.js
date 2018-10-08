@@ -237,7 +237,7 @@ const getSubtitle = (story, chapter_id) =>
 			({ id, title }) => `Chapter ${id}. ${title}`
 		)
 
-const PostList = (state, actions, { story_id, chapter_id }) =>
+const PostList = (state, actions, { story_id, chapter_id, post_id }) =>
 	article({ class: 'post-list' }, [
 		getChapters(state.story.story)
 			.chain(([ first ]) => first.id == chapter_id
@@ -256,7 +256,7 @@ const PostList = (state, actions, { story_id, chapter_id }) =>
 					])
 			),
 		div({ class: 'main' }, state.story.posts.posts.map(
-			x => Post(x, state.story.posts.user, actions.story.posts)
+			x => Post(x, state.story.posts.user, actions.story.posts, post_id)
 		)),
 		getChapters(state.story.story)
 			.map(xs => xs[xs.length - 1])
@@ -284,14 +284,24 @@ const getChapters = (story) =>
 const findChapterId = (chapters, offset, chapter_id) =>
 	chapters[chapters.findIndex(({ id }) => id == chapter_id) + offset].id
 
-const Post = (post, user, actions) =>
+const Post = (post, user, actions, post_id) =>
 	(post.type === 'meta-group'
-		? MetaGroup(post, user, actions)
-		: StoryPost(post, user, actions)
+		? MetaGroup(post, post_id)
+		: StoryPost(post, user, actions, post_id)
 	)
 
-const StoryPost = ({ author, _display_name, text, created_on, _id }, { username }, { editPost }) =>
-	section({ class: 'post' }, [
+const scrollIntoView = (id, path_id) => el =>
+	(path_id && path_id == id
+		? setTimeout(() => el.scrollIntoView(true), 100)
+		: null
+	)
+
+const StoryPost = ({ author, _display_name, text, created_on, _id }, { username }, { editPost }, post_id) =>
+	section({
+		key: `post-${_id}`,
+		class: 'post',
+		oncreate: scrollIntoView(_id, post_id)
+	}, [
 		div({ class: 'post-header' }, [
 			div([
 				img({ class: 'avatar', src: `/api/avatars/${author}` }),
@@ -323,16 +333,20 @@ const StoryPostButtons = ({ author, username, _id, editPost }) =>
 			: null
 	])
 
-const MetaGroup = (group, user) =>
+const MetaGroup = (group, post_id) =>
 	section({ class: 'meta-group' }, [
 		div({ class: 'meta-title' }, [
 			h4('Meta discussion'),
 		]),
-		...group.posts.map(MetaPost),
+		...group.posts.map(MetaPost(post_id)),
 	])
 
-const MetaPost = ({ author, _display_name, text }) =>
-	div({ class: 'post meta' }, [
+const MetaPost = post_id => ({ _id, author, _display_name, text }) =>
+	div({
+		key: `post-${_id}`,
+		class: 'post meta',
+		oncreate: scrollIntoView(_id, post_id),
+	}, [
 		div({ class: 'post-header' }, [
 			div([
 				span({ class: 'post-author' }, _display_name || author),

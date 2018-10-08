@@ -16,7 +16,7 @@ module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findSt
 		})))
 		.chain(stories => Future.parallel(Infinity,
 			stories.map(x => findLatestStoryPost(x._id.toString())
-				.map(({ author, created_on, chapter_id }) => Object.assign({}, x, { _latest: { author, created_on, chapter_id }})
+				.map(({ _id, author, created_on, chapter_id }) => Object.assign({}, x, { _latest: { post_id: _id, author, created_on, chapter_id }})
 			))
 		))
 		.fork(

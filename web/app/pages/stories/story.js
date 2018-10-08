@@ -97,6 +97,11 @@ const StoryBody = (state, actions, match) =>
 	Switch({}, [
 		Route({
 			parent: true,
+			path: `${match.path}/chapters/:chapter_id/posts/:post_id`,
+			render: ({ match }) => StoryPosts.view(state, actions, match),
+		}),
+		Route({
+			parent: true,
 			path: `${match.path}/chapters/:chapter_id/posts`,
 			render: ({ match }) => StoryPosts.view(state, actions, match),
 		}),
