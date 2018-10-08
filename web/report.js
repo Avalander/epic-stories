@@ -17,6 +17,8 @@ window.onerror = function (message, source, lineno, colno, error) {
                 stack: error.stack,
             },
             from: window.location.href,
+            version: $VERSION$,
+            timestamp: Date.now(),
         })
     })
     .then(function () {

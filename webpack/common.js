@@ -23,7 +23,7 @@ module.exports = ({ base_dir, folders }) => ({
 				options: {
 					presets: [[ '@babel/env', {
 						targets: {
-							chrome: 59,
+							chrome: 46,
 							firefox: 60,
 						}
 					}]],
