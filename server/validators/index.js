@@ -42,3 +42,8 @@ module.exports.validateUserPreferences = makeValidator(
 	[ 'username' ],
 	[ '_id', 'display_name' ]
 )
+
+module.exports.validateActivity = makeValidator(
+	[ 'username', 'action', 'timestamp' ],
+	[ 'data' ]
+)

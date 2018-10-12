@@ -4,7 +4,7 @@ import { Link } from '@hyperapp/router'
 
 import { fromNullable, Nothing, Just } from '@avalander/fun/src/maybe'
 
-import { fetchJson, postJson } from 'App/fx'
+import { fetchJson, postJson, track } from 'App/fx'
 import { Notifications, Markdown } from 'App/components'
 
 import { parseDate } from 'App/date'
@@ -51,10 +51,21 @@ const actions = {
 			'onFetchPostsSuccess',
 			'onApiError'
 		),
-	onFetchPostsSuccess: ({ result }) => state =>
+	onFetchPostsSuccess: ({ result }) =>
+		[
+			action('updatePostList', result),
+			action('trackViewStory', result),
+		],
+	updatePostList: posts => state =>
 		({
 			...state,
-			posts: stashMetaPosts(result),
+			posts: stashMetaPosts(posts),
+		}),
+	trackViewStory: posts => state =>
+		track('view-story', {
+			story_id: state.story_id,
+			chapter_id: state.chapter_id,
+			latest_post_id: tail(posts)._id,
 		}),
 	// Init state
 	clearState: () => state =>
@@ -164,6 +175,9 @@ const actions = {
 			}
 		}),
 }
+
+const tail = arr =>
+	arr[arr.length - 1]
 
 const parsePostDraft = data =>
 	(data

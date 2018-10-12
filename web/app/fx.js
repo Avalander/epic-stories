@@ -32,6 +32,23 @@ export const postJson = (url, success, failure, data, options, error) =>
 		error,
 	}]
 
+export const track = (action, data) =>
+	['track', {
+		url: '/api/activity',
+		options: {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				action,
+				data,
+				timestamp: Date.now(),
+			})
+		}
+	}]
+
 export const go = url =>
 	['go', {
 		url,
@@ -50,6 +67,12 @@ export const makeFetchJson = () => (props, getAction) =>
 				? getAction(props.success) (result)
 				: getAction(props.failure) (result)
 		)
+		.catch(error =>
+			console.error(error)
+		)
+
+export const makeTrack = () => (props, getAction) =>
+	fetch(props.url, props.options)
 		.catch(error =>
 			console.error(error)
 		)

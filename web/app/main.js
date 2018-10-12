@@ -5,7 +5,7 @@ import { location, Route, Redirect } from '@hyperapp/router'
 import { withFx } from '@hyperapp/fx'
 import { div, main } from '@hyperapp/html'
 
-import { makeFetchJson, makeGo, fetchJson } from 'App/fx'
+import { makeFetchJson, makeGo, makeTrack, fetchJson } from 'App/fx'
 
 import { Toolbar, Sidebar } from 'App/components'
 import {
@@ -81,5 +81,7 @@ const Page = (view, state, actions, match) =>
 const epic_stories = withFx({
 	fetchJson: makeFetchJson(),
 	go: makeGo(),
+	track: makeTrack(),
 }) (app) (state, actions, view, document.body)
+
 location.subscribe(epic_stories.location)
