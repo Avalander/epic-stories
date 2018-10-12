@@ -3,7 +3,7 @@ const Future = require('fluture')
 const { Result } = require('result')
 
 
-module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findStory, saveChapter, validateStory, validateChapter, findUserCharacters, findLatestStoryPost, findLatestChapterPost }) => {
+module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findStory, saveChapter, validateStory, validateChapter, findUserCharacters, findLatestStoryPost, findLatestChapterPost, getLastView }) => {
 	const api = Router()
 
 	api.get('/stories', authorise, (req, res, next) =>
@@ -38,16 +38,21 @@ module.exports = ({ Router, authorise, createStory, findStoriesByGroups, findSt
 			.chain(story =>
 				Future.parallel(Infinity, [
 					Future.of(story),
-					...(story.chapters || []).map(
-						x => findLatestChapterPost(story._id.toString(), x.id.toString())
-					)
+					Future.parallel(
+						Infinity,
+						(story.chapters || []).map(
+							x => findLatestChapterPost(story._id.toString(), x.id.toString())
+						)
+					),
+					getLastView(req.bearer.user, req.params.id)
 				])
 			)
-			.map(([ story, ...latest_posts ]) =>
+			.map(([ story, latest_posts, last_view ]) =>
 				Object.assign({}, story, {
 					chapters: (story.chapters || []).map(
 						x => Object.assign({}, x, {
-							_latest: latest_posts.find(y => y.chapter_id == x.id)
+							_latest: latest_posts.find(y => y.chapter_id == x.id),
+							_last_view: last_view[x.id],
 						})
 					)
 				})

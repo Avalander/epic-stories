@@ -19,6 +19,10 @@ const {
 	makeFindLatestChapterPost,
 } = require('./post.store')
 
+const {
+	makeGetLastView,
+} = require('./activity.store')
+
 const makeStoryApi = require('./story.api')
 
 
@@ -34,4 +38,5 @@ module.exports = ({ Router, authorise, db }) => makeStoryApi({
 	findUserCharacters: makeFindUserCharacters(db),
 	findLatestStoryPost: makeFindLatestStoryPost(db),
 	findLatestChapterPost: makeFindLatestChapterPost(db),
+	getLastView: makeGetLastView(db),
 })
