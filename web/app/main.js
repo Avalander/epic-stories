@@ -50,22 +50,19 @@ const view = (state, actions) =>
 		oncreate: () => actions._user.fetchUser(),
 	}, [
 		Toolbar(state, actions),
-		//Sidebar.view(state, actions),
 		main({ class: 'with-fixed-toolbar' }, [
-			//Switch({},
-				...routes.map(
-					({ parent, path, view }) =>
-						Route({
-							parent,
-							path,
-							render: ({ match }) => Page(view, state, actions, match)
-						})
-				),
-				Route({
-					path: '/',
-					render: () => Redirect({ to: '/stories' })
-				}),
-			//),
+			...routes.map(
+				({ parent, path, view }) =>
+					Route({
+						parent,
+						path,
+						render: ({ match }) => Page(view, state, actions, match)
+					})
+			),
+			Route({
+				path: '/',
+				render: () => Redirect({ to: '/stories' })
+			}),
 		]),
 	])
 
