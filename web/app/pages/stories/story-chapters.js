@@ -113,13 +113,10 @@ const Chapters = ({ story, alerts, new_chapter }, actions) =>
 
 const Chapter = ({ story_id, id, title, _latest, _last_view }) =>
 	Link({
-		class: 'chapter',
+		class: `chapter${hasNewContent({ _latest, _last_view }) ? ' new-posts' : ''}`,
 		to: `/stories/${story_id}/chapters/${id}/posts`
 	}, [
-		h4({ class: 'chapter-title' }, [
-			NewContent({ story_id, id, _latest, _last_view}),
-			span(`${id}. ${title}`)
-		]),
+		h4({ class: 'chapter-title' }, `${id}. ${title}`),
 		LatestPost(story_id, id, _latest)
 	])
 
@@ -129,16 +126,6 @@ const hasNewContent = ({ _latest, _last_view }) =>
 	(exists(_latest)
 		? !exists(_last_view) || _latest._id !== _last_view.latest_post_id || _latest.edited_on > _last_view.timestamp
 		: false
-	)
-
-const NewContent = ({ story_id, id, _latest, _last_view }) =>
-	(hasNewContent({ _latest, _last_view })
-		? Link({
-			class: 'new-content',
-			title: 'New posts',
-			to: `/stories/${story_id}/chapters/${id}/posts/${_latest._id}`,
-		})
-		: null
 	)
 
 const LatestPost = (story_id, chapter_id, { _id, author, created_on }={}) =>

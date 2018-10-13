@@ -5,10 +5,12 @@
 	.chapter {
 		display: flex;
 		flex-direction: column;
-		//justify-content: space-between;
 		padding: 15px 20px;
 		transition: all 0.3s;
 		cursor: pointer;
+		border-left: solid 4px transparent;
+		border-radius: 2px;
+		margin-bottom: 2px;
 
 		@media (max-width: 768px) {
 			flex-direction: column;
@@ -16,6 +18,11 @@
 
 		&:hover > .chapter-title, &:active > .chapter-title {
 			color: $color-primary-light;
+		}
+
+		&.new-posts {
+			border-left: solid 4px $color-primary;
+			background-color: rgba($color-primary, 0.2)
 		}
 
 		.chapter-title {
