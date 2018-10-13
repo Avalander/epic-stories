@@ -111,6 +111,18 @@ const Chapters = ({ story, alerts, new_chapter }, actions) =>
 			: NewChapter.Inactive(actions),
 	]
 
+const Chapter = ({ story_id, id, title, _latest, _last_view }) =>
+	Link({
+		class: 'chapter',
+		to: `/stories/${story_id}/chapters/${id}/posts`
+	}, [
+		h4({ class: 'chapter-title' }, [
+			NewContent({ story_id, id, _latest, _last_view}),
+			span(`${id}. ${title}`)
+		]),
+		LatestPost(story_id, id, _latest)
+	])
+
 const exists = x => x !== null && x !== undefined
 
 const hasNewContent = ({ _latest, _last_view }) =>
@@ -119,23 +131,15 @@ const hasNewContent = ({ _latest, _last_view }) =>
 		: false
 	)
 
-const Chapter = ({ story_id, id, title, _latest, _last_view }) =>
-	Link({
-		class: 'chapter',
-		to: `/stories/${story_id}/chapters/${id}/posts`
-	}, [
-		h4({ class: 'chapter-title' }, [
-			hasNewContent({ _latest, _last_view })
-				? Link({
-					class: 'new-content',
-					title: 'New posts',
-					to: `/stories/${story_id}/chapters/${id}/posts/${_latest._id}`,
-				})
-				: null,
-			span(`${id}. ${title}`)
-		]),
-		LatestPost(story_id, id, _latest)
-	])
+const NewContent = ({ story_id, id, _latest, _last_view }) =>
+	(hasNewContent({ _latest, _last_view })
+		? Link({
+			class: 'new-content',
+			title: 'New posts',
+			to: `/stories/${story_id}/chapters/${id}/posts/${_latest._id}`,
+		})
+		: null
+	)
 
 const LatestPost = (story_id, chapter_id, { _id, author, created_on }={}) =>
 	(_id
