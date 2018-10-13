@@ -55,6 +55,7 @@ h1.title {
 	.post {
 		display: flex;
 		flex-direction: row;
+		border-left: solid 4px transparent;
 
 		&.meta {
 			border-bottom: none;
@@ -75,6 +76,10 @@ h1.title {
 				min-width: 80px;
 				align-items: flex-start; 
 			}
+		}
+
+		&.post-new {
+			border-left: solid 4px $color-primary;
 		}
 
 		.post-author {

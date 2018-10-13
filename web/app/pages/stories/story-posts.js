@@ -1,6 +1,7 @@
 import { article, div, button, section, img, i, span, h4, textarea, a, time } from '@hyperapp/html'
 import { action } from '@hyperapp/fx'
 import { Link } from '@hyperapp/router'
+import { Enter } from '@hyperapp/transitions'
 
 import { fromNullable, Nothing, Just } from '@avalander/fun/src/maybe'
 
@@ -65,7 +66,7 @@ const actions = {
 		track('view-story', {
 			story_id: state.story_id,
 			chapter_id: state.chapter_id,
-			latest_post_id: tail(posts)._id,
+			latest_post_id: posts.length > 0 ? tail(posts)._id : undefined,
 		}),
 	// Init state
 	clearState: () => state =>
@@ -270,7 +271,16 @@ const PostList = (state, actions, { story_id, chapter_id, post_id }) =>
 					])
 			),
 		div({ class: 'main' }, state.story.posts.posts.map(
-			x => Post(x, state.story.posts.user, actions.story.posts, post_id)
+			x => Post({
+				post: x,
+				user: state.story.posts.user,
+				actions: actions.story.posts,
+				chapter: state.story.story.chapters
+					.find(
+						({ id }) => id == chapter_id
+					),
+				post_id,
+			})
 		)),
 		getChapters(state.story.story)
 			.map(xs => xs[xs.length - 1])
@@ -298,10 +308,10 @@ const getChapters = (story) =>
 const findChapterId = (chapters, offset, chapter_id) =>
 	chapters[chapters.findIndex(({ id }) => id == chapter_id) + offset].id
 
-const Post = (post, user, actions, post_id) =>
+const Post = ({ post, user, actions, chapter, post_id }) =>
 	(post.type === 'meta-group'
 		? MetaGroup(post, post_id)
-		: StoryPost(post, user, actions, post_id)
+		: StoryPost(post, user, actions, chapter, post_id)
 	)
 
 const scrollIntoView = (id, path_id) => el =>
@@ -310,13 +320,13 @@ const scrollIntoView = (id, path_id) => el =>
 		: null
 	)
 
-const StoryPost = ({ author, _display_name, text, created_on, _id }, { username }, { editPost }, post_id) =>
+const StoryPost = ({ author, _display_name, text, created_on, edited_on, _id }, { username }, { editPost }, { _last_view }, post_id) =>
 	section({
 		key: `post-${_id}`,
-		class: 'post',
+		class: `post${isNewPost(author, username, created_on, edited_on, _last_view) ? ' post-new' : ''}`,
 		oncreate: scrollIntoView(_id, post_id)
 	}, [
-		div({ class: 'post-header' }, [
+		div({ class: `post-header` }, [
 			div([
 				img({ class: 'avatar', src: `/api/avatars/${author}` }),
 			]),
@@ -332,6 +342,9 @@ const StoryPost = ({ author, _display_name, text, created_on, _id }, { username 
 			div({ class: 'post-text' }, Markdown(text)),
 		])
 	])
+
+const isNewPost = (author, username, created_on, edited_on, _last_view) =>
+	author !== username && _last_view && (_last_view.timestamp < created_on || _last_view.timestamp < edited_on)
 
 const StoryPostButtons = ({ author, username, _id, editPost }) =>
 	div({ class: 'button-container' }, [
