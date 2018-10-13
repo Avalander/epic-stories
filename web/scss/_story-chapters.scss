@@ -14,8 +14,8 @@
 			flex-direction: column;
 		}
 
-		&:hover, &:active {
-			background: $color-primary;
+		&:hover > .chapter-title, &:active > .chapter-title {
+			color: $color-primary-light;
 		}
 
 		.chapter-title {
@@ -32,6 +32,15 @@
 
 		.link-to-latest a:hover {
 			text-decoration: underline;
+		}
+
+		.new-content {
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background-color: $color-primary;
+			margin-right: 10px;
 		}
 	}
 }
